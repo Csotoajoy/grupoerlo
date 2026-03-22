@@ -3,418 +3,1175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="refresh" content="300">
-<title>Erlo IA — Tablero de Producción</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Erlo IA – Tablero de Planta</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap');
+
   :root {
-    --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2236;--border:#1e2d47;
-    --accent:#00d4ff;--accent2:#00ff9d;--danger:#ff3b5c;--warn:#ffb020;
-    --muted:#4a5a7a;--text:#e8eef8;--text2:#8899bb;
+    --bg:        #0a0c10;
+    --surface:   #111520;
+    --border:    #1e2535;
+    --accent:    #00e5ff;
+    --accent2:   #ff6b35;
+    --green:     #00e676;
+    --yellow:    #ffd740;
+    --red:       #ff1744;
+    --text:      #e8eaf6;
+    --muted:     #546e8a;
+    --llenado:   #00e5ff;
+    --inyeccion: #7c4dff;
+    --etiquetado:#00e676;
+    --talco:     #ffd740;
+    --bolitas:   #ff6b35;
   }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
-  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-  .wrapper{position:relative;z-index:1;padding:14px}
-  header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:linear-gradient(135deg,#0d1528,#0a1020);border:1px solid var(--border);border-radius:10px;margin-bottom:12px}
-  .logo{display:flex;align-items:center;gap:14px}
-  .logo-mark{width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;color:#000}
-  .logo-text h1{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;color:var(--accent)}
-  .logo-text p{font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase}
-  .header-right{display:flex;align-items:center;gap:20px}
-  .clock{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:700;color:var(--text);letter-spacing:2px}
-  .date-info .fecha{font-size:13px;color:var(--text2);text-align:right}
-  .date-info .semana{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;text-align:right}
-  .sync-info{font-size:10px;color:var(--muted);text-align:right;margin-top:2px}
 
-  .alert-banner{background:linear-gradient(90deg,rgba(255,59,92,0.15),rgba(255,59,92,0.05));border:1px solid rgba(255,59,92,0.4);border-radius:8px;padding:10px 18px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
-  .alert-dot{width:10px;height:10px;border-radius:50%;background:var(--danger);animation:pulse 1s infinite}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
-  .alert-text{font-size:13px;color:#ff6b85;font-weight:600;letter-spacing:.5px}
-  .alert-text span{color:var(--text2);font-weight:400;margin-left:8px}
+  * { margin:0; padding:0; box-sizing:border-box; }
 
-  .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px}
-  .kpi{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;position:relative;overflow:hidden}
-  .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-  .kpi.blue::before{background:var(--accent)}
-  .kpi.green::before{background:var(--accent2)}
-  .kpi.red::before{background:var(--danger)}
-  .kpi.warn::before{background:var(--warn)}
-  .kpi.purple::before{background:#a78bfa}
-  .kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px}
-  .kpi-val{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;line-height:1}
-  .kpi.blue .kpi-val{color:var(--accent)}
-  .kpi.green .kpi-val{color:var(--accent2)}
-  .kpi.red .kpi-val{color:var(--danger)}
-  .kpi.warn .kpi-val{color:var(--warn)}
-  .kpi.purple .kpi-val{color:#a78bfa}
-  .kpi-sub{font-size:10px;color:var(--text2);margin-top:3px}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
 
-  .main-grid{display:grid;grid-template-columns:1fr 1fr 300px;gap:12px}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-  .card-header{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
-  .card-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2)}
-  .card-body{padding:12px}
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 28px;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    height: 64px;
+    flex-shrink: 0;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); }
+  .header-center {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 6px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  #screen-label {
+    color: var(--accent);
+    transition: color 0.4s;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  #clock {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--text);
+    letter-spacing: 3px;
+  }
+  #date {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+    text-align: right;
+    line-height: 1.3;
+  }
+  .pulse-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.4; transform:scale(0.7); }
+  }
 
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
-  .badge-ok{background:rgba(0,255,157,0.15);color:var(--accent2);border:1px solid rgba(0,255,157,0.3)}
-  .badge-warn{background:rgba(255,176,32,0.15);color:var(--warn);border:1px solid rgba(255,176,32,0.3)}
-  .badge-danger{background:rgba(255,59,92,0.15);color:var(--danger);border:1px solid rgba(255,59,92,0.3)}
-  .badge-info{background:rgba(0,212,255,0.15);color:var(--accent);border:1px solid rgba(0,212,255,0.3)}
-  .badge-purple{background:rgba(167,139,250,0.15);color:#a78bfa;border:1px solid rgba(167,139,250,0.3)}
+  /* ── NAV DOTS ── */
+  #screen-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot.active { background: var(--accent); transform: scale(1.4); }
 
-  /* OPs TABLE */
-  .ops-table{width:100%;border-collapse:collapse}
-  .ops-table th{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:5px 8px;text-align:left;border-bottom:1px solid var(--border)}
-  .ops-table td{padding:6px 8px;font-size:11px;border-bottom:1px solid rgba(30,45,71,0.5);vertical-align:middle}
-  .ops-table tr:hover td{background:rgba(0,212,255,0.03)}
-  .op-code{font-family:'Barlow Condensed',sans-serif;font-weight:700;color:var(--accent);font-size:12px}
-  .op-sku{color:var(--text);font-weight:500;font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .op-est{color:var(--text2);font-size:10px}
-  .num-right{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;text-align:right;color:var(--accent2)}
+  /* ── MAIN AREA ── */
+  #screens-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .screen {
+    position: absolute;
+    inset: 0;
+    padding: 18px 24px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    overflow-y: auto;
+  }
+  .screen.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+  .screen::-webkit-scrollbar { width: 4px; }
+  .screen::-webkit-scrollbar-track { background: transparent; }
+  .screen::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* ESTADO BADGES */
-  .est-bloq{background:rgba(255,59,92,0.15);color:var(--danger);border:1px solid rgba(255,59,92,0.3);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px}
-  .est-pend{background:rgba(255,176,32,0.15);color:var(--warn);border:1px solid rgba(255,176,32,0.3);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px}
-  .est-ejec{background:rgba(0,212,255,0.15);color:var(--accent);border:1px solid rgba(0,212,255,0.3);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px}
-  .est-comp{background:rgba(0,255,157,0.15);color:var(--accent2);border:1px solid rgba(0,255,157,0.3);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:1px}
-  .est-urg{background:rgba(255,59,92,0.3);color:#fff;border:1px solid var(--danger);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:800;letter-spacing:1px;animation:pulse 2s infinite}
+  /* ── SCREEN HEADER ── */
+  .screen-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .station-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.06);
+    border-left: 3px solid var(--accent);
+  }
+  .screen-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .screen-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-left: auto;
+  }
 
-  /* PRI */
-  .pri-a{color:var(--danger);font-weight:800;font-size:11px}
-  .pri-b{color:var(--warn);font-weight:800;font-size:11px}
-  .pri-c{color:var(--muted);font-weight:800;font-size:11px}
-  .pri-u{color:#fff;font-weight:800;font-size:11px;background:var(--danger);padding:1px 5px;border-radius:3px}
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+  }
+  .kpi-card.warn::before { background: var(--yellow); }
+  .kpi-card.danger::before { background: var(--red); }
+  .kpi-card.ok::before { background: var(--green); }
+  .kpi-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--text); line-height: 1; }
+  .kpi-value.big { font-size: 42px; }
+  .kpi-unit { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-  .scroll-area{max-height:320px;overflow-y:auto}
-  .scroll-area::-webkit-scrollbar{width:3px}
-  .scroll-area::-webkit-scrollbar-track{background:transparent}
-  .scroll-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  /* ── DATA TABLE ── */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table thead th {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0;
+  }
+  .data-table tbody tr {
+    border-bottom: 1px solid rgba(30,37,53,0.6);
+    transition: background 0.2s;
+  }
+  .data-table tbody tr:hover { background: rgba(0,229,255,0.04); }
+  .data-table td {
+    padding: 10px 12px;
+    font-size: 15px;
+    font-weight: 400;
+    vertical-align: middle;
+  }
+  .data-table td.mono {
+    font-family: 'Barlow Condensed', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .data-table td.sku-name { font-weight: 600; color: var(--text); max-width: 300px; }
+  .data-table td.num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    text-align: right;
+  }
 
-  /* BARRAS */
-  .bar-chart{display:flex;flex-direction:column;gap:7px}
-  .bar-row{display:grid;grid-template-columns:140px 1fr 55px;align-items:center;gap:8px}
-  .bar-label{font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bar-track{height:16px;background:var(--bg3);border-radius:3px;overflow:hidden}
-  .bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-  .bar-val{font-size:10px;color:var(--text);text-align:right;font-weight:600}
+  /* ── STATUS BADGES ── */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 3px 9px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .badge-urgente { background: rgba(255,23,68,0.15); color: var(--red); border: 1px solid rgba(255,23,68,0.3); }
+  .badge-a       { background: rgba(255,107,53,0.15); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
+  .badge-b       { background: rgba(255,215,64,0.12); color: var(--yellow); border: 1px solid rgba(255,215,64,0.3); }
+  .badge-c       { background: rgba(84,110,138,0.15); color: var(--muted); border: 1px solid rgba(84,110,138,0.3); }
+  .badge-bloq    { background: rgba(255,23,68,0.08); color: var(--red); border: 1px dashed rgba(255,23,68,0.4); }
+  .badge-pend    { background: rgba(255,215,64,0.08); color: var(--yellow); border: 1px solid rgba(255,215,64,0.25); }
+  .badge-ejec    { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.3); }
+  .badge-comp    { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+  .badge-riesgo  { background: rgba(255,215,64,0.15); color: var(--yellow); border: 1px solid rgba(255,215,64,0.4); }
+  .badge-ok      { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
 
-  /* ESFERAS */
-  .esfera-panel{padding:12px;background:linear-gradient(135deg,rgba(255,59,92,0.08),rgba(255,59,92,0.03));border:1px solid rgba(255,59,92,0.25);border-radius:10px;margin-bottom:12px}
-  .esfera-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
-  .esfera-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-  .esfera-label{font-size:11px;color:var(--text2)}
-  .esfera-val{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700}
+  /* ── STOCK BAR ── */
+  .stock-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .stock-bar-bg {
+    flex: 1; height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+  }
+  .stock-bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 0.8s ease;
+  }
+  .fill-green { background: var(--green); }
+  .fill-yellow { background: var(--yellow); }
+  .fill-red { background: var(--red); }
+  .stock-num { font-family: 'Bebas Neue', sans-serif; font-size: 20px; min-width: 70px; text-align: right; }
 
-  /* STOCK */
-  .stock-list{display:flex;flex-direction:column;gap:5px}
-  .stock-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--danger)}
-  .stock-item.warn{border-left-color:var(--warn)}
-  .stock-item.ok{border-left-color:var(--accent2)}
-  .stock-nombre{font-size:10px;color:var(--text);font-weight:600}
-  .stock-tipo{font-size:9px;color:var(--text2)}
-  .stock-unds{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--danger)}
-  .stock-item.warn .stock-unds{color:var(--warn)}
-  .stock-item.ok .stock-unds{color:var(--accent2)}
+  /* ── ALERT BANNER ── */
+  .alert-banner {
+    background: rgba(255,23,68,0.08);
+    border: 1px solid rgba(255,23,68,0.3);
+    border-radius: 6px;
+    padding: 12px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--red);
+  }
+  .alert-icon { font-size: 20px; }
 
-  .empty-ops{padding:30px;text-align:center;color:var(--muted);font-size:12px}
+  /* ── PROGRESS RING ── */
+  .op-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .op-bar-wrap {
+    flex: 1; height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .op-bar { height: 100%; background: var(--accent); border-radius: 3px; }
 
-  footer{margin-top:12px;padding:9px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:space-between}
-  .footer-left{font-size:10px;color:var(--muted)}
-  .footer-right{font-size:10px;color:var(--muted)}
-  .live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);margin-right:5px;animation:pulse 2s infinite}
-  .dead-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--danger);margin-right:5px}
+  /* ── PEDIDOS SCREEN ── */
+  .pedido-row { display: flex; align-items: center; gap: 16px; padding: 12px 16px; }
+  .dias-chip {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    min-width: 50px;
+    text-align: center;
+    line-height: 1;
+  }
+  .dias-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-align: center; }
+
+  /* ── SKU RISK GRID ── */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .risk-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .risk-card.critical { border-color: rgba(255,23,68,0.4); }
+  .risk-card.warning  { border-color: rgba(255,215,64,0.3); }
+  .risk-card-name { font-size: 14px; font-weight: 600; margin-bottom: 8px; line-height: 1.2; }
+  .risk-card-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .risk-tag { font-size: 11px; color: var(--muted); }
+  .risk-tag strong { color: var(--text); }
+
+  /* ── FOOTER BAR ── */
+  footer {
+    height: 36px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  #last-update { color: var(--accent); }
+  .footer-nav { display: flex; gap: 20px; }
+  .footer-nav button {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 11px; letter-spacing: 1px;
+    font-family: 'Barlow Condensed', sans-serif;
+    padding: 4px 8px;
+    transition: color 0.2s;
+  }
+  .footer-nav button:hover { color: var(--accent); }
+
+  /* ── LOADING ── */
+  #loading {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px; z-index: 100;
+  }
+  .load-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px; letter-spacing: 8px; color: var(--accent);
+  }
+  .load-sub { font-size: 13px; color: var(--muted); letter-spacing: 3px; }
+  .load-bar-wrap { width: 200px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+  .load-bar { height: 100%; background: var(--accent); border-radius: 1px; animation: loadanim 1.5s ease-in-out infinite; }
+  @keyframes loadanim {
+    0% { width:0; margin-left:0; }
+    50% { width:60%; margin-left:20%; }
+    100% { width:0; margin-left:100%; }
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 60px; color: var(--muted);
+    gap: 12px;
+  }
+  .empty-state .icon { font-size: 48px; }
+  .empty-state p { font-size: 14px; letter-spacing: 1px; }
+
+  /* ── OVERVIEW SCREEN ── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .station-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .station-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .station-card .s-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .station-card .s-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .station-card .s-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+  .station-card .s-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .bar-llenado   { background: var(--llenado); }
+  .bar-inyeccion { background: var(--inyeccion); }
+  .bar-etiquetado{ background: var(--etiquetado); }
+  .bar-talco     { background: var(--talco); }
+  .bar-bolitas   { background: var(--bolitas); }
+
+  .col-llenado   { color: var(--llenado); }
+  .col-inyeccion { color: var(--inyeccion); }
+  .col-etiquetado{ color: var(--etiquetado); }
+  .col-talco     { color: var(--talco); }
+  .col-bolitas   { color: var(--bolitas); }
+
+  @media (max-width: 900px) {
+    .overview-grid { grid-template-columns: 1fr 1fr; }
+    .risk-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
-<div class="wrapper">
 
+<div id="loading">
+  <div class="load-logo">ERLO IA</div>
+  <div class="load-sub">CARGANDO DATOS DE PLANTA</div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
+</div>
+
+<!-- HEADER -->
 <header>
-  <div class="logo">
-    <div class="logo-mark">GE</div>
-    <div class="logo-text">
-      <h1>ERLO IA</h1>
-      <p>Tablero de Producción — Planta Heavenly Digital</p>
-    </div>
-  </div>
+  <div class="logo">ERLO <span>IA</span></div>
+  <div class="header-center">TABLERO DE PLANTA &nbsp;·&nbsp; <span id="screen-label">RESUMEN</span></div>
   <div class="header-right">
-    <div class="date-info">
-      <div class="fecha" id="fecha-hoy"></div>
-      <div class="semana" id="semana-txt"></div>
-      <div class="sync-info" id="sync-info">Cargando datos...</div>
+    <div class="pulse-dot" id="live-dot"></div>
+    <div>
+      <div id="clock">00:00:00</div>
+      <div id="date">—</div>
     </div>
-    <div class="clock" id="reloj">--:--:--</div>
   </div>
 </header>
 
-<div class="alert-banner" id="alert-banner">
-  <div class="alert-dot"></div>
-  <div class="alert-text" id="alert-text">Cargando estado del sistema...</div>
+<!-- DOTS NAV -->
+<div id="screen-dots"></div>
+
+<!-- SCREENS -->
+<div id="screens-wrap">
+
+  <!-- 0: RESUMEN GENERAL -->
+  <div class="screen active" data-label="RESUMEN GENERAL">
+    <div class="screen-header">
+      <div class="station-badge">VISTA GLOBAL</div>
+      <div class="screen-title">RESUMEN DE PLANTA</div>
+      <div class="screen-sub" id="overview-updated"></div>
+    </div>
+    <div class="kpi-strip" id="kpi-strip-overview"></div>
+    <div class="overview-grid" id="station-cards"></div>
+  </div>
+
+  <!-- 1: D-LLENADO -->
+  <div class="screen" data-label="D · LLENADO">
+    <div class="screen-header">
+      <div class="station-badge" style="border-color:var(--llenado)">ESTACIÓN D</div>
+      <div class="screen-title col-llenado">LLENADO</div>
+      <div class="screen-sub">Órdenes activas y SKUs en riesgo</div>
+    </div>
+    <div class="kpi-strip" id="kpi-llenado"></div>
+    <div id="alert-llenado"></div>
+    <table class="data-table" id="table-llenado">
+      <thead><tr>
+        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
+        <th>Estado</th><th>Avance</th><th style="text-align:right">Stock PT</th>
+      </tr></thead>
+      <tbody id="tbody-llenado"></tbody>
+    </table>
+    <div style="margin-top:20px">
+      <div class="station-badge" style="margin-bottom:12px">⚠ SKUs EN RIESGO — INVENTARIO PT</div>
+      <div class="risk-grid" id="risk-llenado"></div>
+    </div>
+  </div>
+
+  <!-- 2: B-INYECCIÓN SOPLADO -->
+  <div class="screen" data-label="B · INYECCIÓN SOPLADO">
+    <div class="screen-header">
+      <div class="station-badge" style="border-color:var(--inyeccion)">ESTACIÓN B</div>
+      <div class="screen-title col-inyeccion">INYECCIÓN SOPLADO</div>
+      <div class="screen-sub">Moldes, resina y esferas</div>
+    </div>
+    <div class="kpi-strip" id="kpi-inyeccion"></div>
+    <div id="alert-inyeccion"></div>
+    <table class="data-table" id="table-inyeccion">
+      <thead><tr>
+        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
+        <th>Estado</th><th>Kg Resina</th><th>Molde</th><th style="text-align:right">Stock SKU</th>
+      </tr></thead>
+      <tbody id="tbody-inyeccion"></tbody>
+    </table>
+    <div style="margin-top:20px">
+      <div class="station-badge" style="margin-bottom:12px; border-color:var(--bolitas)">⚠ SKUs EN RIESGO — PIEZAS</div>
+      <div class="risk-grid" id="risk-inyeccion"></div>
+    </div>
+  </div>
+
+  <!-- 3: C-ETIQUETADO -->
+  <div class="screen" data-label="C · ETIQUETADO">
+    <div class="screen-header">
+      <div class="station-badge" style="border-color:var(--etiquetado)">ESTACIÓN C</div>
+      <div class="screen-title col-etiquetado">ETIQUETADO Y SERIGRAFÍA</div>
+      <div class="screen-sub">Envases etiquetados y tapas armadas</div>
+    </div>
+    <div class="kpi-strip" id="kpi-etiquetado"></div>
+    <div id="alert-etiquetado"></div>
+    <table class="data-table" id="table-etiquetado">
+      <thead><tr>
+        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
+        <th>Estado</th><th>Avance</th><th style="text-align:right">Stock SKU</th>
+      </tr></thead>
+      <tbody id="tbody-etiquetado"></tbody>
+    </table>
+    <div style="margin-top:20px">
+      <div class="station-badge" style="margin-bottom:12px">⚠ SKUs EN RIESGO — PIEZAS ETIQUETADAS</div>
+      <div class="risk-grid" id="risk-etiquetado"></div>
+    </div>
+  </div>
+
+  <!-- 4: LLENADO TALCO -->
+  <div class="screen" data-label="D · TALCO">
+    <div class="screen-header">
+      <div class="station-badge" style="border-color:var(--talco)">TALCO</div>
+      <div class="screen-title col-talco">LLENADO DE TALCO</div>
+      <div class="screen-sub">Línea de talcos — todas las presentaciones</div>
+    </div>
+    <div class="kpi-strip" id="kpi-talco"></div>
+    <div id="alert-talco"></div>
+    <table class="data-table" id="table-talco">
+      <thead><tr>
+        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
+        <th>Estado</th><th>Avance</th><th style="text-align:right">Stock PT</th>
+      </tr></thead>
+      <tbody id="tbody-talco"></tbody>
+    </table>
+    <div style="margin-top:20px">
+      <div class="station-badge" style="margin-bottom:12px; border-color:var(--talco)">⚠ SKUs TALCO EN RIESGO</div>
+      <div class="risk-grid" id="risk-talco"></div>
+    </div>
+  </div>
+
+  <!-- 5: INVENTARIO PT -->
+  <div class="screen" data-label="INVENTARIO PT">
+    <div class="screen-header">
+      <div class="station-badge">PRODUCTO TERMINADO</div>
+      <div class="screen-title">INVENTARIO PT</div>
+      <div class="screen-sub">Stock actual de producto terminado</div>
+    </div>
+    <div class="kpi-strip" id="kpi-invpt"></div>
+    <table class="data-table" id="table-invpt">
+      <thead><tr>
+        <th>Código</th><th>Descripción</th><th>Línea</th>
+        <th style="text-align:right">Unidades</th><th>Estado</th>
+      </tr></thead>
+      <tbody id="tbody-invpt"></tbody>
+    </table>
+  </div>
+
+  <!-- 6: INVENTARIO SKU PIEZAS -->
+  <div class="screen" data-label="INVENTARIO SKU">
+    <div class="screen-header">
+      <div class="station-badge">PIEZAS Y ENVASES</div>
+      <div class="screen-title">INVENTARIO SKU</div>
+      <div class="screen-sub">Stock de piezas, tapas, esferas y envases</div>
+    </div>
+    <div class="kpi-strip" id="kpi-invsku"></div>
+    <table class="data-table" id="table-invsku">
+      <thead><tr>
+        <th>Código</th><th>Descripción</th><th>Tipo</th>
+        <th style="text-align:right">Unidades</th><th>Estado</th>
+      </tr></thead>
+      <tbody id="tbody-invsku"></tbody>
+    </table>
+  </div>
+
+  <!-- 7: PEDIDOS ACTIVOS -->
+  <div class="screen" data-label="PEDIDOS ACTIVOS">
+    <div class="screen-header">
+      <div class="station-badge">OCs DE CLIENTES</div>
+      <div class="screen-title">PEDIDOS ACTIVOS</div>
+      <div class="screen-sub">Meta de entrega: 4 días</div>
+    </div>
+    <div class="kpi-strip" id="kpi-pedidos"></div>
+    <div id="alert-pedidos"></div>
+    <table class="data-table" id="table-pedidos">
+      <thead><tr>
+        <th>OC</th><th>Cliente</th><th>Vendedor</th>
+        <th>Fecha Pedido</th><th>Fecha Entrega</th>
+        <th style="text-align:right">Días en Sistema</th><th>Estado</th>
+      </tr></thead>
+      <tbody id="tbody-pedidos"></tbody>
+    </table>
+  </div>
+
 </div>
 
-<div class="kpi-row">
-  <div class="kpi blue"><div class="kpi-label">OPs activas</div><div class="kpi-val" id="kpi-ops-activas">--</div><div class="kpi-sub" id="kpi-ops-sub">Cargando...</div></div>
-  <div class="kpi red"><div class="kpi-label">Bloqueadas</div><div class="kpi-val" id="kpi-bloq">--</div><div class="kpi-sub">Piezas faltantes</div></div>
-  <div class="kpi warn"><div class="kpi-label">Pendientes aprob.</div><div class="kpi-val" id="kpi-pend">--</div><div class="kpi-sub">Esperan Oscar/Cristian</div></div>
-  <div class="kpi green"><div class="kpi-label">En ejecución</div><div class="kpi-val" id="kpi-ejec">--</div><div class="kpi-sub">Produciendo ahora</div></div>
-  <div class="kpi purple"><div class="kpi-label">Completadas</div><div class="kpi-val" id="kpi-comp">--</div><div class="kpi-sub">Esta semana</div></div>
-</div>
-
-<div class="main-grid">
-
-  <!-- OPs generadas por el agente -->
-  <div class="card" style="grid-row:span 2">
-    <div class="card-header">
-      <span class="card-title">Órdenes de producción — Erlo Bot</span>
-      <span class="badge badge-info" id="badge-total">0 OPs</span>
-    </div>
-    <div class="card-body">
-      <div class="scroll-area">
-        <table class="ops-table">
-          <thead>
-            <tr>
-              <th>OP Code</th>
-              <th>SKU</th>
-              <th>Estación</th>
-              <th style="text-align:right">Cantidad</th>
-              <th>Estado</th>
-              <th>Pri</th>
-            </tr>
-          </thead>
-          <tbody id="ops-tbody">
-            <tr><td colspan="6" class="empty-ops">Cargando órdenes de producción...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Producción semana -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Producción semana 12 — estaciones</span>
-      <span class="badge badge-info">14–20 Mar</span>
-    </div>
-    <div class="card-body">
-      <div class="bar-chart">
-        <div class="bar-row"><div class="bar-label">B-Inyección Soplado</div><div class="bar-track"><div class="bar-fill" style="width:0%" data-pct="100"></div></div><div class="bar-val">150.4k</div></div>
-        <div class="bar-row"><div class="bar-label">C-Etiquetado/Serigrafía</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#00d4ff,#7dd3fc)" data-pct="27.7"></div></div><div class="bar-val">41.7k</div></div>
-        <div class="bar-row"><div class="bar-label">B-Máquina Bolitas</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#ffb020,#fde68a)" data-pct="16.1"></div></div><div class="bar-val">24.2k</div></div>
-        <div class="bar-row"><div class="bar-label">D-Llenado</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#00ff9d,#86efac)" data-pct="13.4"></div></div><div class="bar-val">20.2k</div></div>
-        <div class="bar-row"><div class="bar-label">C-Armar Tapas</div><div class="bar-track"><div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#a78bfa,#c4b5fd)" data-pct="6.7"></div></div><div class="bar-val">10.1k</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stock crítico -->
-  <div style="display:flex;flex-direction:column;gap:12px;grid-row:span 2">
-    <div class="esfera-panel">
-      <div class="esfera-title">⛔ Estado esferas</div>
-      <div class="esfera-row">
-        <span class="esfera-label">Esfera Grande (75ml)</span>
-        <span class="esfera-val" style="color:var(--accent2)">24,184</span>
-      </div>
-      <div style="height:5px;background:var(--bg3);border-radius:3px;margin-bottom:8px">
-        <div style="height:100%;width:82%;background:var(--accent2);border-radius:3px"></div>
-      </div>
-      <div class="esfera-row">
-        <span class="esfera-label">Esfera Pequeña (50ml)</span>
-        <span class="esfera-val" style="color:var(--danger)">−6,137</span>
-      </div>
-      <div style="height:5px;background:var(--bg3);border-radius:3px;margin-bottom:8px">
-        <div style="height:100%;width:100%;background:var(--danger);border-radius:3px"></div>
-      </div>
-      <div style="font-size:10px;color:var(--danger);font-weight:600">Máquina Bolitas activa — +5,400 hoy</div>
-    </div>
-
-    <div class="card" style="flex:1">
-      <div class="card-header">
-        <span class="card-title">Piezas críticas</span>
-        <span class="badge badge-danger">9 en negativo</span>
-      </div>
-      <div class="card-body scroll-area" style="max-height:260px">
-        <div class="stock-list">
-          <div class="stock-item"><div><div class="stock-nombre">Esfera Pequeña 1/4</div><div class="stock-tipo">Roll On 50ml</div></div><div class="stock-unds">−6,137</div></div>
-          <div class="stock-item"><div><div class="stock-nombre">Tapa Flip Fuccia</div><div class="stock-tipo">Crema</div></div><div class="stock-unds">−3,276</div></div>
-          <div class="stock-item"><div><div class="stock-nombre">Envase Crema Algamarina</div><div class="stock-tipo">437ml</div></div><div class="stock-unds">−1,459</div></div>
-          <div class="stock-item"><div><div class="stock-nombre">Envase Shampoo Baby</div><div class="stock-tipo">310ml</div></div><div class="stock-unds">−1,138</div></div>
-          <div class="stock-item"><div><div class="stock-nombre">Envase Crema Aroma</div><div class="stock-tipo">237ml</div></div><div class="stock-unds">−985</div></div>
-          <div class="stock-item warn"><div><div class="stock-nombre">Tapa Roll On Crema 50ml</div><div class="stock-tipo">Roll On Pequeño</div></div><div class="stock-unds">0</div></div>
-          <div class="stock-item warn"><div><div class="stock-nombre">Envase Roll On Azul 75ml</div><div class="stock-tipo">Roll On Grande</div></div><div class="stock-unds">0</div></div>
-          <div class="stock-item warn"><div><div class="stock-nombre">Envase Talco Café 375gr</div><div class="stock-tipo">Talco</div></div><div class="stock-unds">0</div></div>
-          <div class="stock-item ok"><div><div class="stock-nombre">Esfera Grande 1/2</div><div class="stock-tipo">Roll On Grande</div></div><div class="stock-unds">24,184</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Cover Sheet -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">Cover Sheet — inventario vs pendiente</span>
-      <span class="badge badge-ok">en vivo</span>
-    </div>
-    <div class="card-body">
-      <div class="scroll-area" style="max-height:260px">
-        <table class="ops-table">
-          <thead>
-            <tr>
-              <th>Código</th><th>Producto</th>
-              <th style="text-align:right">PT</th>
-              <th style="text-align:right">Pendiente</th>
-              <th style="text-align:right">Balance</th>
-              <th>Pri</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td class="op-code">10-01</td><td class="op-sku">ROLL ON WILL COUNTY 75ML</td><td class="num-right">12,897</td><td class="num-right" style="color:var(--warn)">22,474</td><td class="num-right" style="color:var(--danger)">−9,577</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">10-20</td><td class="op-sku">ROLL ON WILL COUNTY 50ML</td><td class="num-right">8,976</td><td class="num-right" style="color:var(--warn)">7,104</td><td class="num-right" style="color:var(--accent2)">+1,872</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">30-09</td><td class="op-sku">CREMA SWEET HONEY 237ML</td><td class="num-right">5,093</td><td class="num-right" style="color:var(--warn)">690</td><td class="num-right" style="color:var(--accent2)">+4,403</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">50-01</td><td class="op-sku">TALCO BABY GRD 575GR</td><td class="num-right">2,080</td><td class="num-right" style="color:var(--warn)">6,670</td><td class="num-right" style="color:var(--danger)">−4,590</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">60-00</td><td class="op-sku">SHAMP BABY GRD 946ML</td><td class="num-right">1,786</td><td class="num-right" style="color:var(--warn)">3,652</td><td class="num-right" style="color:var(--danger)">−1,866</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">50-05</td><td class="op-sku">TALCO WILL COUNTY 375GR</td><td class="num-right">3,410</td><td class="num-right" style="color:var(--warn)">1,550</td><td class="num-right" style="color:var(--accent2)">+1,860</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">30-00</td><td class="op-sku">CREMA ALGAMARINA VIT A</td><td class="num-right">2,069</td><td class="num-right" style="color:var(--warn)">906</td><td class="num-right" style="color:var(--accent2)">+1,163</td><td class="pri-a">A</td></tr>
-            <tr><td class="op-code">30-13</td><td class="op-sku">CREMA INDIRA 237ML</td><td class="num-right">4,251</td><td class="num-right" style="color:var(--warn)">966</td><td class="num-right" style="color:var(--accent2)">+3,285</td><td class="pri-b">B</td></tr>
-            <tr><td class="op-code">40-04</td><td class="op-sku">COLONIA EMANUEL 250ML</td><td class="num-right">1,151</td><td class="num-right" style="color:var(--warn)">1,000</td><td class="num-right" style="color:var(--accent2)">+151</td><td class="pri-b">B</td></tr>
-            <tr><td class="op-code">10-35</td><td class="op-sku">ROLL ON TRIUNFO 50ML</td><td class="num-right">2,856</td><td class="num-right" style="color:var(--muted)">0</td><td class="num-right" style="color:var(--accent2)">+2,856</td><td class="pri-c">C</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-</div>
-
+<!-- FOOTER -->
 <footer>
-  <div class="footer-left"><span class="live-dot" id="live-dot"></span><span id="footer-sync">Conectando con SharePoint...</span></div>
-  <div class="footer-right">Erlo IA v3.0 · Auto-refresh cada 5 min · F11 pantalla completa</div>
+  <div>GRUPO ERLO · SISTEMA DE PRODUCCIÓN IA · <span id="last-update">Cargando...</span></div>
+  <div class="footer-nav">
+    <button onclick="pauseRotation()">⏸ PAUSAR</button>
+    <button onclick="resumeRotation()">▶ ROTAR</button>
+    <button onclick="prevScreen()">◀</button>
+    <button onclick="nextScreen()">▶</button>
+  </div>
+  <div>AUTO-REFRESH: <span style="color:var(--accent)">5 MIN</span></div>
 </footer>
 
-</div>
-
 <script>
-const JSON_URL = 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_data.json';
+// ══════════════════════════════════════════════════════
+//  CONFIGURACIÓN — CAMBIAR SOLO ESTAS URLs
+// ══════════════════════════════════════════════════════
+const URLS = {
+  ops:        'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json',
+  inventario: 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_inventario.json',
+  pedidos:    'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_pedidos.json'
+};
+const REFRESH_MS = 5 * 60 * 1000; // 5 minutos
 
-// RELOJ Y FECHA
-function actualizarReloj() {
+// ══════════════════════════════════════════════════════
+//  DATOS GLOBALES
+// ══════════════════════════════════════════════════════
+let G = { ops: [], invPT: [], invSKU: [], pedidos: [] };
+let currentScreen = 0;
+let totalScreens = 0;
+let rotating = true;
+let rotateTimer = null;
+const ROTATE_INTERVAL = 15000; // 15 segundos por pantalla
+
+// ══════════════════════════════════════════════════════
+//  RELOJ
+// ══════════════════════════════════════════════════════
+function updateClock() {
   const now = new Date();
-  document.getElementById('reloj').textContent =
-    String(now.getHours()).padStart(2,'0')+':'+
-    String(now.getMinutes()).padStart(2,'0')+':'+
-    String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent =
+    now.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false });
+  document.getElementById('date').innerHTML =
+    now.toLocaleDateString('es-CR', { weekday:'long', day:'numeric', month:'long' });
 }
-setInterval(actualizarReloj, 1000);
-actualizarReloj();
+setInterval(updateClock, 1000);
+updateClock();
 
-const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const now = new Date();
-const semana = Math.ceil((now - new Date(now.getFullYear(),0,1)) / 604800000);
-document.getElementById('fecha-hoy').textContent = `${dias[now.getDay()]}, ${now.getDate()} de ${meses[now.getMonth()]} ${now.getFullYear()}`;
-document.getElementById('semana-txt').textContent = `Semana ${semana} · ${now.getFullYear()}`;
-
-// ANIMACIÓN BARRAS
-setTimeout(() => {
-  document.querySelectorAll('.bar-fill').forEach(b => {
-    b.style.width = b.dataset.pct + '%';
+// ══════════════════════════════════════════════════════
+//  NAVEGACIÓN
+// ══════════════════════════════════════════════════════
+function buildDots() {
+  const screens = document.querySelectorAll('.screen');
+  totalScreens = screens.length;
+  const wrap = document.getElementById('screen-dots');
+  wrap.innerHTML = '';
+  screens.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goToScreen(i);
+    wrap.appendChild(d);
   });
-}, 400);
-
-// BADGE DE ESTADO
-function getBadgeEstado(estado) {
-  if (!estado) return '<span class="est-pend">PENDIENTE</span>';
-  const e = estado.toUpperCase();
-  if (e.includes('BLOQ')) return '<span class="est-bloq">BLOQUEADA</span>';
-  if (e.includes('EJEC')) return '<span class="est-ejec">EN EJECUCIÓN</span>';
-  if (e.includes('COMP')) return '<span class="est-comp">COMPLETADA</span>';
-  if (e.includes('URGENTE') || e.includes('URGENTE')) return '<span class="est-urg">URGENTE</span>';
-  return '<span class="est-pend">PENDIENTE</span>';
 }
 
-function getPriClass(pri) {
-  if (!pri) return '';
-  const p = pri.toUpperCase();
-  if (p === 'URGENTE') return 'pri-u';
-  if (p === 'A') return 'pri-a';
-  if (p === 'B') return 'pri-b';
-  return 'pri-c';
+function goToScreen(idx) {
+  const screens = document.querySelectorAll('.screen');
+  const dots = document.querySelectorAll('.dot');
+  screens[currentScreen].classList.remove('active');
+  dots[currentScreen].classList.remove('active');
+  currentScreen = (idx + totalScreens) % totalScreens;
+  screens[currentScreen].classList.add('active');
+  dots[currentScreen].classList.add('active');
+  const label = screens[currentScreen].dataset.label || '';
+  document.getElementById('screen-label').textContent = label;
 }
 
-// CARGAR OPs DESDE JSON
-async function cargarOPs() {
+function nextScreen() { goToScreen(currentScreen + 1); }
+function prevScreen() { goToScreen(currentScreen - 1); }
+
+function startRotation() {
+  if (rotateTimer) clearInterval(rotateTimer);
+  rotateTimer = setInterval(() => { if (rotating) nextScreen(); }, ROTATE_INTERVAL);
+}
+
+function pauseRotation()  { rotating = false; document.getElementById('live-dot').style.background = 'var(--yellow)'; }
+function resumeRotation() { rotating = true;  document.getElementById('live-dot').style.background = 'var(--green)'; }
+
+// ══════════════════════════════════════════════════════
+//  FETCH DATOS
+// ══════════════════════════════════════════════════════
+async function fetchData() {
   try {
-    const res = await fetch(JSON_URL + '?t=' + Date.now(), {
-      headers: { 'Accept': 'application/json' }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
+    const [opsRes, invRes, pedRes] = await Promise.all([
+      fetch(URLS.ops + '?t=' + Date.now()),
+      fetch(URLS.inventario + '?t=' + Date.now()),
+      fetch(URLS.pedidos + '?t=' + Date.now())
+    ]);
 
-    const ops = data.ops || [];
-    const opsReales = ops.filter(o => o.Title && o.Title !== 'TEST-001');
-    const total = opsReales.length;
+    const [opsData, invData, pedData] = await Promise.all([
+      opsRes.json(), invRes.json(), pedRes.json()
+    ]);
 
-    // KPIs
-    const bloq = opsReales.filter(o => (o.Estado||'').toUpperCase().includes('BLOQ')).length;
-    const pend = opsReales.filter(o => !(o.Estado) || (o.Estado||'').toUpperCase().includes('PEND')).length;
-    const ejec = opsReales.filter(o => (o.Estado||'').toUpperCase().includes('EJEC')).length;
-    const comp = opsReales.filter(o => (o.Estado||'').toUpperCase().includes('COMP')).length;
+    G.ops    = opsData.ops    || [];
+    G.invPT  = invData.invPT  || [];
+    G.invSKU = invData.invSKU || [];
+    G.pedidos = pedData.pedidos || [];
 
-    document.getElementById('kpi-ops-activas').textContent = total;
-    document.getElementById('kpi-ops-sub').textContent = total === 0 ? 'Sin OPs generadas' : `${total} total generadas`;
-    document.getElementById('kpi-bloq').textContent = bloq;
-    document.getElementById('kpi-pend').textContent = pend;
-    document.getElementById('kpi-ejec').textContent = ejec;
-    document.getElementById('kpi-comp').textContent = comp;
-    document.getElementById('badge-total').textContent = total + ' OPs';
+    const ts = new Date().toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
+    document.getElementById('last-update').textContent = 'Actualizado: ' + ts;
 
-    // TABLA OPs
-    const tbody = document.getElementById('ops-tbody');
-    if (total === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="empty-ops">El agente aún no ha generado órdenes de producción.<br>Usá el comando "Generar plan semana" en Erlo Bot.</td></tr>';
-    } else {
-      tbody.innerHTML = opsReales.map(op => `
-        <tr>
-          <td class="op-code">${op['OP Code'] || op.Title || '—'}</td>
-          <td><div class="op-sku">${op['Producto_x002f_SKU'] || op.Title || '—'}</div><div class="op-est">${op['Estaci_x00f3_n'] || op.Estación || '—'}</div></td>
-          <td class="op-est">${(op['Estaci_x00f3_n'] || op.Estación || '—').replace('B-lnyección Soplado','B-Iny').replace('C-Etiquetado y serigrafia','C-Etiq').replace('D-Llenado','D-Llen')}</td>
-          <td class="num-right">${op.Cantidad ? Number(op.Cantidad).toLocaleString() : '—'}</td>
-          <td>${getBadgeEstado(op.Estado || op.Aprobaci_x00f3_n)}</td>
-          <td class="${getPriClass(op.Prioridad)}">${op.Prioridad || '—'}</td>
-        </tr>`).join('');
-    }
+    renderAll();
+    document.getElementById('loading').style.display = 'none';
 
-    // ALERTA
-    const alertText = document.getElementById('alert-text');
-    if (bloq > 0) {
-      alertText.innerHTML = `⛔ ${bloq} OP(S) BLOQUEADA(S) <span>Piezas con stock insuficiente — revisar SKU Inventario</span>`;
-      document.getElementById('alert-banner').style.borderColor = 'rgba(255,59,92,0.4)';
-    } else if (total === 0) {
-      alertText.innerHTML = `ℹ️ SIN OPs GENERADAS <span>Erlo Bot está listo — ejecutá "Generar plan semana" para crear las primeras órdenes</span>`;
-      document.getElementById('alert-banner').style.borderColor = 'rgba(0,212,255,0.3)';
-    } else {
-      alertText.innerHTML = `✅ SISTEMA OPERATIVO <span>${total} OPs activas · ${ejec} en ejecución · Última actualización: ${new Date(data.actualizado).toLocaleTimeString('es-CR')}</span>`;
-      document.getElementById('alert-banner').style.background = 'linear-gradient(90deg,rgba(0,255,157,0.08),rgba(0,255,157,0.03))';
-      document.getElementById('alert-banner').style.borderColor = 'rgba(0,255,157,0.3)';
-    }
-
-    // SYNC INFO
-    const syncTime = data.actualizado ? new Date(data.actualizado).toLocaleTimeString('es-CR') : 'desconocido';
-    document.getElementById('sync-info').textContent = `Última sync: ${syncTime}`;
-    document.getElementById('footer-sync').textContent = `Datos desde SharePoint · Última sync: ${syncTime}`;
-    document.getElementById('live-dot').className = 'live-dot';
-
-  } catch(err) {
-    console.error('Error cargando JSON:', err);
-    document.getElementById('ops-tbody').innerHTML = '<tr><td colspan="6" class="empty-ops">⚠️ No se pudo cargar el JSON desde SharePoint.<br>Verificá que el archivo ps_data.json existe en tablero-datos.</td></tr>';
-    document.getElementById('kpi-ops-activas').textContent = '?';
-    document.getElementById('footer-sync').textContent = 'Error de conexión con SharePoint';
-    document.getElementById('live-dot').className = 'dead-dot';
-    document.getElementById('sync-info').textContent = 'Sin conexión';
+  } catch(e) {
+    console.error('Error cargando datos:', e);
+    // Si falla, intentar cargar datos de demostración
+    loadDemoData();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('last-update').textContent = '⚠ Usando datos demo — Error de red';
   }
 }
 
-cargarOPs();
-setInterval(cargarOPs, 300000);
+// ══════════════════════════════════════════════════════
+//  DATOS DEMO (mientras los JSONs reales están en GitHub)
+// ══════════════════════════════════════════════════════
+function loadDemoData() {
+  G.ops = [
+    { opCode:'OP-D-ROLLWC75-001', sku:'ROLL ON WILL COUNTY 75ML', estacion:'D-Llenado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:2800, stockPT:12897, undsStock:12897, undsProducto:'ROLL ON', molde:null },
+    { opCode:'OP-D-ROLLSH75-002', sku:'ROLL ON SWEET HONEY 75ML', estacion:'D-Llenado', prioridad:'A', estado:'PENDIENTE', cantidad:6000, cantidadProducida:0, stockPT:4500, undsStock:4500, undsProducto:'ROLL ON', molde:null },
+    { opCode:'OP-D-ROLLWC50-003', sku:'ROLL ON WILL COUNTY 50ML', estacion:'D-Llenado', prioridad:'A', estado:'BLOQUEADA', cantidad:8000, cantidadProducida:0, stockPT:320, undsStock:320, undsProducto:'ROLL ON', molde:null },
+    { opCode:'OP-D-ROLLSH50-004', sku:'ROLL ON SWEET HONEY 50ML', estacion:'D-Llenado', prioridad:'URGENTE', estado:'BLOQUEADA', cantidad:8000, cantidadProducida:0, stockPT:150, undsStock:150, undsProducto:'ROLL ON', molde:null },
+    { opCode:'OP-D-TALCOBG575-005', sku:'TALCO BABY GRD 575GR', estacion:'D-Llenado', prioridad:'B', estado:'EN EJECUCIÓN', cantidad:1200, cantidadProducida:900, stockPT:2200, undsProducto:'TALCO', molde:null },
+    { opCode:'OP-D-TALCOWC375-006', sku:'TALCO WILL COUNTY 375GR', estacion:'D-Llenado', prioridad:'B', estado:'PENDIENTE', cantidad:1500, cantidadProducida:0, stockPT:3410, undsProducto:'TALCO', molde:null },
+    { opCode:'OP-D-TALCOBP150-007', sku:'TALCO BABY PEQ 150GR', estacion:'D-Llenado', prioridad:'C', estado:'PENDIENTE', cantidad:800, cantidadProducida:0, stockPT:2300, undsProducto:'TALCO', molde:null },
+    { opCode:'OP-D-GELKILO-008', sku:'GEL PLASTIMAX KILO', estacion:'D-Llenado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:3000, cantidadProducida:1940, stockPT:890, undsProducto:'GEL', molde:null },
+    { opCode:'OP-D-SHAMPAG500-009', sku:'SHAMP FRACHEL AGUACATE 500ML', estacion:'D-Llenado', prioridad:'B', estado:'PENDIENTE', cantidad:2000, cantidadProducida:155, stockPT:700, undsProducto:'SHAMPOO', molde:null },
+    { opCode:'OP-B-ENVROSA50-010', sku:'ENVASE ROLL ON ROSA – 50ML', estacion:'B-lnyección Soplado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:15000, cantidadProducida:3250, stockPT:null, tipoSKU:'ENVASE ROLL ON – 50ML', kilosResina:25, molde:'Molde Roll-On 50ml', stockSKU:8400 },
+    { opCode:'OP-B-ENVROB50-011', sku:'ENVASE ROLL ON BLANCO – 50ML', estacion:'B-lnyección Soplado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:20000, cantidadProducida:14402, stockPT:null, tipoSKU:'ENVASE ROLL ON – 50ML', kilosResina:50, molde:'Molde Roll-On 50ml', stockSKU:5200 },
+    { opCode:'OP-B-TAPAGEL250-012', sku:'TAPA GEL TRANSPARENTE – 250ML', estacion:'B-lnyección Soplado', prioridad:'B', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:3370, stockPT:null, tipoSKU:'TAPA GEL', kilosResina:25, molde:'Molde Tapa Gel 250', stockSKU:1200 },
+    { opCode:'OP-B-ENVGELG950-013', sku:'ENVASE GEL GRANDE CLARIFICADO – 950ML', estacion:'B-lnyección Soplado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:4000, cantidadProducida:3141, stockPT:null, tipoSKU:'ENVASE GEL – 1KG', kilosResina:25, molde:'Molde Gel 1KG', stockSKU:2364 },
+    { opCode:'OP-C-GELKILO-014', sku:'GEL PLASTIMAX KILO', estacion:'C-Etiquetado y serigrafia', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:3512, stockSKU:2169 },
+    { opCode:'OP-C-SHAMBBP310-015', sku:'SHAMP BABY PEQ 310ML', estacion:'C-Etiquetado y serigrafia', prioridad:'B', estado:'EN EJECUCIÓN', cantidad:3000, cantidadProducida:1138, stockSKU:225 },
+    { opCode:'OP-C-ROLLSH50-016', sku:'ROLL ON SWEET HONEY 50ML', estacion:'C-Etiquetado y serigrafia', prioridad:'URGENTE', estado:'EN EJECUCIÓN', cantidad:8000, cantidadProducida:6597, stockSKU:1800 },
+    { opCode:'OP-C-TAPFLIP-017', sku:'TAPA FLIP BLANCA – ESTANDAR', estacion:'C-Armar Tapas', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:1620, stockSKU:3580 },
+    { opCode:'OP-B-ESFERA-018', sku:'ESFERA GRANDE TRANSPARENTE – 1/2', estacion:'B-Maquina Bolitas', prioridad:'URGENTE', estado:'EN EJECUCIÓN', cantidad:20000, cantidadProducida:5400, stockSKU:5400 },
+  ];
+
+  G.invPT = [
+    { descripcion:'ROLL ON WILL COUNTY 75ML', codigo:'10-01', producto:'ROLL ON', unds:12897, minimo:5000 },
+    { descripcion:'ROLL ON SWEET HONEY 75ML', codigo:'10-02', producto:'ROLL ON', unds:4500, minimo:5000 },
+    { descripcion:'ROLL ON WILL COUNTY 50ML', codigo:'10-03', producto:'ROLL ON', unds:320, minimo:3000 },
+    { descripcion:'ROLL ON SWEET HONEY 50ML', codigo:'10-04', producto:'ROLL ON', unds:150, minimo:3000 },
+    { descripcion:'TALCO BABY GRD 575GR', codigo:'20-01', producto:'TALCO', unds:2200, minimo:1000 },
+    { descripcion:'TALCO WILL COUNTY 375GR', codigo:'20-02', producto:'TALCO', unds:3410, minimo:1500 },
+    { descripcion:'TALCO BABY PEQ 150GR', codigo:'20-03', producto:'TALCO', unds:2300, minimo:1000 },
+    { descripcion:'TALCO WILL COUNTY 150GR', codigo:'20-04', producto:'TALCO', unds:0, minimo:800 },
+    { descripcion:'SHAMP BABY GRD 946ML', codigo:'60-00', producto:'SHAMPOO', unds:1786, minimo:800 },
+    { descripcion:'SHAMP BABY PEQ 310ML', codigo:'60-01', producto:'SHAMPOO', unds:512, minimo:600 },
+    { descripcion:'GEL PLASTIMAX KILO', codigo:'50-01', producto:'GEL', unds:890, minimo:1200 },
+    { descripcion:'CREMA INDIRA 237ML', codigo:'30-01', producto:'CREMA', unds:4251, minimo:1000 },
+    { descripcion:'COLONIA EMANUEL 250ML', codigo:'40-04', producto:'PERFUME', unds:1151, minimo:500 },
+  ];
+
+  G.invSKU = [
+    { titulo:'ES500C01OS', descripcion:'ENVASE SHAMPOO AROMAS – 500ML', tipoSKU:'ENVASE SHAMPOO – 500ML', unds:225, status:'Envase Etiquetado' },
+    { titulo:'EG950C01CS', descripcion:'ENVASE GEL GRANDE CLARIFICADO – 950ML', tipoSKU:'ENVASE GEL – 1KG', unds:2364, status:'Envase' },
+    { titulo:'EBO5C01OS', descripcion:'ENVASE ROLL ON BLANCO – 50ML', tipoSKU:'ENVASE ROLL ON – 50ML', unds:5200, status:'Envase' },
+    { titulo:'ERO5C01OS', descripcion:'ENVASE ROLL ON ROSA – 50ML', tipoSKU:'ENVASE ROLL ON – 50ML', unds:8400, status:'Envase' },
+    { titulo:'ESGR01', descripcion:'ESFERA GRANDE TRANSPARENTE – 1/2', tipoSKU:'ESFERA ROLL ON – 1/2', unds:5400, status:'Esfera' },
+    { titulo:'ESPQ01', descripcion:'ESFERA PEQUEÑA TRANSPARENTE – 1/4', tipoSKU:'ESFERA ROLL ON – 1/4', unds:0, status:'Esfera' },
+    { titulo:'TPEstC02FI', descripcion:'TAPA 28-410 PRESS BLANCA', tipoSKU:'TAPA PRESS – ESTANDAR', unds:3582, status:'Tapa' },
+    { titulo:'TAPFLIP01', descripcion:'TAPA FLIP BLANCA – ESTANDAR', tipoSKU:'TAPA FLIP', unds:3580, status:'Tapa Armada' },
+    { titulo:'TGel250', descripcion:'TAPA GEL TRANSPARENTE – 250ML', tipoSKU:'TAPA PARA GEL – 250GR', unds:1200, status:'Tapa' },
+  ];
+
+  G.pedidos = [
+    { idPedido:'OC-041-1261', cliente:'NARSIL / IMPORTADORA ALFA', vendedor:'Jesús Badilla', noOC:'1261', fechaPedido:'2026-03-19', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-20' },
+    { idPedido:'OC-184-1260', cliente:'SUPER MERCADO EL GRAN SOCIO', vendedor:'Jesús Badilla', noOC:'1260', fechaPedido:'2026-03-19', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-20' },
+    { idPedido:'OC-234-1259', cliente:'CORPORACION VADO QUESADA', vendedor:'Jenier Rodriguez', noOC:'1259', fechaPedido:'2026-03-18', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-19' },
+    { idPedido:'OC-011-1258', cliente:'ALMACENES EL REY – PUNTARENAS', vendedor:'Jesús Badilla', noOC:'1258', fechaPedido:'2026-03-17', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-18' },
+    { idPedido:'OC-011-1257', cliente:'ALMACENES EL REY – SAN CARLOS', vendedor:'Jesús Badilla', noOC:'1257', fechaPedido:'2026-03-17', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-18' },
+  ];
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+function fmt(n) { return n == null ? '—' : Number(n).toLocaleString('es-CR'); }
+
+function prioClass(p) {
+  if (!p) return '';
+  p = p.toUpperCase();
+  if (p === 'URGENTE') return 'badge badge-urgente';
+  if (p === 'A') return 'badge badge-a';
+  if (p === 'B') return 'badge badge-b';
+  return 'badge badge-c';
+}
+
+function estadoClass(e) {
+  if (!e) return '';
+  e = e.toUpperCase();
+  if (e === 'BLOQUEADA') return 'badge badge-bloq';
+  if (e === 'PENDIENTE') return 'badge badge-pend';
+  if (e.includes('EJECUCIÓN') || e.includes('EJECUCION')) return 'badge badge-ejec';
+  if (e === 'COMPLETADA') return 'badge badge-comp';
+  return 'badge badge-pend';
+}
+
+function progressBar(producida, total) {
+  const p = total > 0 ? Math.min(100, Math.round((producida / total) * 100)) : 0;
+  const cls = p < 30 ? 'fill-red' : p < 70 ? 'fill-yellow' : 'fill-green';
+  return `<div class="op-progress">
+    <div class="op-bar-wrap"><div class="op-bar ${cls}" style="width:${p}%"></div></div>
+    <span style="font-size:13px;color:var(--muted);min-width:38px;text-align:right">${p}%</span>
+  </div>`;
+}
+
+function stockBar(unds, minimo) {
+  const min = minimo || 1000;
+  const pct = Math.min(100, Math.round((unds / (min * 2)) * 100));
+  const cls = unds <= 0 ? 'fill-red' : unds < min ? 'fill-yellow' : 'fill-green';
+  const color = unds <= 0 ? 'var(--red)' : unds < min ? 'var(--yellow)' : 'var(--green)';
+  return `<div class="stock-bar-wrap">
+    <div class="stock-bar-bg"><div class="stock-bar-fill ${cls}" style="width:${pct}%"></div></div>
+    <span class="stock-num" style="color:${color}">${fmt(unds)}</span>
+  </div>`;
+}
+
+function diasEnSistema(created) {
+  if (!created) return 0;
+  const c = new Date(created);
+  const now = new Date();
+  return Math.floor((now - c) / (1000 * 60 * 60 * 24));
+}
+
+// ══════════════════════════════════════════════════════
+//  RENDER GENERAL
+// ══════════════════════════════════════════════════════
+function renderAll() {
+  renderOverview();
+  renderEstacion('llenado',    'D-Llenado');
+  renderEstacion('inyeccion',  'B-lnyección Soplado');
+  renderEstacion('etiquetado', 'C-Etiquetado y serigrafia');
+  renderTalco();
+  renderInvPT();
+  renderInvSKU();
+  renderPedidos();
+}
+
+// ── OVERVIEW ──────────────────────────────────────────
+function renderOverview() {
+  const total = G.ops.length;
+  const urg   = G.ops.filter(o => o.prioridad?.toUpperCase() === 'URGENTE').length;
+  const bloq  = G.ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').length;
+  const ejec  = G.ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
+
+  document.getElementById('kpi-strip-overview').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">OPs TOTALES</div><div class="kpi-value big">${total}</div></div>
+    <div class="kpi-card danger"><div class="kpi-label">URGENTES</div><div class="kpi-value big" style="color:var(--red)">${urg}</div></div>
+    <div class="kpi-card warn"><div class="kpi-label">BLOQUEADAS</div><div class="kpi-value big" style="color:var(--yellow)">${bloq}</div></div>
+    <div class="kpi-card ok"><div class="kpi-label">EN EJECUCIÓN</div><div class="kpi-value big" style="color:var(--accent)">${ejec}</div></div>
+    <div class="kpi-card"><div class="kpi-label">PEDIDOS ACTIVOS</div><div class="kpi-value big">${G.pedidos.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">SKUs CON STOCK</div><div class="kpi-value big">${G.invPT.filter(i => i.unds > 0).length}</div><div class="kpi-unit">de ${G.invPT.length}</div></div>
+  `;
+
+  const stations = [
+    { key:'llenado',    label:'D · LLENADO',         color:'llenado',    filter: o => o.estacion?.includes('Llenado') && !o.sku?.toUpperCase().includes('TALCO') },
+    { key:'inyeccion',  label:'B · INYECCIÓN SOPLADO',color:'inyeccion',  filter: o => o.estacion?.includes('nyección') || o.estacion?.includes('nyeccion') || o.estacion?.includes('Bolitas') },
+    { key:'etiquetado', label:'C · ETIQUETADO',       color:'etiquetado', filter: o => o.estacion?.includes('Etiquet') || o.estacion?.includes('Armar') },
+    { key:'talco',      label:'TALCO',                color:'talco',      filter: o => o.sku?.toUpperCase().includes('TALCO') },
+  ];
+
+  const cards = document.getElementById('station-cards');
+  cards.innerHTML = stations.map(s => {
+    const ops = G.ops.filter(s.filter);
+    const urgCnt = ops.filter(o => o.prioridad?.toUpperCase() === 'URGENTE').length;
+    const bloqCnt = ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').length;
+    const ej = ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
+    return `
+      <div class="station-card" onclick="jumpToStation('${s.key}')">
+        <div class="s-name col-${s.color}">${s.label}</div>
+        <div class="s-count col-${s.color}">${ops.length}</div>
+        <div class="s-label">ÓRDENES ACTIVAS</div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          ${urgCnt ? `<span class="badge badge-urgente">⚡ ${urgCnt} URGENTE</span>` : ''}
+          ${bloqCnt ? `<span class="badge badge-bloq">⛔ ${bloqCnt} BLOQ</span>` : ''}
+          ${ej ? `<span class="badge badge-ejec">▶ ${ej} EN EJEC.</span>` : ''}
+        </div>
+        <div class="s-bar bar-${s.color}"></div>
+      </div>`;
+  }).join('');
+}
+
+function jumpToStation(key) {
+  const map = { llenado:1, inyeccion:2, etiquetado:3, talco:4 };
+  if (map[key] !== undefined) goToScreen(map[key]);
+}
+
+// ── ESTACIÓN GENÉRICA ─────────────────────────────────
+function renderEstacion(id, estacionFilter) {
+  const ops = G.ops.filter(o => o.estacion?.includes(estacionFilter.split('-')[1].trim().split(' ')[0]));
+
+  const total = ops.length;
+  const urg   = ops.filter(o => o.prioridad?.toUpperCase() === 'URGENTE').length;
+  const bloq  = ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').length;
+  const ejec  = ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
+  const varColor = id === 'llenado' ? 'var(--llenado)' : id === 'inyeccion' ? 'var(--inyeccion)' : 'var(--etiquetado)';
+
+  document.getElementById(`kpi-${id}`).innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">TOTAL OPs</div><div class="kpi-value" style="color:${varColor}">${total}</div></div>
+    <div class="kpi-card ${urg ? 'danger' : ''}"><div class="kpi-label">URGENTES</div><div class="kpi-value" style="color:${urg ? 'var(--red)' : 'var(--muted)'}">${urg}</div></div>
+    <div class="kpi-card ${bloq ? 'warn' : ''}"><div class="kpi-label">BLOQUEADAS</div><div class="kpi-value" style="color:${bloq ? 'var(--yellow)' : 'var(--muted)'}">${bloq}</div></div>
+    <div class="kpi-card ok"><div class="kpi-label">EN EJECUCIÓN</div><div class="kpi-value" style="color:var(--accent)">${ejec}</div></div>
+  `;
+
+  // Alerta si hay bloqueadas
+  const alertEl = document.getElementById(`alert-${id}`);
+  if (bloq > 0) {
+    const names = ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').map(o => o.sku).join(', ');
+    alertEl.innerHTML = `<div class="alert-banner"><span class="alert-icon">⛔</span><span>${bloq} OP(s) BLOQUEADA(s) por piezas faltantes: <strong>${names}</strong></span></div>`;
+  } else { alertEl.innerHTML = ''; }
+
+  // Orden: URGENTE → A → B → C, bloqueadas al final
+  const sorted = [...ops].sort((a,b) => {
+    const pri = { URGENTE:0, A:1, B:2, C:3 };
+    const est = { 'BLOQUEADA':10, 'EN EJECUCIÓN':0, 'EN EJECUCION':0, 'PENDIENTE':1, 'COMPLETADA':5 };
+    const ea = est[a.estado?.toUpperCase()] ?? 2;
+    const eb = est[b.estado?.toUpperCase()] ?? 2;
+    if (ea !== eb) return ea - eb;
+    return (pri[a.prioridad?.toUpperCase()] ?? 9) - (pri[b.prioridad?.toUpperCase()] ?? 9);
+  });
+
+  const tbody = document.getElementById(`tbody-${id}`);
+
+  if (id === 'inyeccion') {
+    tbody.innerHTML = sorted.map(o => `
+      <tr>
+        <td class="mono">${o.opCode || '—'}</td>
+        <td class="sku-name">${o.sku || '—'}</td>
+        <td><span class="${prioClass(o.prioridad)}">${o.prioridad || '—'}</span></td>
+        <td><span class="${estadoClass(o.estado)}">${o.estado || '—'}</span></td>
+        <td class="num">${o.kilosResina ? fmt(o.kilosResina)+' kg' : '—'}</td>
+        <td style="font-size:12px;color:var(--muted)">${o.molde || '—'}</td>
+        <td>${stockBar(o.stockSKU ?? 0, 5000)}</td>
+      </tr>`).join('');
+  } else {
+    tbody.innerHTML = sorted.map(o => `
+      <tr>
+        <td class="mono">${o.opCode || '—'}</td>
+        <td class="sku-name">${o.sku || '—'}</td>
+        <td><span class="${prioClass(o.prioridad)}">${o.prioridad || '—'}</span></td>
+        <td><span class="${estadoClass(o.estado)}">${o.estado || '—'}</span></td>
+        <td>${progressBar(o.cantidadProducida ?? 0, o.cantidad ?? 1)}</td>
+        <td>${stockBar(id === 'etiquetado' ? (o.stockSKU ?? 0) : (o.stockPT ?? 0), 2000)}</td>
+      </tr>`).join('');
+  }
+
+  // SKUs en riesgo
+  let riskItems = [];
+  if (id === 'llenado' || id === 'etiquetado') {
+    riskItems = G.invSKU.filter(s => {
+      if (id === 'llenado') return (s.unds ?? 0) < 500;
+      return (s.unds ?? 0) < 300;
+    });
+  } else if (id === 'inyeccion') {
+    riskItems = G.invSKU.filter(s => (s.unds ?? 0) < 1000);
+  }
+
+  const riskEl = document.getElementById(`risk-${id}`);
+  if (riskItems.length === 0) {
+    riskEl.innerHTML = '<div class="empty-state" style="padding:30px"><span class="icon">✅</span><p>SIN SKUs EN RIESGO</p></div>';
+  } else {
+    riskEl.innerHTML = riskItems.map(s => {
+      const isCrit = (s.unds ?? 0) <= 0;
+      return `<div class="risk-card ${isCrit ? 'critical' : 'warning'}">
+        <div class="risk-card-name">${s.descripcion}</div>
+        <div class="risk-card-meta">
+          <span class="risk-tag"><strong>${s.titulo}</strong></span>
+          <span class="risk-tag">${s.tipoSKU || s.status || ''}</span>
+          <span class="${isCrit ? 'badge badge-bloq' : 'badge badge-riesgo'}">${isCrit ? '⛔ SIN STOCK' : '⚠ BAJO'}</span>
+          <span style="font-family:'Bebas Neue';font-size:22px;color:${isCrit ? 'var(--red)' : 'var(--yellow)'};margin-left:auto">${fmt(s.unds ?? 0)}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── TALCO ─────────────────────────────────────────────
+function renderTalco() {
+  const talcoPT = G.invPT.filter(i => i.producto === 'TALCO' || i.descripcion?.toUpperCase().includes('TALCO'));
+  const ops = G.ops.filter(o => o.sku?.toUpperCase().includes('TALCO') || o.sku?.toUpperCase().includes('TALCO'));
+
+  const conStock = talcoPT.filter(t => (t.unds ?? 0) > 0).length;
+  const enRiesgo = talcoPT.filter(t => (t.unds ?? 0) < (t.minimo ?? 800)).length;
+  const enEjec   = ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
+
+  document.getElementById('kpi-talco').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">OPs TALCO</div><div class="kpi-value" style="color:var(--talco)">${ops.length}</div></div>
+    <div class="kpi-card ok"><div class="kpi-label">EN EJECUCIÓN</div><div class="kpi-value" style="color:var(--accent)">${enEjec}</div></div>
+    <div class="kpi-card ${enRiesgo ? 'warn' : 'ok'}"><div class="kpi-label">PRESENTACIONES EN RIESGO</div><div class="kpi-value" style="color:${enRiesgo ? 'var(--yellow)':'var(--green)'}">${enRiesgo}</div></div>
+    <div class="kpi-card"><div class="kpi-label">CON STOCK</div><div class="kpi-value">${conStock}</div><div class="kpi-unit">de ${talcoPT.length}</div></div>
+  `;
+
+  document.getElementById('alert-talco').innerHTML = enRiesgo > 0
+    ? `<div class="alert-banner"><span class="alert-icon">⚠</span><span>${enRiesgo} presentación(es) de talco bajo mínimo de inventario</span></div>` : '';
+
+  const sorted = [...ops].sort((a,b) => {
+    const pri = { URGENTE:0, A:1, B:2, C:3 };
+    return (pri[a.prioridad?.toUpperCase()] ?? 9) - (pri[b.prioridad?.toUpperCase()] ?? 9);
+  });
+
+  document.getElementById('tbody-talco').innerHTML = sorted.map(o => `
+    <tr>
+      <td class="mono">${o.opCode || '—'}</td>
+      <td class="sku-name">${o.sku || '—'}</td>
+      <td><span class="${prioClass(o.prioridad)}">${o.prioridad || '—'}</span></td>
+      <td><span class="${estadoClass(o.estado)}">${o.estado || '—'}</span></td>
+      <td>${progressBar(o.cantidadProducida ?? 0, o.cantidad ?? 1)}</td>
+      <td>${stockBar(o.stockPT ?? 0, 1000)}</td>
+    </tr>`).join('');
+
+  const riskTalco = talcoPT.filter(t => (t.unds ?? 0) < (t.minimo ?? 800));
+  document.getElementById('risk-talco').innerHTML = riskTalco.length === 0
+    ? '<div class="empty-state" style="padding:30px"><span class="icon">✅</span><p>TODOS LOS TALCOS CON STOCK SUFICIENTE</p></div>'
+    : riskTalco.map(t => `
+      <div class="risk-card ${(t.unds ?? 0) <= 0 ? 'critical' : 'warning'}">
+        <div class="risk-card-name">${t.descripcion}</div>
+        <div class="risk-card-meta">
+          <span class="risk-tag"><strong>${t.codigo}</strong></span>
+          <span class="${(t.unds??0)<=0 ? 'badge badge-bloq' : 'badge badge-riesgo'}">${(t.unds??0)<=0 ? '⛔ AGOTADO' : '⚠ BAJO MÍNIMO'}</span>
+          <span style="font-family:'Bebas Neue';font-size:22px;margin-left:auto;color:${(t.unds??0)<=0?'var(--red)':'var(--yellow)'}">${fmt(t.unds ?? 0)}</span>
+        </div>
+      </div>`).join('');
+}
+
+// ── INVENTARIO PT ─────────────────────────────────────
+function renderInvPT() {
+  const total = G.invPT.length;
+  const conStock = G.invPT.filter(i => (i.unds ?? 0) > 0).length;
+  const riesgo = G.invPT.filter(i => (i.unds ?? 0) < (i.minimo ?? 500) && (i.unds ?? 0) > 0).length;
+  const cero = G.invPT.filter(i => (i.unds ?? 0) <= 0).length;
+
+  document.getElementById('kpi-invpt').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">TOTAL SKUs</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card ok"><div class="kpi-label">CON STOCK</div><div class="kpi-value" style="color:var(--green)">${conStock}</div></div>
+    <div class="kpi-card warn"><div class="kpi-label">BAJO MÍNIMO</div><div class="kpi-value" style="color:var(--yellow)">${riesgo}</div></div>
+    <div class="kpi-card danger"><div class="kpi-label">AGOTADOS</div><div class="kpi-value" style="color:var(--red)">${cero}</div></div>
+  `;
+
+  const sorted = [...G.invPT].sort((a,b) => (a.unds ?? 0) - (b.unds ?? 0));
+  document.getElementById('tbody-invpt').innerHTML = sorted.map(i => {
+    const u = i.unds ?? 0;
+    const min = i.minimo ?? 500;
+    const estado = u <= 0 ? `<span class="badge badge-bloq">AGOTADO</span>`
+      : u < min ? `<span class="badge badge-riesgo">BAJO</span>`
+      : `<span class="badge badge-ok">OK</span>`;
+    return `
+      <tr>
+        <td class="mono">${i.codigo || '—'}</td>
+        <td class="sku-name">${i.descripcion || '—'}</td>
+        <td style="font-size:13px;color:var(--muted)">${i.producto || '—'}</td>
+        <td>${stockBar(u, min * 2)}</td>
+        <td>${estado}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ── INVENTARIO SKU ─────────────────────────────────────
+function renderInvSKU() {
+  const total = G.invSKU.length;
+  const cero = G.invSKU.filter(s => (s.unds ?? 0) <= 0).length;
+  const bajo = G.invSKU.filter(s => (s.unds ?? 0) > 0 && (s.unds ?? 0) < 1000).length;
+  const ok   = total - cero - bajo;
+
+  document.getElementById('kpi-invsku').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">TOTAL PIEZAS</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card ok"><div class="kpi-label">STOCK SUFICIENTE</div><div class="kpi-value" style="color:var(--green)">${ok}</div></div>
+    <div class="kpi-card warn"><div class="kpi-label">STOCK BAJO</div><div class="kpi-value" style="color:var(--yellow)">${bajo}</div></div>
+    <div class="kpi-card danger"><div class="kpi-label">SIN STOCK</div><div class="kpi-value" style="color:var(--red)">${cero}</div></div>
+  `;
+
+  const sorted = [...G.invSKU].sort((a,b) => (a.unds ?? 0) - (b.unds ?? 0));
+  document.getElementById('tbody-invsku').innerHTML = sorted.map(s => {
+    const u = s.unds ?? 0;
+    const estado = u <= 0 ? `<span class="badge badge-bloq">SIN STOCK</span>`
+      : u < 500 ? `<span class="badge badge-riesgo">CRÍTICO</span>`
+      : u < 1000 ? `<span class="badge badge-warn" style="background:rgba(255,215,64,.1);color:var(--yellow);border:1px solid rgba(255,215,64,.3)">BAJO</span>`
+      : `<span class="badge badge-ok">OK</span>`;
+    return `
+      <tr>
+        <td class="mono">${s.titulo || '—'}</td>
+        <td class="sku-name">${s.descripcion || '—'}</td>
+        <td style="font-size:12px;color:var(--muted)">${s.tipoSKU || s.status || '—'}</td>
+        <td>${stockBar(u, 3000)}</td>
+        <td>${estado}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ── PEDIDOS ───────────────────────────────────────────
+function renderPedidos() {
+  let vencidas = 0, enRiesgo = 0, enTiempo = 0;
+
+  document.getElementById('tbody-pedidos').innerHTML = G.pedidos.map(p => {
+    const dias = diasEnSistema(p.created);
+    const rest = 4 - dias;
+    let estadoPed, cls;
+    if (rest <= 0)  { estadoPed = 'VENCIDA';   cls = 'badge badge-bloq';  vencidas++; }
+    else if (rest <= 2) { estadoPed = 'EN RIESGO'; cls = 'badge badge-riesgo'; enRiesgo++; }
+    else             { estadoPed = 'EN TIEMPO';  cls = 'badge badge-ok';   enTiempo++; }
+
+    const diasColor = rest <= 0 ? 'var(--red)' : rest <= 2 ? 'var(--yellow)' : 'var(--green)';
+
+    return `
+      <tr>
+        <td class="mono">${p.idPedido || p.noOC || '—'}</td>
+        <td class="sku-name">${p.cliente || '—'}</td>
+        <td style="font-size:13px;color:var(--muted)">${p.vendedor || '—'}</td>
+        <td style="font-size:13px">${p.fechaPedido || '—'}</td>
+        <td style="font-size:13px">${p.fechaEntrega || '—'}</td>
+        <td style="text-align:right">
+          <span style="font-family:'Bebas Neue';font-size:26px;color:${diasColor}">${dias}</span>
+          <span style="font-size:11px;color:var(--muted)"> días</span>
+        </td>
+        <td><span class="${cls}">${estadoPed}</span></td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('kpi-pedidos').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">TOTAL PEDIDOS</div><div class="kpi-value">${G.pedidos.length}</div></div>
+    <div class="kpi-card ok"><div class="kpi-label">EN TIEMPO</div><div class="kpi-value" style="color:var(--green)">${enTiempo}</div></div>
+    <div class="kpi-card ${enRiesgo ? 'warn' : ''}"><div class="kpi-label">EN RIESGO</div><div class="kpi-value" style="color:${enRiesgo ? 'var(--yellow)':'var(--muted)'}">${enRiesgo}</div></div>
+    <div class="kpi-card ${vencidas ? 'danger' : ''}"><div class="kpi-label">VENCIDAS</div><div class="kpi-value" style="color:${vencidas ? 'var(--red)':'var(--muted)'}">${vencidas}</div></div>
+    <div class="kpi-card"><div class="kpi-label">META ENTREGA</div><div class="kpi-value">4</div><div class="kpi-unit">DÍAS CALENDARIO</div></div>
+  `;
+
+  const alertPed = document.getElementById('alert-pedidos');
+  if (vencidas > 0) {
+    alertPed.innerHTML = `<div class="alert-banner"><span class="alert-icon">🔴</span><span>${vencidas} OC(s) VENCIDA(S) — REQUIEREN ACCIÓN INMEDIATA</span></div>`;
+  } else { alertPed.innerHTML = ''; }
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  buildDots();
+  fetchData();
+  setInterval(fetchData, REFRESH_MS);
+  startRotation();
+});
 </script>
 </body>
 </html>
