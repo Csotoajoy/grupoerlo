@@ -983,26 +983,38 @@ function renderEstacion(id, estacionFilter) {
   // Etiquetado:        Envase Etiquetado, Envase Serigrafiado, Envase Serigrafiado y etiquetado, Tapa Armada
   // Llenado:           Inventario PT bajo mínimo (no SKU de piezas)
   const STATUS_INYECCION  = ['Envase', 'Tapa', 'Esfera'];
+  // Etiquetado: piezas procesadas listas para llenado — excluye Body (se etiqueta al llenar)
   const STATUS_ETIQUETADO = ['Envase Etiquetado', 'Envase Serigrafiado', 'Envase Serigrafiado y etiquetado', 'Tapa Armada'];
+  const isBody = s => (s.tipoSKU || '').toUpperCase().includes('BODY') ||
+                      (s.descripcion || '').toUpperCase().includes('BODY');
 
   let riskItems = [];
   let riskLabel = '';
 
   if (id === 'llenado') {
-    // Riesgo en llenado = PT con stock bajo mínimo
-    riskItems = G.invPT.filter(i => (i.unds ?? 0) < (i.minimo ?? 1000) || (i.unds ?? 0) <= 0);
-    riskLabel = '⚠ PT EN RIESGO — STOCK BAJO MÍNIMO';
+    // 1) PT bajo mínimo
+    const ptRiesgo = G.invPT.filter(i => (i.unds ?? 0) < (i.minimo ?? 1000) || (i.unds ?? 0) <= 0);
+    // 2) Envases Body crudos bajo 500 (body se etiqueta al llenar, así que el riesgo es el envase sin procesar)
+    const bodyRiesgo = G.invSKU.filter(s => isBody(s) && s.status === 'Envase' && (s.unds ?? 0) < 500);
+    // Combinar — marcar origin para renderizar correctamente
+    riskItems = [
+      ...ptRiesgo.map(i => ({ ...i, _tipo: 'pt' })),
+      ...bodyRiesgo.map(s => ({ ...s, _tipo: 'sku' }))
+    ];
+    riskLabel = '⚠ PT BAJO MÍNIMO + ENVASES BODY CRÍTICOS';
   } else if (id === 'inyeccion') {
-    // Solo envases y tapas sin procesar
+    // Solo envases y tapas sin procesar — excluye body (se gestiona desde llenado)
     riskItems = G.invSKU
-      .filter(s => STATUS_INYECCION.includes(s.status))
-      .filter(s => (s.unds ?? 0) < 2000);
+      .filter(s => STATUS_INYECCION.includes(s.status) && !isBody(s))
+      .filter(s => (s.unds ?? 0) < 2000)
+      .map(s => ({ ...s, _tipo: 'sku' }));
     riskLabel = '⚠ ENVASES Y TAPAS EN RIESGO — SIN PROCESAR';
   } else if (id === 'etiquetado') {
-    // Envases ya etiquetados/serigrafiados y tapas armadas en riesgo
+    // Piezas ya procesadas listas para llenado — excluye Body
     riskItems = G.invSKU
-      .filter(s => STATUS_ETIQUETADO.includes(s.status))
-      .filter(s => (s.unds ?? 0) < 500);
+      .filter(s => STATUS_ETIQUETADO.includes(s.status) && !isBody(s))
+      .filter(s => (s.unds ?? 0) < 500)
+      .map(s => ({ ...s, _tipo: 'sku' }));
     riskLabel = '⚠ PIEZAS PROCESADAS EN RIESGO';
   }
 
@@ -1015,18 +1027,18 @@ function renderEstacion(id, estacionFilter) {
   if (riskItems.length === 0) {
     riskEl.innerHTML = '<div class="empty-state" style="padding:30px"><span class="icon">✅</span><p>SIN SKUs EN RIESGO</p></div>';
   } else {
-    // Ordenar: sin stock primero, luego por unds asc
     riskItems = [...riskItems].sort((a,b) => (a.unds??0) - (b.unds??0));
     riskEl.innerHTML = riskItems.map(s => {
-      const unds = s.unds ?? 0;
-      const isCrit = unds <= 0;
-      const isLow  = !isCrit && unds < (s.minimo ?? 500);
-      // Para PT usa descripcion, para SKU usa descripcion/titulo
+      const unds    = s.unds ?? 0;
+      const isCrit  = unds <= 0;
+      const isPT    = s._tipo === 'pt';
       const nombre  = s.descripcion || s.titulo || '—';
       const codigo  = s.codigo || s.titulo || '';
-      const tipo    = s.tipoSKU || s.status || s.producto || '';
+      const tipo    = isPT ? (s.producto || 'PT') : (s.tipoSKU || s.status || '');
+      const tag     = isPT ? '<span class="badge" style="background:rgba(0,229,255,0.1);color:var(--accent);border:1px solid rgba(0,229,255,0.3);font-size:9px">PT</span>'
+                           : '<span class="badge" style="background:rgba(124,77,255,0.1);color:#b39ddb;border:1px solid rgba(124,77,255,0.3);font-size:9px">SKU</span>';
       return `<div class="risk-card ${isCrit ? 'critical' : 'warning'}">
-        <div class="risk-card-name">${nombre}</div>
+        <div class="risk-card-name">${nombre} ${tag}</div>
         <div class="risk-card-meta">
           <span class="risk-tag"><strong>${codigo}</strong></span>
           <span class="risk-tag">${tipo}</span>
