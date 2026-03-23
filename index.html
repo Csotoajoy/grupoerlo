@@ -497,7 +497,7 @@
       <tbody id="tbody-llenado"></tbody>
     </table>
     <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px">⚠ SKUs EN RIESGO — INVENTARIO PT</div>
+      <div class="station-badge" style="margin-bottom:12px">⚠ PT EN RIESGO — STOCK BAJO MÍNIMO</div>
       <div class="risk-grid" id="risk-llenado"></div>
     </div>
   </div>
@@ -519,7 +519,7 @@
       <tbody id="tbody-inyeccion"></tbody>
     </table>
     <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px; border-color:var(--bolitas)">⚠ SKUs EN RIESGO — PIEZAS</div>
+      <div class="station-badge" style="margin-bottom:12px; border-color:var(--bolitas)">⚠ ENVASES Y TAPAS EN RIESGO — SIN PROCESAR</div>
       <div class="risk-grid" id="risk-inyeccion"></div>
     </div>
   </div>
@@ -541,7 +541,7 @@
       <tbody id="tbody-etiquetado"></tbody>
     </table>
     <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px">⚠ SKUs EN RIESGO — PIEZAS ETIQUETADAS</div>
+      <div class="station-badge" style="margin-bottom:12px">⚠ PIEZAS PROCESADAS EN RIESGO — ETIQUETADAS / SERIGRAFIADAS</div>
       <div class="risk-grid" id="risk-etiquetado"></div>
     </div>
   </div>
@@ -978,30 +978,60 @@ function renderEstacion(id, estacionFilter) {
       </tr>`).join('');
   }
 
-  // SKUs en riesgo
+  // SKUs en riesgo — filtros por status según estación
+  // Inyección Soplado: solo Envase y Tapa (sin procesar)
+  // Etiquetado:        Envase Etiquetado, Envase Serigrafiado, Envase Serigrafiado y etiquetado, Tapa Armada
+  // Llenado:           Inventario PT bajo mínimo (no SKU de piezas)
+  const STATUS_INYECCION  = ['Envase', 'Tapa', 'Esfera'];
+  const STATUS_ETIQUETADO = ['Envase Etiquetado', 'Envase Serigrafiado', 'Envase Serigrafiado y etiquetado', 'Tapa Armada'];
+
   let riskItems = [];
-  if (id === 'llenado' || id === 'etiquetado') {
-    riskItems = G.invSKU.filter(s => {
-      if (id === 'llenado') return (s.unds ?? 0) < 500;
-      return (s.unds ?? 0) < 300;
-    });
+  let riskLabel = '';
+
+  if (id === 'llenado') {
+    // Riesgo en llenado = PT con stock bajo mínimo
+    riskItems = G.invPT.filter(i => (i.unds ?? 0) < (i.minimo ?? 1000) || (i.unds ?? 0) <= 0);
+    riskLabel = '⚠ PT EN RIESGO — STOCK BAJO MÍNIMO';
   } else if (id === 'inyeccion') {
-    riskItems = G.invSKU.filter(s => (s.unds ?? 0) < 1000);
+    // Solo envases y tapas sin procesar
+    riskItems = G.invSKU
+      .filter(s => STATUS_INYECCION.includes(s.status))
+      .filter(s => (s.unds ?? 0) < 2000);
+    riskLabel = '⚠ ENVASES Y TAPAS EN RIESGO — SIN PROCESAR';
+  } else if (id === 'etiquetado') {
+    // Envases ya etiquetados/serigrafiados y tapas armadas en riesgo
+    riskItems = G.invSKU
+      .filter(s => STATUS_ETIQUETADO.includes(s.status))
+      .filter(s => (s.unds ?? 0) < 500);
+    riskLabel = '⚠ PIEZAS PROCESADAS EN RIESGO';
   }
+
+  // Actualizar badge de la sección
+  const riskBadgeEl = document.querySelector(`#screens-wrap .screen:nth-child(${
+    id==='llenado'?2:id==='inyeccion'?3:4
+  }) .station-badge:last-of-type`);
 
   const riskEl = document.getElementById(`risk-${id}`);
   if (riskItems.length === 0) {
     riskEl.innerHTML = '<div class="empty-state" style="padding:30px"><span class="icon">✅</span><p>SIN SKUs EN RIESGO</p></div>';
   } else {
+    // Ordenar: sin stock primero, luego por unds asc
+    riskItems = [...riskItems].sort((a,b) => (a.unds??0) - (b.unds??0));
     riskEl.innerHTML = riskItems.map(s => {
-      const isCrit = (s.unds ?? 0) <= 0;
+      const unds = s.unds ?? 0;
+      const isCrit = unds <= 0;
+      const isLow  = !isCrit && unds < (s.minimo ?? 500);
+      // Para PT usa descripcion, para SKU usa descripcion/titulo
+      const nombre  = s.descripcion || s.titulo || '—';
+      const codigo  = s.codigo || s.titulo || '';
+      const tipo    = s.tipoSKU || s.status || s.producto || '';
       return `<div class="risk-card ${isCrit ? 'critical' : 'warning'}">
-        <div class="risk-card-name">${s.descripcion}</div>
+        <div class="risk-card-name">${nombre}</div>
         <div class="risk-card-meta">
-          <span class="risk-tag"><strong>${s.titulo}</strong></span>
-          <span class="risk-tag">${s.tipoSKU || s.status || ''}</span>
+          <span class="risk-tag"><strong>${codigo}</strong></span>
+          <span class="risk-tag">${tipo}</span>
           <span class="${isCrit ? 'badge badge-bloq' : 'badge badge-riesgo'}">${isCrit ? '⛔ SIN STOCK' : '⚠ BAJO'}</span>
-          <span style="font-family:'Bebas Neue';font-size:22px;color:${isCrit ? 'var(--red)' : 'var(--yellow)'};margin-left:auto">${fmt(s.unds ?? 0)}</span>
+          <span style="font-family:'Bebas Neue';font-size:22px;color:${isCrit ? 'var(--red)' : 'var(--yellow)'};margin-left:auto">${fmt(unds)}</span>
         </div>
       </div>`;
     }).join('');
