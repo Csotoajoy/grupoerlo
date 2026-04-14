@@ -1,0 +1,11 @@
+[
+  {
+    "opCode": "OP-Llenado-...",
+    "estacion": "Llenado",
+    "producto": "SHAMP FRACHEL MANZANA 500ML",
+    "prioridad": "URGENTE",
+    "estado": "BLOQUEADA",
+    "cantidad": 100,
+    "stock": 96
+  }
+]
