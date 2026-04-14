@@ -1,1219 +1,203 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Erlo IA – Tablero de Planta</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap');
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="3600">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERLO IA · ETIQUETADO</title>
 
-  :root {
-    --bg:        #0a0c10;
-    --surface:   #111520;
-    --border:    #1e2535;
-    --accent:    #00e5ff;
-    --accent2:   #ff6b35;
-    --green:     #00e676;
-    --yellow:    #ffd740;
-    --red:       #ff1744;
-    --text:      #e8eaf6;
-    --muted:     #546e8a;
-    --llenado:   #00e5ff;
-    --inyeccion: #7c4dff;
-    --etiquetado:#00e676;
-    --talco:     #ffd740;
-    --bolitas:   #ff6b35;
-  }
+  <style>
+    :root {
+      --bg:#0a0c10;
+      --surface:#111520;
+      --border:#1e2535;
+      --accent:#00e5ff;
+      --green:#00e676;
+      --yellow:#ffd740;
+      --red:#ff1744;
+      --text:#e8eaf6;
+      --muted:#546e8a;
+    }
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+    * { box-sizing:border-box; margin:0; padding:0; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Barlow Condensed', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
+    body {
+      background:var(--bg);
+      color:var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      height:100vh;
+      overflow:hidden;
+    }
 
-  /* ── HEADER ── */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 28px;
-    background: var(--surface);
-    border-bottom: 2px solid var(--border);
-    height: 64px;
-    flex-shrink: 0;
-  }
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 4px;
-    color: var(--accent);
-  }
-  .logo span { color: var(--text); }
-  .header-center {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 6px;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-  #screen-label {
-    color: var(--accent);
-    transition: color 0.4s;
-  }
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  #clock {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    color: var(--text);
-    letter-spacing: 3px;
-  }
-  #date {
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: 300;
-    text-align: right;
-    line-height: 1.3;
-  }
-  .pulse-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%,100% { opacity:1; transform:scale(1); }
-    50% { opacity:0.4; transform:scale(0.7); }
-  }
+    header {
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 28px;
+      background:var(--surface);
+      border-bottom:2px solid var(--border);
+    }
 
-  /* ── NAV DOTS ── */
-  #screen-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 8px;
-    flex-shrink: 0;
-  }
-  .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--border);
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-  .dot.active { background: var(--accent); transform: scale(1.4); }
+    .title {
+      font-size:30px;
+      letter-spacing:4px;
+      color:var(--accent);
+      font-weight:bold;
+    }
 
-  /* ── MAIN AREA ── */
-  #screens-wrap {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
-  .screen {
-    position: absolute;
-    inset: 0;
-    padding: 18px 24px;
-    opacity: 0;
-    transform: translateX(60px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    pointer-events: none;
-    overflow-y: auto;
-  }
-  .screen.active {
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: all;
-  }
-  .screen::-webkit-scrollbar { width: 4px; }
-  .screen::-webkit-scrollbar-track { background: transparent; }
-  .screen::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .clock {
+      font-size:26px;
+      letter-spacing:3px;
+    }
 
-  /* ── SCREEN HEADER ── */
-  .screen-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
-  }
-  .station-badge {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 3px;
-    padding: 4px 14px;
-    border-radius: 3px;
-    background: rgba(255,255,255,0.06);
-    border-left: 3px solid var(--accent);
-  }
-  .screen-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px;
-    letter-spacing: 3px;
-    line-height: 1;
-  }
-  .screen-sub {
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: 300;
-    margin-left: auto;
-  }
+    main {
+      padding:24px;
+      height:calc(100vh - 72px);
+      overflow:hidden;
+    }
 
-  /* ── KPI STRIP ── */
-  .kpi-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .kpi-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    background: var(--accent);
-  }
-  .kpi-card.warn::before { background: var(--yellow); }
-  .kpi-card.danger::before { background: var(--red); }
-  .kpi-card.ok::before { background: var(--green); }
-  .kpi-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-  .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--text); line-height: 1; }
-  .kpi-value.big { font-size: 42px; }
-  .kpi-unit { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    h2 {
+      font-size:24px;
+      margin-bottom:16px;
+      letter-spacing:2px;
+    }
 
-  /* ── DATA TABLE ── */
-  .data-table { width: 100%; border-collapse: collapse; }
-  .data-table thead th {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    text-align: left;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    position: sticky; top: 0;
-  }
-  .data-table tbody tr {
-    border-bottom: 1px solid rgba(30,37,53,0.6);
-    transition: background 0.2s;
-  }
-  .data-table tbody tr:hover { background: rgba(0,229,255,0.04); }
-  .data-table td {
-    padding: 10px 12px;
-    font-size: 15px;
-    font-weight: 400;
-    vertical-align: middle;
-  }
-  .data-table td.mono {
-    font-family: 'Barlow Condensed', monospace;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .data-table td.sku-name { font-weight: 600; color: var(--text); max-width: 300px; }
-  .data-table td.num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    text-align: right;
-  }
+    table {
+      width:100%;
+      border-collapse:collapse;
+    }
 
-  /* ── STATUS BADGES ── */
-  .badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    padding: 3px 9px;
-    border-radius: 3px;
-    text-transform: uppercase;
-  }
-  .badge-urgente { background: rgba(255,23,68,0.15); color: var(--red); border: 1px solid rgba(255,23,68,0.3); }
-  .badge-a       { background: rgba(255,107,53,0.15); color: var(--accent2); border: 1px solid rgba(255,107,53,0.3); }
-  .badge-b       { background: rgba(255,215,64,0.12); color: var(--yellow); border: 1px solid rgba(255,215,64,0.3); }
-  .badge-c       { background: rgba(84,110,138,0.15); color: var(--muted); border: 1px solid rgba(84,110,138,0.3); }
-  .badge-bloq    { background: rgba(255,23,68,0.08); color: var(--red); border: 1px dashed rgba(255,23,68,0.4); }
-  .badge-pend    { background: rgba(255,215,64,0.08); color: var(--yellow); border: 1px solid rgba(255,215,64,0.25); }
-  .badge-ejec    { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.3); }
-  .badge-comp    { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
-  .badge-riesgo  { background: rgba(255,215,64,0.15); color: var(--yellow); border: 1px solid rgba(255,215,64,0.4); }
-  .badge-ok      { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.3); }
+    thead th {
+      font-size:13px;
+      color:var(--muted);
+      text-align:left;
+      padding:10px;
+      border-bottom:1px solid var(--border);
+    }
 
-  /* ── STOCK BAR ── */
-  .stock-bar-wrap { display: flex; align-items: center; gap: 8px; }
-  .stock-bar-bg {
-    flex: 1; height: 5px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    min-width: 60px;
-  }
-  .stock-bar-fill {
-    height: 100%; border-radius: 3px;
-    transition: width 0.8s ease;
-  }
-  .fill-green { background: var(--green); }
-  .fill-yellow { background: var(--yellow); }
-  .fill-red { background: var(--red); }
-  .stock-num { font-family: 'Bebas Neue', sans-serif; font-size: 20px; min-width: 70px; text-align: right; }
+    tbody td {
+      font-size:20px;
+      padding:14px 10px;
+      border-bottom:1px solid rgba(30,37,53,0.6);
+    }
 
-  /* ── ALERT BANNER ── */
-  .alert-banner {
-    background: rgba(255,23,68,0.08);
-    border: 1px solid rgba(255,23,68,0.3);
-    border-radius: 6px;
-    padding: 12px 18px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-    color: var(--red);
-  }
-  .alert-icon { font-size: 20px; }
+    .URGENTE { color:var(--red); font-weight:bold; }
+    .A { color:#ff6b35; font-weight:bold; }
+    .B { color:var(--yellow); font-weight:bold; }
+    .C { color:var(--muted); }
 
-  /* ── PROGRESS RING ── */
-  .op-progress {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .op-bar-wrap {
-    flex: 1; height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .op-bar { height: 100%; background: var(--accent); border-radius: 3px; }
+    .BLOQUEADA { color:var(--red); font-weight:bold; }
+    .PENDIENTE { color:var(--yellow); }
+    .EJECUCIÓN { color:var(--accent); }
 
-  /* ── PEDIDOS SCREEN ── */
-  .pedido-row { display: flex; align-items: center; gap: 16px; padding: 12px 16px; }
-  .dias-chip {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
-    min-width: 50px;
-    text-align: center;
-    line-height: 1;
-  }
-  .dias-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-align: center; }
-
-  /* ── SKU RISK GRID ── */
-  .risk-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-  }
-  .risk-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  .risk-card.critical { border-color: rgba(255,23,68,0.4); }
-  .risk-card.warning  { border-color: rgba(255,215,64,0.3); }
-  .risk-card-name { font-size: 14px; font-weight: 600; margin-bottom: 8px; line-height: 1.2; }
-  .risk-card-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .risk-tag { font-size: 11px; color: var(--muted); }
-  .risk-tag strong { color: var(--text); }
-
-  /* ── FOOTER BAR ── */
-  footer {
-    height: 36px;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 24px;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    flex-shrink: 0;
-  }
-  #last-update { color: var(--accent); }
-  .footer-nav { display: flex; gap: 20px; }
-  .footer-nav button {
-    background: none; border: none; color: var(--muted);
-    cursor: pointer; font-size: 11px; letter-spacing: 1px;
-    font-family: 'Barlow Condensed', sans-serif;
-    padding: 4px 8px;
-    transition: color 0.2s;
-  }
-  .footer-nav button:hover { color: var(--accent); }
-
-  /* ── LOADING ── */
-  #loading {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 20px; z-index: 100;
-  }
-  .load-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px; letter-spacing: 8px; color: var(--accent);
-  }
-  .load-sub { font-size: 13px; color: var(--muted); letter-spacing: 3px; }
-  .load-bar-wrap { width: 200px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
-  .load-bar { height: 100%; background: var(--accent); border-radius: 1px; animation: loadanim 1.5s ease-in-out infinite; }
-  @keyframes loadanim {
-    0% { width:0; margin-left:0; }
-    50% { width:60%; margin-left:20%; }
-    100% { width:0; margin-left:100%; }
-  }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 60px; color: var(--muted);
-    gap: 12px;
-  }
-  .empty-state .icon { font-size: 48px; }
-  .empty-state p { font-size: 14px; letter-spacing: 1px; }
-
-  /* ── OVERVIEW SCREEN ── */
-  .overview-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  .station-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-    cursor: pointer;
-    transition: border-color 0.3s, transform 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .station-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .station-card .s-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-  }
-  .station-card .s-count {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .station-card .s-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
-  .station-card .s-bar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .bar-llenado   { background: var(--llenado); }
-  .bar-inyeccion { background: var(--inyeccion); }
-  .bar-etiquetado{ background: var(--etiquetado); }
-  .bar-talco     { background: var(--talco); }
-  .bar-bolitas   { background: var(--bolitas); }
-
-  .col-llenado   { color: var(--llenado); }
-  .col-inyeccion { color: var(--inyeccion); }
-  .col-etiquetado{ color: var(--etiquetado); }
-  .col-talco     { color: var(--talco); }
-  .col-bolitas   { color: var(--bolitas); }
-
-  @media (max-width: 900px) {
-    .overview-grid { grid-template-columns: 1fr 1fr; }
-    .risk-grid { grid-template-columns: 1fr; }
-  }
-</style>
+    #loading {
+      position:fixed;
+      inset:0;
+      background:var(--bg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      letter-spacing:3px;
+      color:var(--accent);
+      z-index:10;
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="loading">
-  <div class="load-logo">ERLO IA</div>
-  <div class="load-sub">CARGANDO DATOS DE PLANTA</div>
-  <div class="load-bar-wrap"><div class="load-bar"></div></div>
-</div>
+<div id="loading">CARGANDO ÓRDENES DE ETIQUETADO…</div>
 
-<!-- HEADER -->
 <header>
-  <div class="logo">ERLO <span>IA</span></div>
-  <div class="header-center">TABLERO DE PLANTA &nbsp;·&nbsp; <span id="screen-label">RESUMEN</span></div>
-  <div class="header-right">
-    <div class="pulse-dot" id="live-dot"></div>
-    <div>
-      <div id="clock">00:00:00</div>
-      <div id="date">—</div>
-    </div>
-  </div>
+  <div class="title">ERLO IA · ETIQUETADO</div>
+  <div class="clock" id="clock">00:00</div>
 </header>
 
-<!-- DOTS NAV -->
-<div id="screen-dots"></div>
+<main>
+  <h2>ÓRDENES ACTIVAS – ESTACIÓN C</h2>
 
-<!-- SCREENS -->
-<div id="screens-wrap">
-
-  <!-- 0: RESUMEN GENERAL -->
-  <div class="screen active" data-label="RESUMEN GENERAL">
-    <div class="screen-header">
-      <div class="station-badge">VISTA GLOBAL</div>
-      <div class="screen-title">RESUMEN DE PLANTA</div>
-      <div class="screen-sub" id="overview-updated"></div>
-    </div>
-    <div class="kpi-strip" id="kpi-strip-overview"></div>
-    <div class="overview-grid" id="station-cards"></div>
-  </div>
-
-  <!-- 1: D-LLENADO -->
-  <div class="screen" data-label="D · LLENADO">
-    <div class="screen-header">
-      <div class="station-badge" style="border-color:var(--llenado)">ESTACIÓN D</div>
-      <div class="screen-title col-llenado">LLENADO</div>
-      <div class="screen-sub">Órdenes activas y SKUs en riesgo</div>
-    </div>
-    <div class="kpi-strip" id="kpi-llenado"></div>
-    <div id="alert-llenado"></div>
-    <table class="data-table" id="table-llenado">
-      <thead><tr>
-        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
-        <th>Estado</th><th>Avance</th><th style="text-align:right">Stock PT</th>
-      </tr></thead>
-      <tbody id="tbody-llenado"></tbody>
-    </table>
-    <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px">⚠ PT EN RIESGO — STOCK BAJO MÍNIMO</div>
-      <div class="risk-grid" id="risk-llenado"></div>
-    </div>
-  </div>
-
-  <!-- 2: B-INYECCIÓN SOPLADO -->
-  <div class="screen" data-label="B · INYECCIÓN SOPLADO">
-    <div class="screen-header">
-      <div class="station-badge" style="border-color:var(--inyeccion)">ESTACIÓN B</div>
-      <div class="screen-title col-inyeccion">INYECCIÓN SOPLADO</div>
-      <div class="screen-sub">Moldes, resina y esferas</div>
-    </div>
-    <div class="kpi-strip" id="kpi-inyeccion"></div>
-    <div id="alert-inyeccion"></div>
-    <table class="data-table" id="table-inyeccion">
-      <thead><tr>
-        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
-        <th>Estado</th><th>Kg Resina</th><th>Molde</th><th style="text-align:right">Stock SKU</th>
-      </tr></thead>
-      <tbody id="tbody-inyeccion"></tbody>
-    </table>
-    <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px; border-color:var(--bolitas)">⚠ ENVASES Y TAPAS EN RIESGO — SIN PROCESAR</div>
-      <div class="risk-grid" id="risk-inyeccion"></div>
-    </div>
-  </div>
-
-  <!-- 3: C-ETIQUETADO -->
-  <div class="screen" data-label="C · ETIQUETADO">
-    <div class="screen-header">
-      <div class="station-badge" style="border-color:var(--etiquetado)">ESTACIÓN C</div>
-      <div class="screen-title col-etiquetado">ETIQUETADO Y SERIGRAFÍA</div>
-      <div class="screen-sub">Envases etiquetados y tapas armadas</div>
-    </div>
-    <div class="kpi-strip" id="kpi-etiquetado"></div>
-    <div id="alert-etiquetado"></div>
-    <table class="data-table" id="table-etiquetado">
-      <thead><tr>
-        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
-        <th>Estado</th><th>Avance</th><th style="text-align:right">Stock SKU</th>
-      </tr></thead>
-      <tbody id="tbody-etiquetado"></tbody>
-    </table>
-    <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px">⚠ PIEZAS PROCESADAS EN RIESGO — ETIQUETADAS / SERIGRAFIADAS</div>
-      <div class="risk-grid" id="risk-etiquetado"></div>
-    </div>
-  </div>
-
-  <!-- 4: LLENADO TALCO -->
-  <div class="screen" data-label="D · TALCO">
-    <div class="screen-header">
-      <div class="station-badge" style="border-color:var(--talco)">TALCO</div>
-      <div class="screen-title col-talco">LLENADO DE TALCO</div>
-      <div class="screen-sub">Línea de talcos — todas las presentaciones</div>
-    </div>
-    <div class="kpi-strip" id="kpi-talco"></div>
-    <div id="alert-talco"></div>
-    <table class="data-table" id="table-talco">
-      <thead><tr>
-        <th>OP Code</th><th>Producto / SKU</th><th>Prioridad</th>
-        <th>Estado</th><th>Avance</th><th style="text-align:right">Stock PT</th>
-      </tr></thead>
-      <tbody id="tbody-talco"></tbody>
-    </table>
-    <div style="margin-top:20px">
-      <div class="station-badge" style="margin-bottom:12px; border-color:var(--talco)">⚠ SKUs TALCO EN RIESGO</div>
-      <div class="risk-grid" id="risk-talco"></div>
-    </div>
-  </div>
-
-  <!-- 5: INVENTARIO PT -->
-  <div class="screen" data-label="INVENTARIO PT">
-    <div class="screen-header">
-      <div class="station-badge">PRODUCTO TERMINADO</div>
-      <div class="screen-title">INVENTARIO PT</div>
-      <div class="screen-sub">Stock actual de producto terminado</div>
-    </div>
-    <div class="kpi-strip" id="kpi-invpt"></div>
-    <table class="data-table" id="table-invpt">
-      <thead><tr>
-        <th>Código</th><th>Descripción</th><th>Línea</th>
-        <th style="text-align:right">Unidades</th><th>Estado</th>
-      </tr></thead>
-      <tbody id="tbody-invpt"></tbody>
-    </table>
-  </div>
-
-  <!-- 6: INVENTARIO SKU PIEZAS -->
-  <div class="screen" data-label="INVENTARIO SKU">
-    <div class="screen-header">
-      <div class="station-badge">PIEZAS Y ENVASES</div>
-      <div class="screen-title">INVENTARIO SKU</div>
-      <div class="screen-sub">Stock de piezas, tapas, esferas y envases</div>
-    </div>
-    <div class="kpi-strip" id="kpi-invsku"></div>
-    <table class="data-table" id="table-invsku">
-      <thead><tr>
-        <th>Código</th><th>Descripción</th><th>Tipo</th>
-        <th style="text-align:right">Unidades</th><th>Estado</th>
-      </tr></thead>
-      <tbody id="tbody-invsku"></tbody>
-    </table>
-  </div>
-
-  <!-- 7: PEDIDOS ACTIVOS -->
-  <div class="screen" data-label="PEDIDOS ACTIVOS">
-    <div class="screen-header">
-      <div class="station-badge">OCs DE CLIENTES</div>
-      <div class="screen-title">PEDIDOS ACTIVOS</div>
-      <div class="screen-sub">Meta de entrega: 4 días</div>
-    </div>
-    <div class="kpi-strip" id="kpi-pedidos"></div>
-    <div id="alert-pedidos"></div>
-    <table class="data-table" id="table-pedidos">
-      <thead><tr>
-        <th>OC</th><th>Cliente</th><th>Vendedor</th>
-        <th>Fecha Pedido</th><th>Fecha Entrega</th>
-        <th style="text-align:right">Días en Sistema</th><th>Estado</th>
-      </tr></thead>
-      <tbody id="tbody-pedidos"></tbody>
-    </table>
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div>GRUPO ERLO · SISTEMA DE PRODUCCIÓN IA · <span id="last-update">Cargando...</span></div>
-  <div class="footer-nav">
-    <button onclick="pauseRotation()">⏸ PAUSAR</button>
-    <button onclick="resumeRotation()">▶ ROTAR</button>
-    <button onclick="prevScreen()">◀</button>
-    <button onclick="nextScreen()">▶</button>
-  </div>
-  <div>AUTO-REFRESH: <span style="color:var(--accent)">5 MIN</span></div>
-</footer>
+  <table>
+    <thead>
+      <tr>
+        <th>OP</th>
+        <th>Producto / SKU</th>
+        <th>Prioridad</th>
+        <th>Estado</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-etiquetado"></tbody>
+  </table>
+</main>
 
 <script>
-// ══════════════════════════════════════════════════════
-//  CONFIGURACIÓN — CAMBIAR SOLO ESTAS URLs
-// ══════════════════════════════════════════════════════
-const URLS = {
-  ops:        'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json',
-  inventario: 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_inventario.json',
-  pedidos:    'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_pedidos.json'
-};
-const REFRESH_MS = 5 * 60 * 1000; // 5 minutos
+/* ===============================
+   CONFIGURACIÓN
+================================ */
+const OPS_URL =
+  'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json';
 
-// ══════════════════════════════════════════════════════
-//  DATOS GLOBALES
-// ══════════════════════════════════════════════════════
-let G = { ops: [], invPT: [], invSKU: [], pedidos: [] };
-let currentScreen = 0;
-let totalScreens = 0;
-let rotating = true;
-let rotateTimer = null;
-const ROTATE_INTERVAL = 15000; // 15 segundos por pantalla
+const DATA_REFRESH_MS = 2 * 60 * 1000;
 
-// ══════════════════════════════════════════════════════
-//  RELOJ
-// ══════════════════════════════════════════════════════
+/* ===============================
+   RELOJ
+================================ */
 function updateClock() {
-  const now = new Date();
+  const n = new Date();
   document.getElementById('clock').textContent =
-    now.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false });
-  document.getElementById('date').innerHTML =
-    now.toLocaleDateString('es-CR', { weekday:'long', day:'numeric', month:'long' });
+    n.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ══════════════════════════════════════════════════════
-//  NAVEGACIÓN
-// ══════════════════════════════════════════════════════
-function buildDots() {
-  const screens = document.querySelectorAll('.screen');
-  totalScreens = screens.length;
-  const wrap = document.getElementById('screen-dots');
-  wrap.innerHTML = '';
-  screens.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.onclick = () => goToScreen(i);
-    wrap.appendChild(d);
-  });
-}
-
-function goToScreen(idx) {
-  const screens = document.querySelectorAll('.screen');
-  const dots = document.querySelectorAll('.dot');
-  screens[currentScreen].classList.remove('active');
-  dots[currentScreen].classList.remove('active');
-  currentScreen = (idx + totalScreens) % totalScreens;
-  screens[currentScreen].classList.add('active');
-  dots[currentScreen].classList.add('active');
-  const label = screens[currentScreen].dataset.label || '';
-  document.getElementById('screen-label').textContent = label;
-}
-
-function nextScreen() { goToScreen(currentScreen + 1); }
-function prevScreen() { goToScreen(currentScreen - 1); }
-
-function startRotation() {
-  if (rotateTimer) clearInterval(rotateTimer);
-  rotateTimer = setInterval(() => { if (rotating) nextScreen(); }, ROTATE_INTERVAL);
-}
-
-function pauseRotation()  { rotating = false; document.getElementById('live-dot').style.background = 'var(--yellow)'; }
-function resumeRotation() { rotating = true;  document.getElementById('live-dot').style.background = 'var(--green)'; }
-
-// ══════════════════════════════════════════════════════
-//  FETCH DATOS
-// ══════════════════════════════════════════════════════
+/* ===============================
+   CARGA DE DATOS
+================================ */
 async function fetchData() {
   try {
-    const [opsRes, invRes, pedRes] = await Promise.all([
-      fetch(URLS.ops + '?t=' + Date.now()),
-      fetch(URLS.inventario + '?t=' + Date.now()),
-      fetch(URLS.pedidos + '?t=' + Date.now())
-    ]);
+    const res = await fetch(OPS_URL + '?t=' + Date.now());
+    const json = await res.json();
 
-    const [opsData, invData, pedData] = await Promise.all([
-      opsRes.json(), invRes.json(), pedRes.json()
-    ]);
+    // ✅ CLAVE: data real viene en json.value
+    renderEtiquetado(json.value || []);
 
-    G.ops    = opsData.ops    || [];
-    G.invPT  = invData.invPT  || [];
-    G.invSKU = invData.invSKU || [];
-    G.pedidos = pedData.pedidos || [];
-
-    const ts = new Date().toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
-    document.getElementById('last-update').textContent = 'Actualizado: ' + ts;
-
-    renderAll();
     document.getElementById('loading').style.display = 'none';
-
-  } catch(e) {
-    console.error('Error cargando datos:', e);
-    // Si falla, intentar cargar datos de demostración
-    loadDemoData();
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('last-update').textContent = '⚠ Usando datos demo — Error de red';
+  } catch (e) {
+    console.error('Error cargando OPS:', e);
   }
 }
 
-// ══════════════════════════════════════════════════════
-//  DATOS DEMO (mientras los JSONs reales están en GitHub)
-// ══════════════════════════════════════════════════════
-function loadDemoData() {
-  G.ops = [
-    { opCode:'OP-D-ROLLWC75-001', sku:'ROLL ON WILL COUNTY 75ML', estacion:'D-Llenado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:2800, stockPT:12897, undsStock:12897, undsProducto:'ROLL ON', molde:null },
-    { opCode:'OP-D-ROLLSH75-002', sku:'ROLL ON SWEET HONEY 75ML', estacion:'D-Llenado', prioridad:'A', estado:'PENDIENTE', cantidad:6000, cantidadProducida:0, stockPT:4500, undsStock:4500, undsProducto:'ROLL ON', molde:null },
-    { opCode:'OP-D-ROLLWC50-003', sku:'ROLL ON WILL COUNTY 50ML', estacion:'D-Llenado', prioridad:'A', estado:'BLOQUEADA', cantidad:8000, cantidadProducida:0, stockPT:320, undsStock:320, undsProducto:'ROLL ON', molde:null },
-    { opCode:'OP-D-ROLLSH50-004', sku:'ROLL ON SWEET HONEY 50ML', estacion:'D-Llenado', prioridad:'URGENTE', estado:'BLOQUEADA', cantidad:8000, cantidadProducida:0, stockPT:150, undsStock:150, undsProducto:'ROLL ON', molde:null },
-    { opCode:'OP-D-TALCOBG575-005', sku:'TALCO BABY GRD 575GR', estacion:'D-Llenado', prioridad:'B', estado:'EN EJECUCIÓN', cantidad:1200, cantidadProducida:900, stockPT:2200, undsProducto:'TALCO', molde:null },
-    { opCode:'OP-D-TALCOWC375-006', sku:'TALCO WILL COUNTY 375GR', estacion:'D-Llenado', prioridad:'B', estado:'PENDIENTE', cantidad:1500, cantidadProducida:0, stockPT:3410, undsProducto:'TALCO', molde:null },
-    { opCode:'OP-D-TALCOBP150-007', sku:'TALCO BABY PEQ 150GR', estacion:'D-Llenado', prioridad:'C', estado:'PENDIENTE', cantidad:800, cantidadProducida:0, stockPT:2300, undsProducto:'TALCO', molde:null },
-    { opCode:'OP-D-GELKILO-008', sku:'GEL PLASTIMAX KILO', estacion:'D-Llenado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:3000, cantidadProducida:1940, stockPT:890, undsProducto:'GEL', molde:null },
-    { opCode:'OP-D-SHAMPAG500-009', sku:'SHAMP FRACHEL AGUACATE 500ML', estacion:'D-Llenado', prioridad:'B', estado:'PENDIENTE', cantidad:2000, cantidadProducida:155, stockPT:700, undsProducto:'SHAMPOO', molde:null },
-    { opCode:'OP-B-ENVROSA50-010', sku:'ENVASE ROLL ON ROSA – 50ML', estacion:'B-lnyección Soplado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:15000, cantidadProducida:3250, stockPT:null, tipoSKU:'ENVASE ROLL ON – 50ML', kilosResina:25, molde:'Molde Roll-On 50ml', stockSKU:8400 },
-    { opCode:'OP-B-ENVROB50-011', sku:'ENVASE ROLL ON BLANCO – 50ML', estacion:'B-lnyección Soplado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:20000, cantidadProducida:14402, stockPT:null, tipoSKU:'ENVASE ROLL ON – 50ML', kilosResina:50, molde:'Molde Roll-On 50ml', stockSKU:5200 },
-    { opCode:'OP-B-TAPAGEL250-012', sku:'TAPA GEL TRANSPARENTE – 250ML', estacion:'B-lnyección Soplado', prioridad:'B', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:3370, stockPT:null, tipoSKU:'TAPA GEL', kilosResina:25, molde:'Molde Tapa Gel 250', stockSKU:1200 },
-    { opCode:'OP-B-ENVGELG950-013', sku:'ENVASE GEL GRANDE CLARIFICADO – 950ML', estacion:'B-lnyección Soplado', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:4000, cantidadProducida:3141, stockPT:null, tipoSKU:'ENVASE GEL – 1KG', kilosResina:25, molde:'Molde Gel 1KG', stockSKU:2364 },
-    { opCode:'OP-C-GELKILO-014', sku:'GEL PLASTIMAX KILO', estacion:'C-Etiquetado y serigrafia', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:3512, stockSKU:2169 },
-    { opCode:'OP-C-SHAMBBP310-015', sku:'SHAMP BABY PEQ 310ML', estacion:'C-Etiquetado y serigrafia', prioridad:'B', estado:'EN EJECUCIÓN', cantidad:3000, cantidadProducida:1138, stockSKU:225 },
-    { opCode:'OP-C-ROLLSH50-016', sku:'ROLL ON SWEET HONEY 50ML', estacion:'C-Etiquetado y serigrafia', prioridad:'URGENTE', estado:'EN EJECUCIÓN', cantidad:8000, cantidadProducida:6597, stockSKU:1800 },
-    { opCode:'OP-C-TAPFLIP-017', sku:'TAPA FLIP BLANCA – ESTANDAR', estacion:'C-Armar Tapas', prioridad:'A', estado:'EN EJECUCIÓN', cantidad:5000, cantidadProducida:1620, stockSKU:3580 },
-    { opCode:'OP-B-ESFERA-018', sku:'ESFERA GRANDE TRANSPARENTE – 1/2', estacion:'B-Maquina Bolitas', prioridad:'URGENTE', estado:'EN EJECUCIÓN', cantidad:20000, cantidadProducida:5400, stockSKU:5400 },
-  ];
+/* ===============================
+   RENDER ETIQUETADO
+================================ */
+function renderEtiquetado(ops) {
+  const tbody = document.getElementById('tabla-etiquetado');
 
-  G.invPT = [
-    { descripcion:'ROLL ON WILL COUNTY 75ML', codigo:'10-01', producto:'ROLL ON', unds:12897, minimo:5000 },
-    { descripcion:'ROLL ON SWEET HONEY 75ML', codigo:'10-02', producto:'ROLL ON', unds:4500, minimo:5000 },
-    { descripcion:'ROLL ON WILL COUNTY 50ML', codigo:'10-03', producto:'ROLL ON', unds:320, minimo:3000 },
-    { descripcion:'ROLL ON SWEET HONEY 50ML', codigo:'10-04', producto:'ROLL ON', unds:150, minimo:3000 },
-    { descripcion:'TALCO BABY GRD 575GR', codigo:'20-01', producto:'TALCO', unds:2200, minimo:1000 },
-    { descripcion:'TALCO WILL COUNTY 375GR', codigo:'20-02', producto:'TALCO', unds:3410, minimo:1500 },
-    { descripcion:'TALCO BABY PEQ 150GR', codigo:'20-03', producto:'TALCO', unds:2300, minimo:1000 },
-    { descripcion:'TALCO WILL COUNTY 150GR', codigo:'20-04', producto:'TALCO', unds:0, minimo:800 },
-    { descripcion:'SHAMP BABY GRD 946ML', codigo:'60-00', producto:'SHAMPOO', unds:1786, minimo:800 },
-    { descripcion:'SHAMP BABY PEQ 310ML', codigo:'60-01', producto:'SHAMPOO', unds:512, minimo:600 },
-    { descripcion:'GEL PLASTIMAX KILO', codigo:'50-01', producto:'GEL', unds:890, minimo:1200 },
-    { descripcion:'CREMA INDIRA 237ML', codigo:'30-01', producto:'CREMA', unds:4251, minimo:1000 },
-    { descripcion:'COLONIA EMANUEL 250ML', codigo:'40-04', producto:'PERFUME', unds:1151, minimo:500 },
-  ];
+  const etiquetadoOps = ops.filter(o =>
+    (o['Estación'] || '').toString().toLowerCase() === 'etiquetado'
+  );
 
-  G.invSKU = [
-    { titulo:'ES500C01OS', descripcion:'ENVASE SHAMPOO AROMAS – 500ML', tipoSKU:'ENVASE SHAMPOO – 500ML', unds:225, status:'Envase Etiquetado' },
-    { titulo:'EG950C01CS', descripcion:'ENVASE GEL GRANDE CLARIFICADO – 950ML', tipoSKU:'ENVASE GEL – 1KG', unds:2364, status:'Envase' },
-    { titulo:'EBO5C01OS', descripcion:'ENVASE ROLL ON BLANCO – 50ML', tipoSKU:'ENVASE ROLL ON – 50ML', unds:5200, status:'Envase' },
-    { titulo:'ERO5C01OS', descripcion:'ENVASE ROLL ON ROSA – 50ML', tipoSKU:'ENVASE ROLL ON – 50ML', unds:8400, status:'Envase' },
-    { titulo:'ESGR01', descripcion:'ESFERA GRANDE TRANSPARENTE – 1/2', tipoSKU:'ESFERA ROLL ON – 1/2', unds:5400, status:'Esfera' },
-    { titulo:'ESPQ01', descripcion:'ESFERA PEQUEÑA TRANSPARENTE – 1/4', tipoSKU:'ESFERA ROLL ON – 1/4', unds:0, status:'Esfera' },
-    { titulo:'TPEstC02FI', descripcion:'TAPA 28-410 PRESS BLANCA', tipoSKU:'TAPA PRESS – ESTANDAR', unds:3582, status:'Tapa' },
-    { titulo:'TAPFLIP01', descripcion:'TAPA FLIP BLANCA – ESTANDAR', tipoSKU:'TAPA FLIP', unds:3580, status:'Tapa Armada' },
-    { titulo:'TGel250', descripcion:'TAPA GEL TRANSPARENTE – 250ML', tipoSKU:'TAPA PARA GEL – 250GR', unds:1200, status:'Tapa' },
-  ];
-
-  G.pedidos = [
-    { idPedido:'OC-041-1261', cliente:'NARSIL / IMPORTADORA ALFA', vendedor:'Jesús Badilla', noOC:'1261', fechaPedido:'2026-03-19', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-20' },
-    { idPedido:'OC-184-1260', cliente:'SUPER MERCADO EL GRAN SOCIO', vendedor:'Jesús Badilla', noOC:'1260', fechaPedido:'2026-03-19', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-20' },
-    { idPedido:'OC-234-1259', cliente:'CORPORACION VADO QUESADA', vendedor:'Jenier Rodriguez', noOC:'1259', fechaPedido:'2026-03-18', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-19' },
-    { idPedido:'OC-011-1258', cliente:'ALMACENES EL REY – PUNTARENAS', vendedor:'Jesús Badilla', noOC:'1258', fechaPedido:'2026-03-17', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-18' },
-    { idPedido:'OC-011-1257', cliente:'ALMACENES EL REY – SAN CARLOS', vendedor:'Jesús Badilla', noOC:'1257', fechaPedido:'2026-03-17', fechaEntrega:'2026-03-23', status:'Alisto', created:'2026-03-18' },
-  ];
-}
-
-// ══════════════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════════════
-function fmt(n) { return n == null ? '—' : Number(n).toLocaleString('es-CR'); }
-
-function prioClass(p) {
-  if (!p) return '';
-  p = p.toUpperCase();
-  if (p === 'URGENTE') return 'badge badge-urgente';
-  if (p === 'A') return 'badge badge-a';
-  if (p === 'B') return 'badge badge-b';
-  return 'badge badge-c';
-}
-
-function estadoClass(e) {
-  if (!e) return '';
-  e = e.toUpperCase();
-  if (e === 'BLOQUEADA') return 'badge badge-bloq';
-  if (e === 'PENDIENTE') return 'badge badge-pend';
-  if (e.includes('EJECUCIÓN') || e.includes('EJECUCION')) return 'badge badge-ejec';
-  if (e === 'COMPLETADA') return 'badge badge-comp';
-  return 'badge badge-pend';
-}
-
-function progressBar(producida, total) {
-  const p = total > 0 ? Math.min(100, Math.round((producida / total) * 100)) : 0;
-  const cls = p < 30 ? 'fill-red' : p < 70 ? 'fill-yellow' : 'fill-green';
-  return `<div class="op-progress">
-    <div class="op-bar-wrap"><div class="op-bar ${cls}" style="width:${p}%"></div></div>
-    <span style="font-size:13px;color:var(--muted);min-width:38px;text-align:right">${p}%</span>
-  </div>`;
-}
-
-function stockBar(unds, minimo) {
-  const min = minimo || 1000;
-  const pct = Math.min(100, Math.round((unds / (min * 2)) * 100));
-  const cls = unds <= 0 ? 'fill-red' : unds < min ? 'fill-yellow' : 'fill-green';
-  const color = unds <= 0 ? 'var(--red)' : unds < min ? 'var(--yellow)' : 'var(--green)';
-  return `<div class="stock-bar-wrap">
-    <div class="stock-bar-bg"><div class="stock-bar-fill ${cls}" style="width:${pct}%"></div></div>
-    <span class="stock-num" style="color:${color}">${fmt(unds)}</span>
-  </div>`;
-}
-
-function diasEnSistema(created) {
-  if (!created) return 0;
-  const c = new Date(created);
-  const now = new Date();
-  return Math.floor((now - c) / (1000 * 60 * 60 * 24));
-}
-
-// ══════════════════════════════════════════════════════
-//  RENDER GENERAL
-// ══════════════════════════════════════════════════════
-function renderAll() {
-  renderOverview();
-  renderEstacion('llenado',    'D-Llenado');
-  renderEstacion('inyeccion',  'B-lnyección Soplado');
-  renderEstacion('etiquetado', 'C-Etiquetado y serigrafia');
-  renderTalco();
-  renderInvPT();
-  renderInvSKU();
-  renderPedidos();
-}
-
-// ── OVERVIEW ──────────────────────────────────────────
-function renderOverview() {
-  const total = G.ops.length;
-  const urg   = G.ops.filter(o => o.prioridad?.toUpperCase() === 'URGENTE').length;
-  const bloq  = G.ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').length;
-  const ejec  = G.ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
-
-  document.getElementById('kpi-strip-overview').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">OPs TOTALES</div><div class="kpi-value big">${total}</div></div>
-    <div class="kpi-card danger"><div class="kpi-label">URGENTES</div><div class="kpi-value big" style="color:var(--red)">${urg}</div></div>
-    <div class="kpi-card warn"><div class="kpi-label">BLOQUEADAS</div><div class="kpi-value big" style="color:var(--yellow)">${bloq}</div></div>
-    <div class="kpi-card ok"><div class="kpi-label">EN EJECUCIÓN</div><div class="kpi-value big" style="color:var(--accent)">${ejec}</div></div>
-    <div class="kpi-card"><div class="kpi-label">PEDIDOS ACTIVOS</div><div class="kpi-value big">${G.pedidos.length}</div></div>
-    <div class="kpi-card"><div class="kpi-label">SKUs CON STOCK</div><div class="kpi-value big">${G.invPT.filter(i => i.unds > 0).length}</div><div class="kpi-unit">de ${G.invPT.length}</div></div>
-  `;
-
-  const stations = [
-    { key:'llenado',    label:'D · LLENADO',         color:'llenado',    filter: o => o.estacion?.includes('Llenado') && !o.sku?.toUpperCase().includes('TALCO') },
-    { key:'inyeccion',  label:'B · INYECCIÓN SOPLADO',color:'inyeccion',  filter: o => o.estacion?.includes('nyección') || o.estacion?.includes('nyeccion') || o.estacion?.includes('Bolitas') },
-    { key:'etiquetado', label:'C · ETIQUETADO',       color:'etiquetado', filter: o => o.estacion?.includes('Etiquet') || o.estacion?.includes('Armar') },
-    { key:'talco',      label:'TALCO',                color:'talco',      filter: o => o.sku?.toUpperCase().includes('TALCO') },
-  ];
-
-  const cards = document.getElementById('station-cards');
-  cards.innerHTML = stations.map(s => {
-    const ops = G.ops.filter(s.filter);
-    const urgCnt = ops.filter(o => o.prioridad?.toUpperCase() === 'URGENTE').length;
-    const bloqCnt = ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').length;
-    const ej = ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
-    return `
-      <div class="station-card" onclick="jumpToStation('${s.key}')">
-        <div class="s-name col-${s.color}">${s.label}</div>
-        <div class="s-count col-${s.color}">${ops.length}</div>
-        <div class="s-label">ÓRDENES ACTIVAS</div>
-        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-          ${urgCnt ? `<span class="badge badge-urgente">⚡ ${urgCnt} URGENTE</span>` : ''}
-          ${bloqCnt ? `<span class="badge badge-bloq">⛔ ${bloqCnt} BLOQ</span>` : ''}
-          ${ej ? `<span class="badge badge-ejec">▶ ${ej} EN EJEC.</span>` : ''}
-        </div>
-        <div class="s-bar bar-${s.color}"></div>
-      </div>`;
-  }).join('');
-}
-
-function jumpToStation(key) {
-  const map = { llenado:1, inyeccion:2, etiquetado:3, talco:4 };
-  if (map[key] !== undefined) goToScreen(map[key]);
-}
-
-// ── ESTACIÓN GENÉRICA ─────────────────────────────────
-function renderEstacion(id, estacionFilter) {
-  const ops = G.ops.filter(o => o.estacion?.includes(estacionFilter.split('-')[1].trim().split(' ')[0]));
-
-  const total = ops.length;
-  const urg   = ops.filter(o => o.prioridad?.toUpperCase() === 'URGENTE').length;
-  const bloq  = ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').length;
-  const ejec  = ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
-  const varColor = id === 'llenado' ? 'var(--llenado)' : id === 'inyeccion' ? 'var(--inyeccion)' : 'var(--etiquetado)';
-
-  document.getElementById(`kpi-${id}`).innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">TOTAL OPs</div><div class="kpi-value" style="color:${varColor}">${total}</div></div>
-    <div class="kpi-card ${urg ? 'danger' : ''}"><div class="kpi-label">URGENTES</div><div class="kpi-value" style="color:${urg ? 'var(--red)' : 'var(--muted)'}">${urg}</div></div>
-    <div class="kpi-card ${bloq ? 'warn' : ''}"><div class="kpi-label">BLOQUEADAS</div><div class="kpi-value" style="color:${bloq ? 'var(--yellow)' : 'var(--muted)'}">${bloq}</div></div>
-    <div class="kpi-card ok"><div class="kpi-label">EN EJECUCIÓN</div><div class="kpi-value" style="color:var(--accent)">${ejec}</div></div>
-  `;
-
-  // Alerta si hay bloqueadas
-  const alertEl = document.getElementById(`alert-${id}`);
-  if (bloq > 0) {
-    const names = ops.filter(o => o.estado?.toUpperCase() === 'BLOQUEADA').map(o => o.sku).join(', ');
-    alertEl.innerHTML = `<div class="alert-banner"><span class="alert-icon">⛔</span><span>${bloq} OP(s) BLOQUEADA(s) por piezas faltantes: <strong>${names}</strong></span></div>`;
-  } else { alertEl.innerHTML = ''; }
-
-  // Orden: URGENTE → A → B → C, bloqueadas al final
-  const sorted = [...ops].sort((a,b) => {
-    const pri = { URGENTE:0, A:1, B:2, C:3 };
-    const est = { 'BLOQUEADA':10, 'EN EJECUCIÓN':0, 'EN EJECUCION':0, 'PENDIENTE':1, 'COMPLETADA':5 };
-    const ea = est[a.estado?.toUpperCase()] ?? 2;
-    const eb = est[b.estado?.toUpperCase()] ?? 2;
-    if (ea !== eb) return ea - eb;
-    return (pri[a.prioridad?.toUpperCase()] ?? 9) - (pri[b.prioridad?.toUpperCase()] ?? 9);
-  });
-
-  const tbody = document.getElementById(`tbody-${id}`);
-
-  if (id === 'inyeccion') {
-    tbody.innerHTML = sorted.map(o => `
-      <tr>
-        <td class="mono">${o.opCode || '—'}</td>
-        <td class="sku-name">${o.sku || '—'}</td>
-        <td><span class="${prioClass(o.prioridad)}">${o.prioridad || '—'}</span></td>
-        <td><span class="${estadoClass(o.estado)}">${o.estado || '—'}</span></td>
-        <td class="num">${o.kilosResina ? fmt(o.kilosResina)+' kg' : '—'}</td>
-        <td style="font-size:12px;color:var(--muted)">${o.molde || '—'}</td>
-        <td>${stockBar(o.stockSKU ?? 0, 5000)}</td>
-      </tr>`).join('');
-  } else {
-    tbody.innerHTML = sorted.map(o => `
-      <tr>
-        <td class="mono">${o.opCode || '—'}</td>
-        <td class="sku-name">${o.sku || '—'}</td>
-        <td><span class="${prioClass(o.prioridad)}">${o.prioridad || '—'}</span></td>
-        <td><span class="${estadoClass(o.estado)}">${o.estado || '—'}</span></td>
-        <td>${progressBar(o.cantidadProducida ?? 0, o.cantidad ?? 1)}</td>
-        <td>${stockBar(id === 'etiquetado' ? (o.stockSKU ?? 0) : (o.stockPT ?? 0), 2000)}</td>
-      </tr>`).join('');
-  }
-
-  // SKUs en riesgo — filtros por status según estación
-  // Inyección Soplado: solo Envase y Tapa (sin procesar)
-  // Etiquetado:        Envase Etiquetado, Envase Serigrafiado, Envase Serigrafiado y etiquetado, Tapa Armada
-  // Llenado:           Inventario PT bajo mínimo (no SKU de piezas)
-  const STATUS_INYECCION  = ['Envase', 'Tapa', 'Esfera'];
-  // Etiquetado: piezas procesadas listas para llenado — excluye Body (se etiqueta al llenar)
-  const STATUS_ETIQUETADO = ['Envase Etiquetado', 'Envase Serigrafiado', 'Envase Serigrafiado y etiquetado', 'Tapa Armada'];
-  const isBody = s => (s.tipoSKU || '').toUpperCase().includes('BODY') ||
-                      (s.descripcion || '').toUpperCase().includes('BODY');
-
-  let riskItems = [];
-  let riskLabel = '';
-
-  if (id === 'llenado') {
-    // 1) PT bajo mínimo
-    const ptRiesgo = G.invPT.filter(i => (i.unds ?? 0) < (i.minimo ?? 1000) || (i.unds ?? 0) <= 0);
-    // 2) Envases Body crudos bajo 500 (body se etiqueta al llenar, así que el riesgo es el envase sin procesar)
-    const bodyRiesgo = G.invSKU.filter(s => isBody(s) && s.status === 'Envase' && (s.unds ?? 0) < 500);
-    // Combinar — marcar origin para renderizar correctamente
-    riskItems = [
-      ...ptRiesgo.map(i => ({ ...i, _tipo: 'pt' })),
-      ...bodyRiesgo.map(s => ({ ...s, _tipo: 'sku' }))
-    ];
-    riskLabel = '⚠ PT BAJO MÍNIMO + ENVASES BODY CRÍTICOS';
-  } else if (id === 'inyeccion') {
-    // Solo envases y tapas sin procesar — excluye body (se gestiona desde llenado)
-    riskItems = G.invSKU
-      .filter(s => STATUS_INYECCION.includes(s.status) && !isBody(s))
-      .filter(s => (s.unds ?? 0) < 2000)
-      .map(s => ({ ...s, _tipo: 'sku' }));
-    riskLabel = '⚠ ENVASES Y TAPAS EN RIESGO — SIN PROCESAR';
-  } else if (id === 'etiquetado') {
-    // Piezas ya procesadas listas para llenado — excluye Body
-    riskItems = G.invSKU
-      .filter(s => STATUS_ETIQUETADO.includes(s.status) && !isBody(s))
-      .filter(s => (s.unds ?? 0) < 500)
-      .map(s => ({ ...s, _tipo: 'sku' }));
-    riskLabel = '⚠ PIEZAS PROCESADAS EN RIESGO';
-  }
-
-  // Actualizar badge de la sección
-  const riskBadgeEl = document.querySelector(`#screens-wrap .screen:nth-child(${
-    id==='llenado'?2:id==='inyeccion'?3:4
-  }) .station-badge:last-of-type`);
-
-  const riskEl = document.getElementById(`risk-${id}`);
-  if (riskItems.length === 0) {
-    riskEl.innerHTML = '<div class="empty-state" style="padding:30px"><span class="icon">✅</span><p>SIN SKUs EN RIESGO</p></div>';
-  } else {
-    riskItems = [...riskItems].sort((a,b) => (a.unds??0) - (b.unds??0));
-    riskEl.innerHTML = riskItems.map(s => {
-      const unds    = s.unds ?? 0;
-      const isCrit  = unds <= 0;
-      const isPT    = s._tipo === 'pt';
-      const nombre  = s.descripcion || s.titulo || '—';
-      const codigo  = s.codigo || s.titulo || '';
-      const tipo    = isPT ? (s.producto || 'PT') : (s.tipoSKU || s.status || '');
-      const tag     = isPT ? '<span class="badge" style="background:rgba(0,229,255,0.1);color:var(--accent);border:1px solid rgba(0,229,255,0.3);font-size:9px">PT</span>'
-                           : '<span class="badge" style="background:rgba(124,77,255,0.1);color:#b39ddb;border:1px solid rgba(124,77,255,0.3);font-size:9px">SKU</span>';
-      return `<div class="risk-card ${isCrit ? 'critical' : 'warning'}">
-        <div class="risk-card-name">${nombre} ${tag}</div>
-        <div class="risk-card-meta">
-          <span class="risk-tag"><strong>${codigo}</strong></span>
-          <span class="risk-tag">${tipo}</span>
-          <span class="${isCrit ? 'badge badge-bloq' : 'badge badge-riesgo'}">${isCrit ? '⛔ SIN STOCK' : '⚠ BAJO'}</span>
-          <span style="font-family:'Bebas Neue';font-size:22px;color:${isCrit ? 'var(--red)' : 'var(--yellow)'};margin-left:auto">${fmt(unds)}</span>
-        </div>
-      </div>`;
-    }).join('');
-  }
-}
-
-// ── TALCO ─────────────────────────────────────────────
-function renderTalco() {
-  const talcoPT = G.invPT.filter(i => i.producto === 'TALCO' || i.descripcion?.toUpperCase().includes('TALCO'));
-  const ops = G.ops.filter(o => o.sku?.toUpperCase().includes('TALCO') || o.sku?.toUpperCase().includes('TALCO'));
-
-  const conStock = talcoPT.filter(t => (t.unds ?? 0) > 0).length;
-  const enRiesgo = talcoPT.filter(t => (t.unds ?? 0) < (t.minimo ?? 800)).length;
-  const enEjec   = ops.filter(o => o.estado?.toUpperCase().includes('EJECUCIÓN') || o.estado?.toUpperCase().includes('EJECUCION')).length;
-
-  document.getElementById('kpi-talco').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">OPs TALCO</div><div class="kpi-value" style="color:var(--talco)">${ops.length}</div></div>
-    <div class="kpi-card ok"><div class="kpi-label">EN EJECUCIÓN</div><div class="kpi-value" style="color:var(--accent)">${enEjec}</div></div>
-    <div class="kpi-card ${enRiesgo ? 'warn' : 'ok'}"><div class="kpi-label">PRESENTACIONES EN RIESGO</div><div class="kpi-value" style="color:${enRiesgo ? 'var(--yellow)':'var(--green)'}">${enRiesgo}</div></div>
-    <div class="kpi-card"><div class="kpi-label">CON STOCK</div><div class="kpi-value">${conStock}</div><div class="kpi-unit">de ${talcoPT.length}</div></div>
-  `;
-
-  document.getElementById('alert-talco').innerHTML = enRiesgo > 0
-    ? `<div class="alert-banner"><span class="alert-icon">⚠</span><span>${enRiesgo} presentación(es) de talco bajo mínimo de inventario</span></div>` : '';
-
-  const sorted = [...ops].sort((a,b) => {
-    const pri = { URGENTE:0, A:1, B:2, C:3 };
-    return (pri[a.prioridad?.toUpperCase()] ?? 9) - (pri[b.prioridad?.toUpperCase()] ?? 9);
-  });
-
-  document.getElementById('tbody-talco').innerHTML = sorted.map(o => `
+  tbody.innerHTML = etiquetadoOps.map(o => `
     <tr>
-      <td class="mono">${o.opCode || '—'}</td>
-      <td class="sku-name">${o.sku || '—'}</td>
-      <td><span class="${prioClass(o.prioridad)}">${o.prioridad || '—'}</span></td>
-      <td><span class="${estadoClass(o.estado)}">${o.estado || '—'}</span></td>
-      <td>${progressBar(o.cantidadProducida ?? 0, o.cantidad ?? 1)}</td>
-      <td>${stockBar(o.stockPT ?? 0, 1000)}</td>
-    </tr>`).join('');
-
-  const riskTalco = talcoPT.filter(t => (t.unds ?? 0) < (t.minimo ?? 800));
-  document.getElementById('risk-talco').innerHTML = riskTalco.length === 0
-    ? '<div class="empty-state" style="padding:30px"><span class="icon">✅</span><p>TODOS LOS TALCOS CON STOCK SUFICIENTE</p></div>'
-    : riskTalco.map(t => `
-      <div class="risk-card ${(t.unds ?? 0) <= 0 ? 'critical' : 'warning'}">
-        <div class="risk-card-name">${t.descripcion}</div>
-        <div class="risk-card-meta">
-          <span class="risk-tag"><strong>${t.codigo}</strong></span>
-          <span class="${(t.unds??0)<=0 ? 'badge badge-bloq' : 'badge badge-riesgo'}">${(t.unds??0)<=0 ? '⛔ AGOTADO' : '⚠ BAJO MÍNIMO'}</span>
-          <span style="font-family:'Bebas Neue';font-size:22px;margin-left:auto;color:${(t.unds??0)<=0?'var(--red)':'var(--yellow)'}">${fmt(t.unds ?? 0)}</span>
-        </div>
-      </div>`).join('');
+      <td>${o['OP Code'] || ''}</td>
+      <td>${o['Producto/SKU'] || ''}</td>
+      <td class="${o['Prioridad']}">${o['Prioridad']}</td>
+      <td class="${(o['Estado'] || 'PENDIENTE').split(' ')[0]}">
+        ${o['Estado'] || 'PENDIENTE'}
+      </td>
+      <td>${o['Cantidad'] || 0}</td>
+    </tr>
+  `).join('');
 }
 
-// ── INVENTARIO PT ─────────────────────────────────────
-function renderInvPT() {
-  const total = G.invPT.length;
-  const conStock = G.invPT.filter(i => (i.unds ?? 0) > 0).length;
-  const riesgo = G.invPT.filter(i => (i.unds ?? 0) < (i.minimo ?? 500) && (i.unds ?? 0) > 0).length;
-  const cero = G.invPT.filter(i => (i.unds ?? 0) <= 0).length;
-
-  document.getElementById('kpi-invpt').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">TOTAL SKUs</div><div class="kpi-value">${total}</div></div>
-    <div class="kpi-card ok"><div class="kpi-label">CON STOCK</div><div class="kpi-value" style="color:var(--green)">${conStock}</div></div>
-    <div class="kpi-card warn"><div class="kpi-label">BAJO MÍNIMO</div><div class="kpi-value" style="color:var(--yellow)">${riesgo}</div></div>
-    <div class="kpi-card danger"><div class="kpi-label">AGOTADOS</div><div class="kpi-value" style="color:var(--red)">${cero}</div></div>
-  `;
-
-  const sorted = [...G.invPT].sort((a,b) => (a.unds ?? 0) - (b.unds ?? 0));
-  document.getElementById('tbody-invpt').innerHTML = sorted.map(i => {
-    const u = i.unds ?? 0;
-    const min = i.minimo ?? 500;
-    const estado = u <= 0 ? `<span class="badge badge-bloq">AGOTADO</span>`
-      : u < min ? `<span class="badge badge-riesgo">BAJO</span>`
-      : `<span class="badge badge-ok">OK</span>`;
-    return `
-      <tr>
-        <td class="mono">${i.codigo || '—'}</td>
-        <td class="sku-name">${i.descripcion || '—'}</td>
-        <td style="font-size:13px;color:var(--muted)">${i.producto || '—'}</td>
-        <td>${stockBar(u, min * 2)}</td>
-        <td>${estado}</td>
-      </tr>`;
-  }).join('');
-}
-
-// ── INVENTARIO SKU ─────────────────────────────────────
-function renderInvSKU() {
-  const total = G.invSKU.length;
-  const cero = G.invSKU.filter(s => (s.unds ?? 0) <= 0).length;
-  const bajo = G.invSKU.filter(s => (s.unds ?? 0) > 0 && (s.unds ?? 0) < 1000).length;
-  const ok   = total - cero - bajo;
-
-  document.getElementById('kpi-invsku').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">TOTAL PIEZAS</div><div class="kpi-value">${total}</div></div>
-    <div class="kpi-card ok"><div class="kpi-label">STOCK SUFICIENTE</div><div class="kpi-value" style="color:var(--green)">${ok}</div></div>
-    <div class="kpi-card warn"><div class="kpi-label">STOCK BAJO</div><div class="kpi-value" style="color:var(--yellow)">${bajo}</div></div>
-    <div class="kpi-card danger"><div class="kpi-label">SIN STOCK</div><div class="kpi-value" style="color:var(--red)">${cero}</div></div>
-  `;
-
-  const sorted = [...G.invSKU].sort((a,b) => (a.unds ?? 0) - (b.unds ?? 0));
-  document.getElementById('tbody-invsku').innerHTML = sorted.map(s => {
-    const u = s.unds ?? 0;
-    const estado = u <= 0 ? `<span class="badge badge-bloq">SIN STOCK</span>`
-      : u < 500 ? `<span class="badge badge-riesgo">CRÍTICO</span>`
-      : u < 1000 ? `<span class="badge badge-warn" style="background:rgba(255,215,64,.1);color:var(--yellow);border:1px solid rgba(255,215,64,.3)">BAJO</span>`
-      : `<span class="badge badge-ok">OK</span>`;
-    return `
-      <tr>
-        <td class="mono">${s.titulo || '—'}</td>
-        <td class="sku-name">${s.descripcion || '—'}</td>
-        <td style="font-size:12px;color:var(--muted)">${s.tipoSKU || s.status || '—'}</td>
-        <td>${stockBar(u, 3000)}</td>
-        <td>${estado}</td>
-      </tr>`;
-  }).join('');
-}
-
-// ── PEDIDOS ───────────────────────────────────────────
-function renderPedidos() {
-  let vencidas = 0, enRiesgo = 0, enTiempo = 0;
-
-  document.getElementById('tbody-pedidos').innerHTML = G.pedidos.map(p => {
-    const dias = diasEnSistema(p.created);
-    const rest = 4 - dias;
-    let estadoPed, cls;
-    if (rest <= 0)  { estadoPed = 'VENCIDA';   cls = 'badge badge-bloq';  vencidas++; }
-    else if (rest <= 2) { estadoPed = 'EN RIESGO'; cls = 'badge badge-riesgo'; enRiesgo++; }
-    else             { estadoPed = 'EN TIEMPO';  cls = 'badge badge-ok';   enTiempo++; }
-
-    const diasColor = rest <= 0 ? 'var(--red)' : rest <= 2 ? 'var(--yellow)' : 'var(--green)';
-
-    return `
-      <tr>
-        <td class="mono">${p.idPedido || p.noOC || '—'}</td>
-        <td class="sku-name">${p.cliente || '—'}</td>
-        <td style="font-size:13px;color:var(--muted)">${p.vendedor || '—'}</td>
-        <td style="font-size:13px">${p.fechaPedido || '—'}</td>
-        <td style="font-size:13px">${p.fechaEntrega || '—'}</td>
-        <td style="text-align:right">
-          <span style="font-family:'Bebas Neue';font-size:26px;color:${diasColor}">${dias}</span>
-          <span style="font-size:11px;color:var(--muted)"> días</span>
-        </td>
-        <td><span class="${cls}">${estadoPed}</span></td>
-      </tr>`;
-  }).join('');
-
-  document.getElementById('kpi-pedidos').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">TOTAL PEDIDOS</div><div class="kpi-value">${G.pedidos.length}</div></div>
-    <div class="kpi-card ok"><div class="kpi-label">EN TIEMPO</div><div class="kpi-value" style="color:var(--green)">${enTiempo}</div></div>
-    <div class="kpi-card ${enRiesgo ? 'warn' : ''}"><div class="kpi-label">EN RIESGO</div><div class="kpi-value" style="color:${enRiesgo ? 'var(--yellow)':'var(--muted)'}">${enRiesgo}</div></div>
-    <div class="kpi-card ${vencidas ? 'danger' : ''}"><div class="kpi-label">VENCIDAS</div><div class="kpi-value" style="color:${vencidas ? 'var(--red)':'var(--muted)'}">${vencidas}</div></div>
-    <div class="kpi-card"><div class="kpi-label">META ENTREGA</div><div class="kpi-value">4</div><div class="kpi-unit">DÍAS CALENDARIO</div></div>
-  `;
-
-  const alertPed = document.getElementById('alert-pedidos');
-  if (vencidas > 0) {
-    alertPed.innerHTML = `<div class="alert-banner"><span class="alert-icon">🔴</span><span>${vencidas} OC(s) VENCIDA(S) — REQUIEREN ACCIÓN INMEDIATA</span></div>`;
-  } else { alertPed.innerHTML = ''; }
-}
-
-// ══════════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════════
-window.addEventListener('load', () => {
-  buildDots();
-  fetchData();
-  setInterval(fetchData, REFRESH_MS);
-  startRotation();
-});
+/* ===============================
+   INIT
+================================ */
+fetchData();
+setInterval(fetchData, DATA_REFRESH_MS);
 </script>
+
 </body>
 </html>
