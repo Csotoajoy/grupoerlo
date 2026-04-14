@@ -2,40 +2,71 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Diagnóstico ERLO</title>
+  <title>Diagnóstico REAL ps_ops.json</title>
   <style>
     body { background:#0a0c10; color:#e8eaf6; font-family:monospace; padding:16px }
+    h2 { color:#00e5ff }
+    .box { background:#111520; border:1px solid #1e2535; padding:12px; margin-top:12px }
     .ok { color:#00e676 }
     .err { color:#ff1744 }
-    pre { white-space:pre-wrap; word-break:break-word; background:#111520; padding:12px; border:1px solid #1e2535 }
+    pre { white-space:pre-wrap; word-break:break-word }
   </style>
 </head>
 <body>
 
-<h2>Diagnóstico carga ps_ops.json</h2>
-<div id="status">Iniciando…</div>
-<pre id="out"></pre>
+<h2>Diagnóstico REAL de ps_ops.json</h2>
+
+<div id="status" class="box">Cargando…</div>
+<div id="keys" class="box"></div>
+<div id="sample" class="box"></div>
 
 <script>
 const URL = 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json';
 
-(async function(){
+(async function () {
   try {
     const res = await fetch(URL + '?t=' + Date.now());
     const data = await res.json();
 
     document.getElementById('status').innerHTML =
-      '<span class="ok">OK: JSON cargado</span><br>' +
-      'Tipo: ' + (Array.isArray(data) ? 'Array' : typeof data) + '<br>' +
-      'Longitud: ' + (Array.isArray(data) ? data.length : 'N/A');
+      '<span class="ok">✔ JSON cargado</span><br>' +
+      'Tipo raíz: ' + (Array.isArray(data) ? 'Array' : typeof data);
 
-    // Muestra las primeras 2 filas tal cual vienen
-    document.getElementById('out').textContent =
-      JSON.stringify(data.slice(0, 2), null, 2);
+    if (!Array.isArray(data)) {
+      document.getElementById('keys').innerHTML =
+        '<b>Claves del objeto raíz:</b><br><pre>' +
+        JSON.stringify(Object.keys(data), null, 2) +
+        '</pre>';
+    }
+
+    let arr = null;
+
+    if (Array.isArray(data)) {
+      arr = data;
+    } else {
+      // buscar la PRIMERA propiedad que sea un array
+      for (const k in data) {
+        if (Array.isArray(data[k])) {
+          arr = data[k];
+          document.getElementById('status').innerHTML +=
+            '<br><span class="ok">✔ Array encontrado en: <b>' + k + '</b></span>';
+          break;
+        }
+      }
+    }
+
+    if (!arr) {
+      throw new Error('No se encontró ningún array dentro del JSON');
+    }
+
+    document.getElementById('sample').innerHTML =
+      '<b>Primer elemento real de datos:</b><pre>' +
+      JSON.stringify(arr[0], null, 2) +
+      '</pre>';
 
   } catch (e) {
     document.getElementById('status').innerHTML =
-      '<span class="err">ERROR JS:</span> ' + e.message;
+      '<span class="err">✖ ERROR:</span> ' + e.message;
     console.error(e);
   }
 })();
