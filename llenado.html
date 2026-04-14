@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="3600"> <!-- HARD REFRESH 1h -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ERLO IA – LLENADO</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="3600">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERLO IA · LLENADO</title>
 
   <style>
     :root {
@@ -19,17 +19,18 @@
       --muted:#546e8a;
     }
 
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
       background:var(--bg);
       color:var(--text);
-      font-family:Arial,Helvetica,sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       height:100vh;
       overflow:hidden;
     }
 
-    header{
-      height:70px;
+    header {
+      height:72px;
       display:flex;
       align-items:center;
       justify-content:space-between;
@@ -38,71 +39,63 @@
       border-bottom:2px solid var(--border);
     }
 
-    .title{
-      font-size:32px;
+    .title {
+      font-size:30px;
       letter-spacing:4px;
       color:var(--accent);
       font-weight:bold;
     }
 
-    .clock{
-      font-size:28px;
+    .clock {
+      font-size:26px;
       letter-spacing:3px;
     }
 
-    main{
+    main {
       padding:24px;
-      height:calc(100vh - 70px);
+      height:calc(100vh - 72px);
       overflow:hidden;
     }
 
-    .section-title{
-      font-size:26px;
+    h2 {
+      font-size:24px;
       margin-bottom:16px;
       letter-spacing:2px;
     }
 
-    table{
+    table {
       width:100%;
       border-collapse:collapse;
     }
 
-    th{
-      text-align:left;
+    thead th {
+      font-size:13px;
       color:var(--muted);
-      font-size:14px;
-      border-bottom:1px solid var(--border);
+      text-align:left;
       padding:10px;
+      border-bottom:1px solid var(--border);
     }
 
-    td{
-      padding:14px 10px;
+    tbody td {
       font-size:20px;
+      padding:14px 10px;
       border-bottom:1px solid rgba(30,37,53,0.6);
     }
 
-    .priority{
-      font-weight:bold;
-    }
+    .URGENTE { color:var(--red); font-weight:bold; }
+    .A { color:#ff6b35; font-weight:bold; }
+    .B { color:var(--yellow); font-weight:bold; }
+    .C { color:var(--muted); }
 
-    .URGENTE{color:var(--red)}
-    .A{color:#ff6b35}
-    .B{color:var(--yellow)}
-    .C{color:var(--muted)}
+    .BLOQUEADA { color:var(--red); font-weight:bold; }
+    .PENDIENTE { color:var(--yellow); }
+    .EN { color:var(--accent); }
 
-    .estado{
-      font-weight:bold;
-    }
+    .stock-ok { color:var(--green); }
+    .stock-low { color:var(--yellow); }
+    .stock-zero { color:var(--red); font-weight:bold; }
 
-    .BLOQUEADA{color:var(--red)}
-    .PENDIENTE{color:var(--yellow)}
-    .EN{color:var(--accent)}
-
-    .stock-ok{color:var(--green)}
-    .stock-low{color:var(--yellow)}
-    .stock-zero{color:var(--red)}
-
-    #loading{
+    #loading {
       position:fixed;
       inset:0;
       background:var(--bg);
@@ -110,15 +103,16 @@
       align-items:center;
       justify-content:center;
       font-size:28px;
-      letter-spacing:4px;
+      letter-spacing:3px;
       color:var(--accent);
+      z-index:10;
     }
   </style>
 </head>
 
 <body>
 
-<div id="loading">CARGANDO LLENADO…</div>
+<div id="loading">CARGANDO ÓRDENES DE LLENADO…</div>
 
 <header>
   <div class="title">ERLO IA · LLENADO</div>
@@ -126,17 +120,17 @@
 </header>
 
 <main>
-  <div class="section-title">ÓRDENES ACTIVAS – ESTACIÓN D</div>
+  <h2>ÓRDENES ACTIVAS – ESTACIÓN D</h2>
 
   <table>
     <thead>
       <tr>
         <th>OP</th>
-        <th>SKU</th>
-        <th>PRIORIDAD</th>
-        <th>ESTADO</th>
-        <th>AVANCE</th>
-        <th>STOCK PT</th>
+        <th>Producto / SKU</th>
+        <th>Prioridad</th>
+        <th>Estado</th>
+        <th>Avance</th>
+        <th>Stock PT</th>
       </tr>
     </thead>
     <tbody id="tabla-llenado"></tbody>
@@ -147,73 +141,73 @@
 /* ===============================
    CONFIGURACIÓN
 ================================ */
-const OPS_URL = 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json';
-const INV_URL = 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_inventario.json';
+const OPS_URL =
+  'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json';
 
 const DATA_REFRESH_MS = 2 * 60 * 1000;
 
 /* ===============================
-   UTILIDADES
+   RELOJ
 ================================ */
-function updateClock(){
-  const n=new Date();
+function updateClock() {
+  const n = new Date();
   document.getElementById('clock').textContent =
-    n.toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});
+    n.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
 }
-setInterval(updateClock,1000);
+setInterval(updateClock, 1000);
 updateClock();
 
-function clsStock(v){
-  if(v<=0) return 'stock-zero';
-  if(v<1000) return 'stock-low';
+/* ===============================
+   UTILIDADES
+================================ */
+function stockClass(v) {
+  if (v <= 0) return 'stock-zero';
+  if (v < 500) return 'stock-low';
   return 'stock-ok';
 }
 
 /* ===============================
    CARGA DE DATOS
 ================================ */
-async function fetchData(){
-  try{
-    const [opsRes, invRes] = await Promise.all([
-      fetch(OPS_URL + '?t=' + Date.now()),
-      fetch(INV_URL + '?t=' + Date.now())
-    ]);
+async function fetchData() {
+  try {
+    const res = await fetch(OPS_URL + '?t=' + Date.now());
+    const data = await res.json();
 
-    const opsData = await opsRes.json();
-    const invData = await invRes.json();
-
-    renderLlenado(
-      opsData.ops || [],
-      invData.invPT || []
-    );
-
-    document.getElementById('loading').style.display='none';
-  }catch(e){
-    console.error(e);
+    renderLlenado(data);
+    document.getElementById('loading').style.display = 'none';
+  } catch (e) {
+    console.error('Error cargando OPS:', e);
   }
 }
 
 /* ===============================
-   RENDER LLENADO
+   RENDER LLENADO (USA DATOS REALES)
 ================================ */
-function renderLlenado(ops, invPT){
+function renderLlenado(ops) {
   const tbody = document.getElementById('tabla-llenado');
 
-  const llenadoOps = ops
-    .filter(o => o.estacion?.includes('Llenado'));
+  const llenadoOps = ops.filter(o =>
+    (o['Estación'] || '').toString().toLowerCase() === 'llenado'
+  );
 
-  tbody.innerHTML = llenadoOps.map(o=>{
-    const pt = invPT.find(i => i.descripcion === o.sku);
-    const stock = pt?.unds ?? 0;
+  tbody.innerHTML = llenadoOps.map(o => {
+    const cantidad = Number(o['Cantidad'] || 0);
+    const stock = Number(o['Unds Stok'] || 0);
+    const avance = cantidad > 0
+      ? Math.round(((cantidad - stock) / cantidad) * 100)
+      : 0;
 
     return `
       <tr>
-        <td>${o.opCode || ''}</td>
-        <td>${o.sku}</td>
-        <td class="priority ${o.prioridad}">${o.prioridad}</td>
-        <td class="estado ${o.estado?.split(' ')[0]}">${o.estado}</td>
-        <td>${Math.round((o.cantidadProducida||0)/(o.cantidad||1)*100)}%</td>
-        <td class="${clsStock(stock)}">${stock}</td>
+        <td>${o['OP Code'] || ''}</td>
+        <td>${o['Producto/SKU'] || ''}</td>
+        <td class="${o['Prioridad']}">${o['Prioridad']}</td>
+        <td class="${(o['Estado'] || 'PENDIENTE').split(' ')[0]}">
+          ${o['Estado'] || 'PENDIENTE'}
+        </td>
+        <td>${avance}%</td>
+        <td class="${stockClass(stock)}">${stock}</td>
       </tr>
     `;
   }).join('');
