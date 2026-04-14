@@ -7,106 +7,18 @@
   <title>ERLO IA · LLENADO</title>
 
   <style>
-    :root {
-      --bg:#0a0c10;
-      --surface:#111520;
-      --border:#1e2535;
-      --accent:#00e5ff;
-      --green:#00e676;
-      --yellow:#ffd740;
-      --red:#ff1744;
-      --text:#e8eaf6;
-      --muted:#546e8a;
-    }
-
-    * { box-sizing:border-box; margin:0; padding:0; }
-
-    body {
-      background:var(--bg);
-      color:var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      height:100vh;
-      overflow:hidden;
-    }
-
-    header {
-      height:72px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:0 28px;
-      background:var(--surface);
-      border-bottom:2px solid var(--border);
-    }
-
-    .title {
-      font-size:30px;
-      letter-spacing:4px;
-      color:var(--accent);
-      font-weight:bold;
-    }
-
-    .clock {
-      font-size:26px;
-      letter-spacing:3px;
-    }
-
-    main {
-      padding:24px;
-      height:calc(100vh - 72px);
-      overflow:hidden;
-    }
-
-    h2 {
-      font-size:24px;
-      margin-bottom:16px;
-      letter-spacing:2px;
-    }
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-    }
-
-    thead th {
-      font-size:13px;
-      color:var(--muted);
-      text-align:left;
-      padding:10px;
-      border-bottom:1px solid var(--border);
-    }
-
-    tbody td {
-      font-size:20px;
-      padding:14px 10px;
-      border-bottom:1px solid rgba(30,37,53,0.6);
-    }
-
-    .URGENTE { color:var(--red); font-weight:bold; }
-    .A { color:#ff6b35; font-weight:bold; }
-    .B { color:var(--yellow); font-weight:bold; }
-    .C { color:var(--muted); }
-
-    .BLOQUEADA { color:var(--red); font-weight:bold; }
-    .PENDIENTE { color:var(--yellow); }
-    .EN { color:var(--accent); }
-
-    .stock-ok { color:var(--green); }
-    .stock-low { color:var(--yellow); }
-    .stock-zero { color:var(--red); font-weight:bold; }
-
-    #loading {
-      position:fixed;
-      inset:0;
-      background:var(--bg);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:28px;
-      letter-spacing:3px;
-      color:var(--accent);
-      z-index:10;
-    }
+    body { background:#0a0c10; color:#e8eaf6; font-family:Arial,sans-serif; margin:0 }
+    header{ padding:16px 24px; background:#111520; border-bottom:2px solid #1e2535;
+            display:flex; justify-content:space-between; align-items:center }
+    h1{ margin:0; color:#00e5ff; letter-spacing:4px }
+    table{ width:100%; border-collapse:collapse; margin:16px }
+    th{ color:#546e8a; text-align:left; border-bottom:1px solid #1e2535; padding:8px }
+    td{ padding:10px; border-bottom:1px solid #1e2535; font-size:18px }
+    .URGENTE{ color:#ff1744; font-weight:bold }
+    .BLOQUEADA{ color:#ff1744; font-weight:bold }
+    .clock{ font-size:22px }
+    #loading{ position:fixed; inset:0; display:flex; align-items:center;
+              justify-content:center; background:#0a0c10; color:#00e5ff }
   </style>
 </head>
 
@@ -115,109 +27,57 @@
 <div id="loading">CARGANDO ÓRDENES DE LLENADO…</div>
 
 <header>
-  <div class="title">ERLO IA · LLENADO</div>
-  <div class="clock" id="clock">00:00</div>
+  <h1>ERLO IA · LLENADO</h1>
+  <div class="clock" id="clock"></div>
 </header>
 
-<main>
-  <h2>ÓRDENES ACTIVAS – ESTACIÓN D</h2>
-
-  <table>
-    <thead>
-      <tr>
-        <th>OP</th>
-        <th>Producto / SKU</th>
-        <th>Prioridad</th>
-        <th>Estado</th>
-        <th>Avance</th>
-        <th>Stock PT</th>
-      </tr>
-    </thead>
-    <tbody id="tabla-llenado"></tbody>
-  </table>
-</main>
+<table>
+  <thead>
+    <tr>
+      <th>OP</th>
+      <th>Producto</th>
+      <th>Prioridad</th>
+      <th>Estado</th>
+      <th>Cantidad</th>
+      <th>Stock</th>
+    </tr>
+  </thead>
+  <tbody id="rows"></tbody>
+</table>
 
 <script>
-/* ===============================
-   CONFIGURACIÓN
-================================ */
-const OPS_URL =
-  'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json';
+const URL = 'https://raw.githubusercontent.com/Csotoajoy/grupoerlo/main/ps_ops.json';
 
-const DATA_REFRESH_MS = 2 * 60 * 1000;
-
-/* ===============================
-   RELOJ
-================================ */
-function updateClock() {
-  const n = new Date();
-  document.getElementById('clock').textContent =
-    n.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
+function clock(){
+  document.getElementById('clock').innerText =
+    new Date().toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});
 }
-setInterval(updateClock, 1000);
-updateClock();
+setInterval(clock,1000); clock();
 
-/* ===============================
-   UTILIDADES
-================================ */
-function stockClass(v) {
-  if (v <= 0) return 'stock-zero';
-  if (v < 500) return 'stock-low';
-  return 'stock-ok';
-}
+async function load(){
+  const res = await fetch(URL + '?t=' + Date.now());
+  const data = await res.json(); // ✅ data ES EL ARRAY REAL
 
-/* ===============================
-   CARGA DE DATOS
-================================ */
-async function fetchData() {
-  try {
-    const res = await fetch(OPS_URL + '?t=' + Date.now());
-    const data = await res.json();
-
-    renderLlenado(data);
-    document.getElementById('loading').style.display = 'none';
-  } catch (e) {
-    console.error('Error cargando OPS:', e);
-  }
-}
-
-/* ===============================
-   RENDER LLENADO (USA DATOS REALES)
-================================ */
-function renderLlenado(ops) {
-  const tbody = document.getElementById('tabla-llenado');
-
-  const llenadoOps = ops.filter(o =>
-    (o['Estación'] || '').toString().toLowerCase() === 'llenado'
+  const llenado = data.filter(o =>
+    String(o['Estación']).toLowerCase() === 'llenado'
   );
 
-  tbody.innerHTML = llenadoOps.map(o => {
-    const cantidad = Number(o['Cantidad'] || 0);
-    const stock = Number(o['Unds Stok'] || 0);
-    const avance = cantidad > 0
-      ? Math.round(((cantidad - stock) / cantidad) * 100)
-      : 0;
+  document.getElementById('rows').innerHTML = llenado.map(o => `
+    <tr>
+      <td>${o['OP Code']}</td>
+      <td>${o['Producto/SKU']}</td>
+      <td class="${o['Prioridad']}">${o['Prioridad']}</td>
+      <td class="${o['Estado']}">${o['Estado'] || 'PENDIENTE'}</td>
+      <td>${o['Cantidad']}</td>
+      <td>${o['Unds Stok']}</td>
+    </tr>
+  `).join('');
 
-    return `
-      <tr>
-        <td>${o['OP Code'] || ''}</td>
-        <td>${o['Producto/SKU'] || ''}</td>
-        <td class="${o['Prioridad']}">${o['Prioridad']}</td>
-        <td class="${(o['Estado'] || 'PENDIENTE').split(' ')[0]}">
-          ${o['Estado'] || 'PENDIENTE'}
-        </td>
-        <td>${avance}%</td>
-        <td class="${stockClass(stock)}">${stock}</td>
-      </tr>
-    `;
-  }).join('');
+  document.getElementById('loading').style.display='none';
 }
 
-/* ===============================
-   INIT
-================================ */
-fetchData();
-setInterval(fetchData, DATA_REFRESH_MS);
+load();
+setInterval(load, 120000);
 </script>
 
 </body>
