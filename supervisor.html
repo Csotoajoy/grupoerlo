@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supervisor — Grupo Erlo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #070b11;
+    --surface: #0e1520;
+    --surface2: #131d2c;
+    --surface3: #182030;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #eef2ff;
+    --text-dim: #4a5a78;
+    --text-mid: #8090b0;
+    --green: #2ecc71;
+    --amber: #f39c12;
+    --red: #e74c3c;
+    --blue: #3498db;
+    --purple: #9b59b6;
+    --accent: #0080ff;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+    gap: 16px;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .logo-box {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg,#1a3a6e,#0d2244);
+    border: 1px solid rgba(0,128,255,0.3);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 16px; color: #4af;
+  }
+
+  .company { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:16px; color:var(--text-mid); text-transform:uppercase; letter-spacing:.05em; }
+  .page-sub { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.1em; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 16px;
+    color: var(--text-dim);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--text-mid); background: var(--surface3); }
+  .tab-btn.active { background: var(--accent); color: #fff; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .clock {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 28px; line-height:1;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    animation: blink 2s infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .refresh-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--text-mid);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .refresh-btn:hover { border-color: var(--accent); color: #4af; }
+
+  /* ── CONTENT ── */
+  .content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tab-panel {
+    display: none;
+    flex: 1;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  .tab-panel.active { display: flex; }
+
+  /* ── PANEL HEADER ── */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+
+  .panel-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 16px;
+    color: var(--text-mid); text-transform: uppercase; letter-spacing:.05em;
+  }
+
+  /* ─────────────────────────────────────────
+     MÓDULO 1 — GANTT
+  ───────────────────────────────────────── */
+  .gantt-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .gantt-machine {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .gantt-machine-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .machine-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 15px;
+    color: var(--text); text-transform: uppercase; letter-spacing:.05em;
+  }
+
+  .machine-ops-count {
+    font-size: 12px; color: var(--text-dim);
+  }
+
+  .gantt-ops {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .gantt-op-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 100px 80px 80px;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    border-left: 3px solid;
+    transition: border-color .2s;
+  }
+
+  .gantt-op-row:hover { background: var(--surface3); }
+
+  .op-sku-gantt {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 15px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .op-cell {
+    font-size: 12px; color: var(--text-mid);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .op-cell-label {
+    font-size: 10px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing:.08em;
+    display: block; margin-bottom: 2px;
+  }
+
+  .pill-sm {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 11px;
+    padding: 3px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing:.05em;
+    display: inline-block;
+  }
+
+  .gantt-empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  /* alerta tiempo muerto */
+  .idle-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(231,76,60,0.1);
+    border: 1px solid rgba(231,76,60,0.2);
+    border-radius: 6px;
+    font-size: 12px;
+    color: #ff6b6b;
+    margin: 0 12px 8px;
+  }
+
+  /* ─────────────────────────────────────────
+     MÓDULO 2 — DISPONIBILIDAD
+  ───────────────────────────────────────── */
+  .disp-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+  }
+
+  .disp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .disp-table th {
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing:.1em;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+  }
+
+  .disp-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    vertical-align: middle;
+  }
+
+  .disp-table tr:hover td { background: var(--surface2); }
+
+  .semaforo {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+
+  .sku-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .num-cell {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 15px;
+    text-align: right;
+  }
+
+  .bar-cell { width: 160px; }
+
+  .mini-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+  }
+
+  /* ─────────────────────────────────────────
+     MÓDULO 3 — INSUMOS
+  ───────────────────────────────────────── */
+  .insumos-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .insumos-filter {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 14px;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--surface3);
+    color: var(--text);
+    border-color: var(--border2);
+  }
+
+  .filter-btn.f-red.active { border-color: rgba(231,76,60,.5); color: var(--red); }
+  .filter-btn.f-amber.active { border-color: rgba(243,156,18,.5); color: var(--amber); }
+  .filter-btn.f-green.active { border-color: rgba(46,204,113,.5); color: var(--green); }
+
+  .insumos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .insumo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border-left: 3px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .insumo-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 14px;
+    line-height: 1.2;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .insumo-tipo {
+    font-size: 10px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing:.08em;
+  }
+
+  .insumo-stock {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 22px;
+    line-height: 1; margin-top: 4px;
+  }
+
+  .insumo-minimo {
+    font-size: 11px; color: var(--text-dim);
+  }
+
+  /* ─────────────────────────────────────────
+     MÓDULO 4 — KPIs
+  ───────────────────────────────────────── */
+  .kpis-wrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .kpi-card-label {
+    font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing:.1em;
+  }
+
+  .kpi-card-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 44px; line-height:1;
+  }
+
+  .kpi-card-sub {
+    font-size: 12px; color: var(--text-dim);
+  }
+
+  .por-estacion-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 14px;
+    color: var(--text-mid); text-transform: uppercase; letter-spacing:.05em;
+    margin-bottom: 8px;
+  }
+
+  .est-kpi-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 80px 80px 100px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+
+  .est-kpi-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 14px;
+  }
+
+  .est-kpi-bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .est-kpi-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: var(--accent);
+    transition: width .8s ease;
+  }
+
+  .est-kpi-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 15px;
+    text-align: right;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-area">
+    <div class="logo-box">GE</div>
+    <div>
+      <div class="company">Grupo Erlo</div>
+      <div class="page-sub">Vista Supervisor</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('gantt')">① Cadenas</button>
+    <button class="tab-btn" onclick="switchTab('disp')">② Disponibilidad</button>
+    <button class="tab-btn" onclick="switchTab('insumos')">③ Insumos</button>
+    <button class="tab-btn" onclick="switchTab('kpis')">④ KPIs</button>
+  </div>
+
+  <div class="header-right">
+    <span class="status-dot" id="statusDot"></span>
+    <div class="clock" id="clock">00:00</div>
+    <button class="refresh-btn" onclick="fetchAll()">↻ Actualizar</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ── TAB 1: GANTT ── -->
+  <div class="tab-panel active" id="panel-gantt">
+    <div class="panel-header">
+      <div class="panel-title">Monitor de cadenas de producción</div>
+      <div style="font-size:12px;color:var(--text-dim)" id="ganttUpdated"></div>
+    </div>
+    <div class="gantt-wrap" id="ganttWrap">
+      <div style="color:var(--text-dim);text-align:center;padding:40px">Cargando…</div>
+    </div>
+  </div>
+
+  <!-- ── TAB 2: DISPONIBILIDAD ── -->
+  <div class="tab-panel" id="panel-disp">
+    <div class="panel-header">
+      <div class="panel-title">Disponibilidad vs Pedidos</div>
+      <div style="font-size:12px;color:var(--text-dim)">Stock PT vs OCs activas por SKU</div>
+    </div>
+    <div class="disp-wrap">
+      <table class="disp-table">
+        <thead>
+          <tr>
+            <th style="width:40px"></th>
+            <th>Producto</th>
+            <th style="text-align:right">Stock PT</th>
+            <th style="text-align:right">OC pendiente</th>
+            <th style="text-align:right">Diferencia</th>
+            <th class="bar-cell">Cobertura</th>
+          </tr>
+        </thead>
+        <tbody id="dispBody">
+          <tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:40px">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── TAB 3: INSUMOS ── -->
+  <div class="tab-panel" id="panel-insumos">
+    <div class="panel-header">
+      <div class="panel-title">Inventario de insumos</div>
+      <div class="insumos-filter">
+        <button class="filter-btn f-red active" onclick="setFilter('all', this)">Todos</button>
+        <button class="filter-btn f-red" onclick="setFilter('red', this)">🔴 Sin stock</button>
+        <button class="filter-btn f-amber" onclick="setFilter('amber', this)">🟡 Bajo</button>
+        <button class="filter-btn f-green" onclick="setFilter('green', this)">🟢 OK</button>
+      </div>
+    </div>
+    <div class="insumos-wrap">
+      <div class="insumos-grid" id="insumosGrid">
+        <div style="color:var(--text-dim);padding:40px;text-align:center">Cargando…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB 4: KPIs ── -->
+  <div class="tab-panel" id="panel-kpis">
+    <div class="panel-header">
+      <div class="panel-title">KPIs de planta</div>
+      <div style="font-size:12px;color:var(--text-dim)" id="kpiDate"></div>
+    </div>
+    <div class="kpis-wrap" id="kpisWrap">
+      <div style="color:var(--text-dim);text-align:center;padding:40px">Cargando…</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const DATA_OPS  = 'https://csotoajoy.github.io/grupoerlo/ps_data.json';
+const DATA_INV  = 'https://csotoajoy.github.io/grupoerlo/ps_inventario.json';
+const REFRESH_MS = 30000;
+
+const PRIORIDAD_COLOR = {
+  'URGENTE':   '#e74c3c',
+  'A':         '#e67e22',
+  'B':         '#3498db',
+  'C':         '#2ecc71',
+  'BLOQUEADA': '#9b59b6',
+};
+
+const ESTADO_CFG = {
+  'En Producción': { color:'#2ecc71', bg:'rgba(46,204,113,.15)', border:'rgba(46,204,113,.3)' },
+  'Pausada':       { color:'#f39c12', bg:'rgba(243,156,18,.15)', border:'rgba(243,156,18,.3)' },
+  'Bloqueada':     { color:'#e74c3c', bg:'rgba(231,76,60,.15)',  border:'rgba(231,76,60,.3)'  },
+  'Pendiente':     { color:'#4a5a78', bg:'rgba(74,90,120,.12)',  border:'rgba(74,90,120,.2)'  },
+  'Completada':    { color:'#2ecc71', bg:'rgba(46,204,113,.12)', border:'rgba(46,204,113,.2)' },
+};
+
+const MAQUINAS_GANTT = [
+  'Sopladora',
+  'Inyectora 1',
+  'Inyectora 2',
+  'Inyección soplado (Ametralladora)',
+  'Maquina de Bolitas',
+  'Llenadora Roll On Grande',
+  'Llenadora Roll On Pequeño',
+  'Llenadora de Crema',
+  'Llenadora de Talco',
+  'Llenadora de Gel',
+];
+
+let opsData = null;
+let invData = null;
+let filtroInsumos = 'all';
+let activeTab = 'gantt';
+
+// ── RELOJ ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const tabs = ['gantt','disp','insumos','kpis'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + tab);
+  });
+}
+
+// ── FETCH ──
+async function fetchAll() {
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch(DATA_OPS + '?t=' + Date.now()),
+      fetch(DATA_INV + '?t=' + Date.now()),
+    ]);
+    opsData = await r1.json();
+    invData = await r2.json();
+    document.getElementById('statusDot').style.background = '#2ecc71';
+    renderAll();
+  } catch(e) {
+    document.getElementById('statusDot').style.background = '#e74c3c';
+  }
+}
+
+function renderAll() {
+  renderGantt();
+  renderDisp();
+  renderInsumos();
+  renderKPIs();
+}
+
+// ─────────────────────────────────────────
+// MÓDULO 1 — GANTT
+// ─────────────────────────────────────────
+function renderGantt() {
+  if (!opsData) return;
+  const ops = opsData.ops || [];
+  const wrap = document.getElementById('ganttWrap');
+
+  if (opsData.actualizado) {
+    const d = new Date(opsData.actualizado);
+    document.getElementById('ganttUpdated').textContent =
+      'Actualizado: ' + d.toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  let html = '';
+
+  MAQUINAS_GANTT.forEach(maq => {
+    const maqOps = ops.filter(o => o.maquina === maq && o.estado !== 'Completada');
+    if (maqOps.length === 0) return;
+
+    html += `<div class="gantt-machine">
+      <div class="gantt-machine-header">
+        <div class="machine-name">${maq}</div>
+        <div class="machine-ops-count">${maqOps.length} OP${maqOps.length>1?'s':''}</div>
+      </div>
+      <div class="gantt-ops">`;
+
+    // Alerta tiempo muerto entre OPs
+    for (let i = 0; i < maqOps.length - 1; i++) {
+      const op = maqOps[i];
+      const next = maqOps[i+1];
+      if (op.fecha_fin && next.fecha_inicio) {
+        const fin  = new Date(op.fecha_fin);
+        const ini  = new Date(next.fecha_inicio);
+        const diff = (ini - fin) / 60000; // minutos
+        if (diff > 60) {
+          html += `<div class="idle-alert">⚠ Tiempo muerto: ${Math.round(diff/60)}h entre "${op.sku}" y "${next.sku}"</div>`;
+        }
+      }
+    }
+
+    maqOps.forEach(op => {
+      const pcolor = PRIORIDAD_COLOR[op.prioridad] || '#3498db';
+      const ecfg   = ESTADO_CFG[op.estado] || ESTADO_CFG['Pendiente'];
+      const inicio = op.fecha_inicio ? fmtDatetime(op.fecha_inicio) : '—';
+      const fin    = op.fecha_fin    ? fmtDatetime(op.fecha_fin)    : '—';
+
+      html += `<div class="gantt-op-row" style="border-left-color:${pcolor}">
+        <div>
+          <div class="op-sku-gantt">${op.sku || '—'}</div>
+          ${op.molde ? `<div style="font-size:11px;color:var(--text-dim);margin-top:2px">Molde: ${op.molde}</div>` : ''}
+        </div>
+        <div class="op-cell">
+          <span class="op-cell-label">Inicio</span>${inicio}
+        </div>
+        <div class="op-cell">
+          <span class="op-cell-label">Fin</span>${fin}
+        </div>
+        <div>
+          <span class="op-cell-label">Estado</span>
+          <span class="pill-sm" style="background:${ecfg.bg};color:${ecfg.color};border:1px solid ${ecfg.border}">${op.estado||'Pendiente'}</span>
+        </div>
+        <div>
+          <span class="op-cell-label">Prioridad</span>
+          <span class="pill-sm" style="background:${pcolor}18;color:${pcolor};border:1px solid ${pcolor}40">${op.prioridad}</span>
+        </div>
+        <div class="op-cell" style="text-align:right">
+          <span class="op-cell-label">Cantidad</span>
+          <strong>${formatNum(op.cantidad)}</strong>
+        </div>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  // Estaciones sin máquina definida (maquina vacío)
+  const sinMaquina = ops.filter(o =>
+    !o.maquina &&
+    ['B-Inyección Soplado','B-Maquina Bolitas','D-Llenado'].includes(o.estacion) &&
+    o.estado !== 'Completada'
+  );
+
+  if (sinMaquina.length > 0) {
+    html += `<div class="gantt-machine">
+      <div class="gantt-machine-header">
+        <div class="machine-name" style="color:var(--text-dim)">Sin máquina asignada</div>
+        <div class="machine-ops-count">${sinMaquina.length} OPs</div>
+      </div>
+      <div class="gantt-ops">`;
+    sinMaquina.forEach(op => {
+      const pcolor = PRIORIDAD_COLOR[op.prioridad] || '#3498db';
+      html += `<div class="gantt-op-row" style="border-left-color:${pcolor};opacity:.7">
+        <div class="op-sku-gantt">${op.sku}</div>
+        <div class="op-cell"><span class="op-cell-label">Estación</span>${op.estacion}</div>
+        <div></div>
+        <div></div>
+        <div>
+          <span class="pill-sm" style="background:${pcolor}18;color:${pcolor};border:1px solid ${pcolor}40">${op.prioridad}</span>
+        </div>
+        <div class="op-cell" style="text-align:right"><strong>${formatNum(op.cantidad)}</strong></div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (!html) html = '<div class="gantt-empty">No hay órdenes de producción activas en planta.</div>';
+  wrap.innerHTML = html;
+}
+
+// ─────────────────────────────────────────
+// MÓDULO 2 — DISPONIBILIDAD
+// ─────────────────────────────────────────
+function renderDisp() {
+  if (!opsData || !invData) return;
+  const ops = opsData.ops || [];
+  const pt  = (invData.invPT || []);
+
+  // Construir mapa OC pendiente por código
+  const ocMap = {};
+  ops.filter(o => o.estado !== 'Completada').forEach(op => {
+    // stockPT es el stock, unds_meta es la meta de la OP
+    // Para disponibilidad usamos el campo código del inventario
+  });
+
+  // Cruzar inventario PT con OPs activas
+  const rows = pt.map(item => {
+    const codigo = item.codigo || item.code || '';
+    const stock  = Math.max(0, Number(item.unds) || 0);
+    // Buscar OPs activas para este SKU/código
+    const opsActivas = ops.filter(o =>
+      o.estado !== 'Completada' &&
+      (o.sku === item.descripcion || o.sku === codigo)
+    );
+    const ocPendiente = opsActivas.reduce((s, o) => s + (Number(o.cantidad) || 0), 0);
+    const diff = stock - ocPendiente;
+    return { codigo, nombre: item.descripcion || codigo, stock, ocPendiente, diff };
+  }).filter(r => r.ocPendiente > 0 || r.stock > 0)
+    .sort((a,b) => a.diff - b.diff); // primero los más críticos
+
+  const tbody = document.getElementById('dispBody');
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:40px">Sin datos de inventario disponibles.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => {
+    let color, semColor;
+    if (r.stock <= 0)             { color = '#e74c3c'; semColor = '#e74c3c'; }
+    else if (r.diff < 0)          { color = '#e74c3c'; semColor = '#e74c3c'; }
+    else if (r.diff < r.ocPendiente * .2) { color = '#f39c12'; semColor = '#f39c12'; }
+    else                           { color = '#2ecc71'; semColor = '#2ecc71'; }
+
+    const pct = r.ocPendiente > 0 ? Math.min(100, Math.round((r.stock / r.ocPendiente) * 100)) : 100;
+    const barColor = pct >= 100 ? '#2ecc71' : pct >= 50 ? '#f39c12' : '#e74c3c';
+
+    return `<tr>
+      <td><span class="semaforo" style="background:${semColor}"></span></td>
+      <td>
+        <div class="sku-name">${r.nombre}</div>
+        ${r.codigo ? `<div style="font-size:11px;color:var(--text-dim)">${r.codigo}</div>` : ''}
+      </td>
+      <td class="num-cell" style="color:${color}">${formatNum(r.stock)}</td>
+      <td class="num-cell">${formatNum(r.ocPendiente)}</td>
+      <td class="num-cell" style="color:${r.diff >= 0 ? '#2ecc71' : '#e74c3c'}">${r.diff >= 0 ? '+' : ''}${formatNum(r.diff)}</td>
+      <td class="bar-cell">
+        <div style="font-size:11px;color:${barColor};margin-bottom:3px;text-align:right">${pct}%</div>
+        <div class="mini-bar-track">
+          <div class="mini-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────
+// MÓDULO 3 — INSUMOS
+// ─────────────────────────────────────────
+function setFilter(f, btn) {
+  filtroInsumos = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderInsumos();
+}
+
+function renderInsumos() {
+  if (!invData) return;
+  const skus = invData.invSKU || [];
+  const grid = document.getElementById('insumosGrid');
+
+  const items = skus.map(s => {
+    const unds   = Number(s.unds) || 0;
+    const minimo = Number(s.minimo) || 0;
+    let nivel;
+    if (unds <= 0)            nivel = 'red';
+    else if (unds <= minimo)  nivel = 'amber';
+    else                      nivel = 'green';
+    return { ...s, unds, minimo, nivel };
+  }).filter(s => filtroInsumos === 'all' || s.nivel === filtroInsumos)
+    .sort((a,b) => {
+      const order = { red:0, amber:1, green:2 };
+      return order[a.nivel] - order[b.nivel];
+    });
+
+  if (items.length === 0) {
+    grid.innerHTML = '<div style="color:var(--text-dim);padding:40px;text-align:center">Sin insumos en esta categoría.</div>';
+    return;
+  }
+
+  const colores = { red: '#e74c3c', amber: '#f39c12', green: '#2ecc71' };
+
+  grid.innerHTML = items.map(s => {
+    const color = colores[s.nivel];
+    return `<div class="insumo-card" style="border-left-color:${color}">
+      <div class="insumo-tipo">${s.tipoSKU || s.tipo || '—'} · ${s.status || ''}</div>
+      <div class="insumo-name">${s.titulo || s.descripcion || '—'}</div>
+      <div class="insumo-stock" style="color:${color}">${formatNum(s.unds)}</div>
+      <div class="insumo-minimo">Mínimo: ${formatNum(s.minimo)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────
+// MÓDULO 4 — KPIs
+// ─────────────────────────────────────────
+function renderKPIs() {
+  if (!opsData) return;
+  const ops = opsData.ops || [];
+  const wrap = document.getElementById('kpisWrap');
+
+  const hoy = new Date().toDateString();
+  document.getElementById('kpiDate').textContent = new Date().toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'});
+
+  const activas     = ops.filter(o => o.estado === 'En Producción').length;
+  const completadas = ops.filter(o => o.estado === 'Completada').length;
+  const bloqueadas  = ops.filter(o => o.prioridad === 'BLOQUEADA').length;
+  const total       = ops.length;
+  const eficiencia  = total > 0 ? Math.round((completadas / total) * 100) : 0;
+  const unidadesHoy = ops.filter(o => o.estado === 'Completada')
+    .reduce((s,o) => s + (Number(o.cantidad)||0), 0);
+
+  // Por estación
+  const estMap = {};
+  ops.forEach(op => {
+    if (!op.estacion) return;
+    if (!estMap[op.estacion]) estMap[op.estacion] = { total:0, completadas:0, activas:0, unidades:0 };
+    estMap[op.estacion].total++;
+    if (op.estado === 'En Producción') estMap[op.estacion].activas++;
+    if (op.estado === 'Completada') {
+      estMap[op.estacion].completadas++;
+      estMap[op.estacion].unidades += Number(op.cantidad)||0;
+    }
+  });
+
+  const maxUnd = Math.max(...Object.values(estMap).map(e => e.unidades), 1);
+
+  let html = `
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-card-label">Estaciones activas</div>
+        <div class="kpi-card-val" style="color:#2ecc71">${activas}</div>
+        <div class="kpi-card-sub">de ${Object.keys(estMap).length} estaciones con OPs</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-label">OPs completadas</div>
+        <div class="kpi-card-val" style="color:#3498db">${completadas}</div>
+        <div class="kpi-card-sub">de ${total} órdenes totales</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-label">OPs bloqueadas</div>
+        <div class="kpi-card-val" style="color:${bloqueadas>0?'#e74c3c':'#2ecc71'}">${bloqueadas}</div>
+        <div class="kpi-card-sub">${bloqueadas > 0 ? 'Requieren atención' : 'Sin bloqueos'}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-card-label">Eficiencia global</div>
+        <div class="kpi-card-val" style="color:${eficiencia>=70?'#2ecc71':eficiencia>=40?'#f39c12':'#e74c3c'}">${eficiencia}%</div>
+        <div class="kpi-card-sub">OPs completadas / total</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="por-estacion-title">Rendimiento por estación</div>
+      ${Object.entries(estMap).sort((a,b) => b[1].unidades - a[1].unidades).map(([est, d]) => {
+        const pct = Math.round((d.unidades / maxUnd) * 100);
+        const ef  = d.total > 0 ? Math.round((d.completadas / d.total) * 100) : 0;
+        return `<div class="est-kpi-row">
+          <div class="est-kpi-name">${est}</div>
+          <div>
+            <div class="est-kpi-bar-track">
+              <div class="est-kpi-bar-fill" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <div class="est-kpi-num" style="color:#3498db">${d.activas > 0 ? '🟢' : '⚫'} ${d.activas}</div>
+          <div class="est-kpi-num">${d.total} OPs</div>
+          <div class="est-kpi-num" style="color:${ef>=70?'#2ecc71':ef>=40?'#f39c12':'#e74c3c'}">${ef}%</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  wrap.innerHTML = html;
+}
+
+// ── UTILS ──
+function formatNum(n) {
+  if (!n && n !== 0) return '—';
+  return Number(n).toLocaleString('es-CR');
+}
+
+function fmtDatetime(str) {
+  if (!str) return '—';
+  const d = new Date(str);
+  if (isNaN(d)) return str;
+  return d.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit'}) + ' ' +
+         d.toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});
+}
+
+// ── BOOT ──
+updateClock();
+setInterval(updateClock, 1000);
+fetchAll();
+setInterval(fetchAll, REFRESH_MS);
+</script>
+</body>
+</html>
