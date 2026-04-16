@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recepción — Grupo Erlo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a0f;
+    --surface: #0d1420;
+    --surface2: #121b28;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(255,255,255,0.12);
+    --text: #eef2ff;
+    --text-dim: #5a6a88;
+    --text-mid: #8a9ab8;
+    --green: #2ecc71;
+    --amber: #f39c12;
+    --red: #e74c3c;
+    --blue: #3498db;
+    --purple: #9b59b6;
+    --glow-green: rgba(46,204,113,0.2);
+    --glow-amber: rgba(243,156,18,0.2);
+    --glow-red: rgba(231,76,60,0.2);
+    --glow-blue: rgba(52,152,219,0.2);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(8px,1.2vh,16px) clamp(16px,2vw,32px);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px,1.5vw,18px);
+  }
+
+  .logo-box {
+    width: clamp(32px,3.5vw,48px);
+    height: clamp(32px,3.5vw,48px);
+    background: linear-gradient(135deg,#1a3a6e,#0d2244);
+    border: 1px solid rgba(0,160,255,0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(12px,1.8vw,20px);
+    color: #4af;
+  }
+
+  .company-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(13px,1.6vw,20px);
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .page-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(11px,1.3vw,17px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* KPIs header */
+  .header-kpis {
+    display: flex;
+    gap: clamp(16px,3vw,48px);
+    align-items: center;
+  }
+
+  .kpi {
+    text-align: center;
+  }
+
+  .kpi-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(20px,3vw,40px);
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .kpi-val.green { color: var(--green); }
+  .kpi-val.amber { color: var(--amber); }
+  .kpi-val.red   { color: var(--red); }
+
+  .kpi-label {
+    font-size: clamp(8px,0.9vw,11px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .kpi-divider {
+    width: 1px;
+    height: clamp(24px,3vh,40px);
+    background: var(--border);
+  }
+
+  /* reloj */
+  .clock-area { text-align: right; }
+  .clock {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px,3vw,40px);
+    line-height: 1;
+  }
+  .date {
+    font-size: clamp(9px,1vw,12px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ALERTAS ── */
+  .alertas-bar {
+    display: flex;
+    gap: 8px;
+    padding: clamp(4px,0.8vh,10px) clamp(16px,2vw,32px);
+    background: rgba(231,76,60,0.08);
+    border-bottom: 1px solid rgba(231,76,60,0.15);
+    flex-shrink: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .alertas-bar.hidden { display: none; }
+
+  .alerta-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(231,76,60,0.15);
+    border: 1px solid rgba(231,76,60,0.3);
+    border-radius: 100px;
+    padding: clamp(3px,0.5vh,6px) clamp(8px,1vw,14px);
+    font-size: clamp(9px,1vw,13px);
+    color: #ff6b6b;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .alerta-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* ── GRID ESTACIONES ── */
+  .grid-wrap {
+    flex: 1;
+    padding: clamp(8px,1.2vh,16px) clamp(16px,2vw,28px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px,1.2vh,14px);
+  }
+
+  .estaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: clamp(8px,1.2vw,16px);
+    flex: 1;
+  }
+
+  /* tarjeta grande: TV1 ocupa 2 columnas */
+  .card-large { grid-column: span 2; }
+
+  .estacion-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: clamp(10px,1.5vh,20px) clamp(12px,1.5vw,22px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .estacion-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 10px 10px 0 0;
+    background: var(--card-color, var(--border));
+  }
+
+  .card-en-produccion {
+    border-color: rgba(46,204,113,0.25);
+    box-shadow: 0 0 30px rgba(46,204,113,0.08);
+  }
+
+  .card-bloqueada {
+    border-color: rgba(231,76,60,0.3);
+    box-shadow: 0 0 30px rgba(231,76,60,0.1);
+  }
+
+  .card-sin-op {
+    border-color: var(--border);
+    opacity: 0.7;
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card-estacion-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(11px,1.2vw,17px);
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+
+  .estado-pill {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(9px,0.9vw,13px);
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card-sku {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(14px,2vw,28px);
+    line-height: 1.1;
+    color: var(--text);
+    margin: clamp(4px,0.8vh,10px) 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .card-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .card-cantidad {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(12px,1.5vw,22px);
+    color: var(--text-mid);
+  }
+
+  .card-cantidad span {
+    font-size: clamp(9px,0.9vw,13px);
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+
+  /* barra progreso mini */
+  .mini-progress {
+    margin-top: clamp(4px,0.8vh,8px);
+  }
+
+  .mini-track {
+    height: clamp(4px,0.7vh,8px);
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .mini-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1s ease;
+  }
+
+  /* sin op */
+  .sin-op-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .sin-op-icon {
+    font-size: clamp(16px,2.5vw,32px);
+    opacity: 0.2;
+  }
+
+  .sin-op-text {
+    font-size: clamp(10px,1vw,14px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── TICKER ── */
+  .ticker {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: clamp(4px,0.6vh,8px) clamp(16px,2vw,32px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .ticker-label {
+    font-size: clamp(9px,0.9vw,12px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .ticker-content {
+    font-size: clamp(9px,1vw,13px);
+    color: var(--text-mid);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+    animation: blink 2s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-area">
+    <div class="logo-box">GE</div>
+    <div>
+      <div class="company-name">Grupo Erlo</div>
+      <div class="page-title">Vista General de Planta</div>
+    </div>
+  </div>
+
+  <div class="header-kpis">
+    <div class="kpi">
+      <div class="kpi-val green" id="kpiActivas">—</div>
+      <div class="kpi-label">Activas</div>
+    </div>
+    <div class="kpi-divider"></div>
+    <div class="kpi">
+      <div class="kpi-val" id="kpiTotal">—</div>
+      <div class="kpi-label">OPs hoy</div>
+    </div>
+    <div class="kpi-divider"></div>
+    <div class="kpi">
+      <div class="kpi-val amber" id="kpiBloqueadas">—</div>
+      <div class="kpi-label">Bloqueadas</div>
+    </div>
+    <div class="kpi-divider"></div>
+    <div class="kpi">
+      <div class="kpi-val" id="kpiCompletadas">—</div>
+      <div class="kpi-label">Completadas</div>
+    </div>
+  </div>
+
+  <div class="clock-area">
+    <div class="clock" id="clock">00:00</div>
+    <div class="date" id="dateLabel">—</div>
+  </div>
+</div>
+
+<!-- ALERTAS -->
+<div class="alertas-bar hidden" id="alertasBar"></div>
+
+<!-- GRID -->
+<div class="grid-wrap">
+  <div class="estaciones-grid" id="estacionesGrid"></div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <span class="status-dot" id="statusDot"></span>
+  <span class="ticker-label">Estado</span>
+  <span class="ticker-content" id="tickerContent">Cargando datos…</span>
+</div>
+
+<script>
+const DATA_URL = 'https://csotoajoy.github.io/grupoerlo/ps_data.json';
+const REFRESH_MS = 30000;
+
+// Estaciones que se muestran en recepción, en orden
+const ESTACIONES_TV = [
+  { id: 'B-Inyección Soplado',       short: 'Inyección / Soplado',  large: true },
+  { id: 'C-Etiquetado y Serigrafía', short: 'Etiquetado',           large: false },
+  { id: 'C-Armar Tapas',             short: 'Armar Tapas',          large: false },
+  { id: 'D-Llenado',                 short: 'Llenado',              large: false },
+  { id: 'E-Alisto',                  short: 'Alisto',               large: false },
+  { id: 'B-Maquina Bolitas',         short: 'Bolitas',              large: false },
+  { id: 'A-Preparar Resina',         short: 'Preparar Resina',      large: false },
+];
+
+const PRIORIDAD_COLOR = {
+  'URGENTE':   '#ff4444',
+  'A':         '#ff8c00',
+  'B':         '#3498db',
+  'C':         '#2ecc71',
+  'BLOQUEADA': '#cc44ff',
+};
+
+const ESTADO_CFG = {
+  'En Producción': { color: '#2ecc71', bg: 'rgba(46,204,113,0.15)', border: 'rgba(46,204,113,0.35)' },
+  'Pausada':       { color: '#f39c12', bg: 'rgba(243,156,18,0.15)', border: 'rgba(243,156,18,0.35)' },
+  'Bloqueada':     { color: '#e74c3c', bg: 'rgba(231,76,60,0.15)',  border: 'rgba(231,76,60,0.35)' },
+  'Pendiente':     { color: '#5a6a88', bg: 'rgba(90,106,136,0.12)', border: 'rgba(90,106,136,0.25)' },
+};
+
+let data = null;
+
+// ── RELOJ ──
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}`;
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const now2 = new Date();
+  document.getElementById('dateLabel').textContent =
+    `${dias[now2.getDay()]} ${now2.getDate()} ${meses[now2.getMonth()]} ${now2.getFullYear()}`;
+}
+
+// ── FETCH ──
+async function fetchData() {
+  try {
+    const res = await fetch(DATA_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    data = await res.json();
+    document.getElementById('statusDot').style.background = '#2ecc71';
+    render();
+  } catch(e) {
+    document.getElementById('statusDot').style.background = '#e74c3c';
+    document.getElementById('tickerContent').textContent = 'Sin conexión — reintentando…';
+  }
+}
+
+// ── RENDER ──
+function render() {
+  if (!data) return;
+  const ops = data.ops || [];
+
+  // KPIs globales
+  const activas     = ops.filter(o => o.estado === 'En Producción').length;
+  const bloqueadas  = ops.filter(o => o.prioridad === 'BLOQUEADA').length;
+  const completadas = ops.filter(o => o.estado === 'Completada').length;
+
+  document.getElementById('kpiActivas').textContent     = activas;
+  document.getElementById('kpiTotal').textContent       = ops.length;
+  document.getElementById('kpiBloqueadas').textContent  = bloqueadas;
+  document.getElementById('kpiBloqueadas').className    = 'kpi-val ' + (bloqueadas > 0 ? 'red' : '');
+  document.getElementById('kpiCompletadas').textContent = completadas;
+
+  // Alertas
+  const alertas = [];
+  if (bloqueadas > 0) alertas.push(`${bloqueadas} OP${bloqueadas>1?'s':''} bloqueada${bloqueadas>1?'s':''}`);
+
+  ESTACIONES_TV.forEach(est => {
+    const estOps = ops.filter(o => o.estacion === est.id && o.estado !== 'Completada');
+    if (estOps.length === 0) alertas.push(`Sin orden: ${est.short}`);
+  });
+
+  const alertasBar = document.getElementById('alertasBar');
+  if (alertas.length > 0) {
+    alertasBar.classList.remove('hidden');
+    alertasBar.innerHTML = alertas.map(a =>
+      `<div class="alerta-chip"><div class="alerta-dot"></div>${a}</div>`
+    ).join('');
+  } else {
+    alertasBar.classList.add('hidden');
+  }
+
+  // Ticker
+  const tickerParts = [];
+  if (data.actualizado) {
+    const d = new Date(data.actualizado);
+    tickerParts.push(`Actualizado: ${d.toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'})}`);
+  }
+  ops.filter(o => o.estado === 'En Producción').forEach(o => {
+    tickerParts.push(`${o.estacion}: ${o.sku}`);
+  });
+  document.getElementById('tickerContent').textContent = tickerParts.join('   ·   ') || 'Sin actividad en planta';
+
+  // Grid estaciones
+  const grid = document.getElementById('estacionesGrid');
+  grid.innerHTML = '';
+
+  ESTACIONES_TV.forEach(est => {
+    const estOps = ops.filter(o => o.estacion === est.id && o.estado !== 'Completada');
+    const activa = estOps.find(o => o.estado === 'En Producción') ||
+                   estOps.find(o => o.estado === 'Pausada') ||
+                   estOps[0] || null;
+
+    const card = document.createElement('div');
+    card.className = 'estacion-card' + (est.large ? ' card-large' : '');
+
+    if (!activa) {
+      card.classList.add('card-sin-op');
+      card.style.setProperty('--card-color', '#1a2535');
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-estacion-name">${est.short}</div>
+          <div class="estado-pill" style="background:rgba(90,106,136,0.12);color:#5a6a88;border:1px solid rgba(90,106,136,0.2)">Sin OP</div>
+        </div>
+        <div class="sin-op-card">
+          <div class="sin-op-icon">◯</div>
+          <div class="sin-op-text">Sin orden asignada</div>
+        </div>
+      `;
+    } else {
+      const esBloqueada = activa.prioridad === 'BLOQUEADA';
+      const estadoCfg = ESTADO_CFG[activa.estado] || ESTADO_CFG['Pendiente'];
+      const pcolor = PRIORIDAD_COLOR[activa.prioridad] || '#3498db';
+      const pct = activa.unds_meta > 0
+        ? Math.min(100, Math.round((activa.stockPT / activa.unds_meta) * 100))
+        : 0;
+
+      card.classList.add(esBloqueada ? 'card-bloqueada' : activa.estado === 'En Producción' ? 'card-en-produccion' : '');
+      card.style.setProperty('--card-color', pcolor);
+
+      card.innerHTML = `
+        <div>
+          <div class="card-top">
+            <div class="card-estacion-name">${est.short}</div>
+            <div class="estado-pill" style="background:${estadoCfg.bg};color:${estadoCfg.color};border:1px solid ${estadoCfg.border}">
+              ${activa.estado || 'Pendiente'}
+            </div>
+          </div>
+          <div class="card-sku">${activa.sku || '—'}</div>
+        </div>
+        <div>
+          ${activa.unds_meta > 0 ? `
+          <div class="mini-progress">
+            <div class="mini-track">
+              <div class="mini-fill" style="width:${pct}%;background:${pcolor}"></div>
+            </div>
+          </div>` : ''}
+          <div class="card-bottom" style="margin-top:clamp(4px,0.8vh,10px)">
+            <div class="card-cantidad">
+              ${formatNum(activa.cantidad)} <span>uds</span>
+            </div>
+            <div class="estado-pill" style="background:${PRIORIDAD_COLOR[activa.prioridad]}18;color:${pcolor};border:1px solid ${pcolor}40;font-size:clamp(8px,0.8vw,12px)">
+              ${activa.prioridad}
+            </div>
+          </div>
+          ${estOps.length > 1 ? `<div style="font-size:clamp(8px,0.8vw,11px);color:var(--text-dim);margin-top:4px">+${estOps.length-1} en cola</div>` : ''}
+        </div>
+      `;
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+function formatNum(n) {
+  if (!n && n !== 0) return '—';
+  return Number(n).toLocaleString('es-CR');
+}
+
+// ── BOOT ──
+updateClock();
+setInterval(updateClock, 1000);
+fetchData();
+setInterval(fetchData, REFRESH_MS);
+</script>
+</body>
+</html>
