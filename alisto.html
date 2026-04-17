@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Alisto — Grupo Erlo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#070b11; --surface:#0e1520; --surface2:#131d2c; --surface3:#182030;
+    --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+    --text:#eef2ff; --text-dim:#4a5a78; --text-mid:#8090b0;
+    --green:#2ecc71; --amber:#f39c12; --red:#e74c3c;
+    --blue:#3498db; --purple:#9b59b6; --accent:#0080ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+  /* ── HEADER ── */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;gap:16px;}
+  .logo-area{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .logo-box{width:40px;height:40px;background:linear-gradient(135deg,#1a3a6e,#0d2244);border:1px solid rgba(0,128,255,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:#4af;}
+  .company{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--text-mid);text-transform:uppercase;letter-spacing:.05em;}
+  .page-sub{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;}
+  .header-right{display:flex;align-items:center;gap:12px;}
+  .clock{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;color:var(--text-mid);}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--text-dim);}
+  .status-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green);}
+  .refresh-btn{padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:6px;color:var(--text-mid);font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;transition:.2s;}
+  .refresh-btn:hover{background:rgba(255,255,255,0.1);color:var(--text);}
+
+  /* ── MODO TOGGLE ── */
+  .modo-toggle{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;}
+  .modo-btn{padding:6px 16px;border:none;border-radius:6px;background:transparent;color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:.05em;transition:.2s;text-transform:uppercase;}
+  .modo-btn.active{background:var(--accent);color:#fff;}
+
+  /* ── FILTROS ── */
+  .toolbar{display:flex;align-items:center;gap:10px;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface2);flex-shrink:0;flex-wrap:wrap;}
+  .filter-btn{padding:5px 12px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text-mid);font-family:'Barlow',sans-serif;font-size:11px;cursor:pointer;transition:.2s;text-transform:uppercase;letter-spacing:.05em;}
+  .filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,128,255,0.1);}
+  .filter-btn.f-red.active{border-color:var(--red);color:var(--red);background:rgba(231,76,60,0.1);}
+  .filter-btn.f-amber.active{border-color:var(--amber);color:var(--amber);background:rgba(243,156,18,0.1);}
+  .filter-btn.f-green.active{border-color:var(--green);color:var(--green);background:rgba(46,204,113,0.1);}
+  .filter-btn.f-purple.active{border-color:var(--purple);color:var(--purple);background:rgba(155,89,182,0.1);}
+  .search-box{padding:5px 12px;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'Barlow',sans-serif;font-size:12px;width:200px;}
+  .search-box::placeholder{color:var(--text-dim);}
+  .search-box:focus{outline:none;border-color:var(--accent);}
+  .toolbar-count{margin-left:auto;font-size:12px;color:var(--text-dim);}
+
+  /* ── CONTENIDO ── */
+  .content{flex:1;overflow-y:auto;padding:20px 24px;}
+
+  /* ── MODO RESUMEN — CARDS DE OC ── */
+  .oc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px;}
+
+  .oc-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s;}
+  .oc-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+  .oc-card.urgente{border-left:3px solid var(--red);}
+  .oc-card.a{border-left:3px solid var(--amber);}
+  .oc-card.ok{border-left:3px solid var(--green);}
+  .oc-card.parcial{border-left:3px solid var(--purple);}
+
+  .oc-card-header{padding:14px 16px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .oc-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--text);}
+  .oc-cliente{font-size:11px;color:var(--text-mid);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;}
+
+  .oc-status-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;flex-shrink:0;}
+  .badge-alisto{background:rgba(243,156,18,0.15);color:var(--amber);border:1px solid rgba(243,156,18,0.3);}
+  .badge-parcial{background:rgba(155,89,182,0.15);color:var(--purple);border:1px solid rgba(155,89,182,0.3);}
+  .badge-lista{background:rgba(46,204,113,0.15);color:var(--green);border:1px solid rgba(46,204,113,0.3);}
+  .badge-bloqueada{background:rgba(231,76,60,0.15);color:var(--red);border:1px solid rgba(231,76,60,0.3);}
+
+  .oc-fecha-row{padding:0 16px 10px;display:flex;align-items:center;gap:8px;}
+  .oc-fecha-label{font-size:11px;color:var(--text-dim);}
+  .oc-fecha-val{font-size:11px;font-weight:600;}
+  .oc-fecha-val.vencida{color:var(--red);}
+  .oc-fecha-val.urgente{color:var(--amber);}
+  .oc-fecha-val.ok{color:var(--green);}
+  .dias-badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+  .dias-badge.vencida{background:rgba(231,76,60,0.15);color:var(--red);}
+  .dias-badge.urgente{background:rgba(243,156,18,0.15);color:var(--amber);}
+  .dias-badge.ok{background:rgba(46,204,113,0.15);color:var(--green);}
+
+  /* BARRA DE PROGRESO OC */
+  .oc-progress-wrap{padding:0 16px 14px;}
+  .oc-progress-labels{display:flex;justify-content:space-between;margin-bottom:5px;}
+  .oc-progress-pct{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;}
+  .oc-progress-nums{font-size:11px;color:var(--text-dim);}
+  .progress-track{height:6px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;}
+  .progress-bar{height:100%;border-radius:100px;transition:width .4s ease;}
+  .pb-green{background:var(--green);}
+  .pb-amber{background:var(--amber);}
+  .pb-red{background:var(--red);}
+  .pb-purple{background:var(--purple);}
+
+  .oc-lineas-row{padding:0 16px 12px;display:flex;gap:14px;flex-wrap:wrap;}
+  .oc-linea-stat{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);}
+  .dot-stat{width:7px;height:7px;border-radius:50%;}
+
+  /* ALERTA PRODUCCIÓN */
+  .oc-alerta{margin:0 16px 12px;padding:7px 10px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:6px;font-size:11px;color:var(--red);display:flex;align-items:center;gap:6px;}
+
+  /* ── MODO DETALLE — VISTA OC INDIVIDUAL ── */
+  .detalle-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+  .btn-volver{padding:7px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:6px;color:var(--text-mid);font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;}
+  .btn-volver:hover{border-color:var(--accent);color:var(--accent);}
+  .detalle-oc-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;}
+  .detalle-cliente{font-size:13px;color:var(--text-mid);margin-top:2px;}
+
+  .detalle-resumen{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+  .resumen-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .resumen-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;}
+  .resumen-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;line-height:1;}
+
+  /* LÍNEAS DE DETALLE */
+  .lineas-list{display:flex;flex-direction:column;gap:10px;}
+
+  .linea-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .linea-card.disponible{border-left:3px solid var(--green);}
+  .linea-card.parcial{border-left:3px solid var(--purple);}
+  .linea-card.bloqueada{border-left:3px solid var(--red);}
+  .linea-card.no-entregado{border-left:3px solid var(--text-dim);opacity:.6;}
+  .linea-card.entregado{border-left:3px solid var(--green);opacity:.5;}
+
+  .linea-body{padding:14px 16px;}
+  .linea-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px;}
+  .linea-producto{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;line-height:1.2;}
+  .linea-codigo{font-size:11px;color:var(--text-dim);margin-top:2px;}
+
+  .linea-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+  .linea-num-item{display:flex;flex-direction:column;gap:2px;}
+  .linea-num-label{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;}
+  .linea-num-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;}
+  .linea-num-val.ok{color:var(--green);}
+  .linea-num-val.warn{color:var(--amber);}
+  .linea-num-val.danger{color:var(--red);}
+  .linea-num-val.muted{color:var(--text-dim);}
+
+  .linea-progress{margin-top:6px;}
+  .linea-progress-top{display:flex;justify-content:space-between;margin-bottom:4px;}
+  .linea-progress-label{font-size:10px;color:var(--text-dim);}
+  .linea-progress-pct{font-size:10px;font-weight:700;}
+
+  /* BLOQUEO POR PRODUCCIÓN */
+  .linea-bloqueo{margin-top:8px;padding:7px 10px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:6px;font-size:11px;color:var(--text-mid);display:flex;align-items:center;gap:8px;}
+  .linea-bloqueo strong{color:var(--red);}
+  .op-tag{padding:2px 8px;background:rgba(52,152,219,0.15);border:1px solid rgba(52,152,219,0.3);border-radius:4px;font-size:10px;color:var(--blue);font-weight:700;}
+
+  /* LOADER */
+  .loader{display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-dim);font-size:13px;gap:10px;}
+  .spin{width:14px;height:14px;border:2px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* EMPTY STATE */
+  .empty{text-align:center;padding:60px 20px;color:var(--text-dim);}
+  .empty-icon{font-size:40px;margin-bottom:12px;opacity:.3;}
+  .empty-text{font-size:14px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-area">
+    <div class="logo-box">GE</div>
+    <div>
+      <div class="company">Grupo Erlo</div>
+      <div class="page-sub">E-Alisto</div>
+    </div>
+  </div>
+
+  <div class="modo-toggle">
+    <button class="modo-btn active" id="btnResumen" onclick="setModo('resumen')">☰ Resumen</button>
+    <button class="modo-btn" id="btnDetalle" onclick="setModo('detalle')" id="btnDetalleOC" disabled>≡ Detalle OC</button>
+  </div>
+
+  <div class="header-right">
+    <span class="status-dot" id="statusDot"></span>
+    <div class="clock" id="clock">00:00</div>
+    <button class="refresh-btn" onclick="fetchData()">↻ Actualizar</button>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar" id="toolbar">
+  <button class="filter-btn f-red active" onclick="setFiltro('todos',this)">Todos</button>
+  <button class="filter-btn f-red" onclick="setFiltro('bloqueada',this)">🔴 Bloqueadas</button>
+  <button class="filter-btn f-amber" onclick="setFiltro('parcial',this)">🟡 Parcial</button>
+  <button class="filter-btn f-green" onclick="setFiltro('lista',this)">🟢 Listas</button>
+  <button class="filter-btn f-purple" onclick="setFiltro('alisto',this)">🟣 En proceso</button>
+  <input class="search-box" id="searchBox" placeholder="Buscar OC o cliente…" oninput="renderResumen()">
+  <span class="toolbar-count" id="toolbarCount"></span>
+</div>
+
+<!-- CONTENIDO -->
+<div class="content" id="content">
+  <div class="loader"><div class="spin"></div>Cargando datos…</div>
+</div>
+
+<script>
+const DATA_URL = 'https://csotoajoy.github.io/grupoerlo/ps_all.json';
+const REFRESH_MS = 30000;
+
+let allData = null;
+let modo = 'resumen';
+let filtro = 'todos';
+let ocSeleccionada = null;
+
+// ── RELOJ ────────────────────────────────────────────────────────────────────
+function tickClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.getHours().toString().padStart(2,'0') + ':' +
+    now.getMinutes().toString().padStart(2,'0');
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ── FETCH ────────────────────────────────────────────────────────────────────
+async function fetchData() {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'status-dot';
+  try {
+    const r = await fetch(DATA_URL + '?t=' + Date.now());
+    allData = await r.json();
+    dot.className = 'status-dot ok';
+    render();
+  } catch(e) {
+    dot.className = 'status-dot';
+    document.getElementById('content').innerHTML =
+      `<div class="loader" style="color:var(--red)">⚠ Error al cargar datos</div>`;
+  }
+}
+setInterval(fetchData, REFRESH_MS);
+
+// ── MODO ─────────────────────────────────────────────────────────────────────
+function setModo(m) {
+  modo = m;
+  document.getElementById('btnResumen').classList.toggle('active', m === 'resumen');
+  document.getElementById('btnDetalle').classList.toggle('active', m === 'detalle');
+  if (m === 'resumen') { ocSeleccionada = null; }
+  render();
+}
+
+// ── FILTRO ───────────────────────────────────────────────────────────────────
+function setFiltro(f, btn) {
+  filtro = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderResumen();
+}
+
+// ── RENDER PRINCIPAL ─────────────────────────────────────────────────────────
+function render() {
+  if (!allData) return;
+  if (modo === 'resumen' || !ocSeleccionada) {
+    renderResumen();
+  } else {
+    renderDetalle(ocSeleccionada);
+  }
+}
+
+// ── PROCESAR OCs ─────────────────────────────────────────────────────────────
+function procesarOCs() {
+  const ocs_raw = allData.ordenes_compra || [];
+  const inv_pt  = allData.inventario_pt  || [];
+  const ordenes = allData.ordenes        || [];
+
+  // Índice stock PT por código
+  const stockIdx = {};
+  inv_pt.forEach(p => { stockIdx[p.codigo] = parseFloat(p.unds) || 0; });
+
+  // Índice OPs en producción por SKU código
+  const opsIdx = {};
+  ordenes.forEach(op => {
+    if (op.estado === 'En Producción' || op.estado === 'Pendiente') {
+      const cod = (op.sku || '').split(' ')[0];
+      if (!opsIdx[cod]) opsIdx[cod] = [];
+      opsIdx[cod].push(op);
+    }
+  });
+
+  // Agrupar por OC
+  const ocMap = {};
+  ocs_raw.forEach(linea => {
+    const oc = linea.OC || linea.oc || '';
+    if (!oc) return;
+    // Filtrar entregados y cancelados del flujo de trabajo
+    const status = (linea.Status || linea.status || '').toLowerCase();
+    if (status === 'entregado' || status === 'cancelado') return;
+
+    if (!ocMap[oc]) {
+      ocMap[oc] = {
+        oc,
+        cliente: linea.Cliente || linea.cliente || '—',
+        codCliente: linea['Cod Cliente'] || linea.codCliente || '',
+        fechaEntrega: linea['Fecha de Entrega'] || linea.fechaEntrega || '',
+        fechaPedido: linea['Fecha de Pedido'] || linea.fechaPedido || '',
+        lineas: [],
+        totalUnds: 0,
+        totalCajas: 0,
+        entregadasUnds: 0,
+        pendienteUnds: 0,
+        volumen: 0,
+      };
+    }
+
+    const totalLinea   = parseFloat(linea['Total Unds'] || linea.cantidad || 0);
+    const entregada    = parseFloat(linea['Cantidad Entregada'] || 0);
+    const pendiente    = parseFloat(linea['Cantidad Pendiente'] || (status === 'parcial' ? totalLinea - entregada : totalLinea));
+    const cajas        = parseFloat(linea['Total Cajas'] || linea.cajas || 0);
+    const vol          = parseFloat(linea['Peso Volumetrico'] || linea.volumen || 0);
+    const codigo       = linea.Code || linea.codigo || '';
+    const stockDisp    = stockIdx[codigo] || 0;
+    const opsEnProd    = opsIdx[codigo] || [];
+    const faltaStock   = pendiente > stockDisp;
+
+    // Estado de la línea
+    let estadoLinea = 'disponible';
+    if (status === 'no entregado') estadoLinea = 'no-entregado';
+    else if (status === 'parcial') estadoLinea = 'parcial';
+    else if (faltaStock && pendiente > 0) estadoLinea = 'bloqueada';
+    else if (pendiente <= 0) estadoLinea = 'entregado';
+
+    ocMap[oc].lineas.push({
+      producto: linea.Producto || linea.producto || '—',
+      codigo,
+      status,
+      totalUnds: totalLinea,
+      entregada,
+      pendiente,
+      cajas,
+      stockDisp,
+      faltaStock,
+      opsEnProd,
+      estadoLinea,
+      vol,
+    });
+
+    ocMap[oc].totalUnds    += totalLinea;
+    ocMap[oc].totalCajas   += cajas;
+    ocMap[oc].entregadasUnds += entregada;
+    ocMap[oc].pendienteUnds  += pendiente;
+    ocMap[oc].volumen        += vol;
+  });
+
+  // Estado global de cada OC
+  const hoy = new Date();
+  return Object.values(ocMap).map(oc => {
+    const lineas = oc.lineas;
+    const nBloq  = lineas.filter(l => l.estadoLinea === 'bloqueada').length;
+    const nParc  = lineas.filter(l => l.estadoLinea === 'parcial').length;
+    const nDisp  = lineas.filter(l => l.estadoLinea === 'disponible').length;
+    const nNoEnt = lineas.filter(l => l.estadoLinea === 'no-entregado').length;
+
+    let estadoOC = 'alisto';
+    if (nBloq > 0) estadoOC = 'bloqueada';
+    else if (nParc > 0) estadoOC = 'parcial';
+    else if (nDisp === lineas.length || nDisp + nNoEnt === lineas.length) estadoOC = 'lista';
+
+    // Días a vencimiento
+    let diasVenc = null;
+    let claseVenc = 'ok';
+    if (oc.fechaEntrega) {
+      const fe = new Date(oc.fechaEntrega + 'T00:00:00');
+      diasVenc = Math.round((fe - hoy) / (1000*60*60*24));
+      if (diasVenc < 0) claseVenc = 'vencida';
+      else if (diasVenc <= 3) claseVenc = 'urgente';
+      else claseVenc = 'ok';
+    }
+
+    const progreso = oc.totalUnds > 0
+      ? Math.round((oc.entregadasUnds / oc.totalUnds) * 100) : 0;
+
+    return { ...oc, estadoOC, nBloq, nParc, nDisp, nNoEnt, diasVenc, claseVenc, progreso };
+  }).sort((a,b) => {
+    const ord = {bloqueada:0, parcial:1, alisto:2, lista:3};
+    if (ord[a.estadoOC] !== ord[b.estadoOC]) return ord[a.estadoOC] - ord[b.estadoOC];
+    return (a.fechaEntrega || '').localeCompare(b.fechaEntrega || '');
+  });
+}
+
+// ── RENDER RESUMEN ────────────────────────────────────────────────────────────
+function renderResumen() {
+  if (!allData) return;
+  document.getElementById('toolbar').style.display = 'flex';
+  const ocs = procesarOCs();
+  const busq = (document.getElementById('searchBox').value || '').toLowerCase();
+
+  let filtradas = ocs.filter(oc => {
+    if (filtro !== 'todos' && oc.estadoOC !== filtro) return false;
+    if (busq && !oc.oc.toLowerCase().includes(busq) && !oc.cliente.toLowerCase().includes(busq)) return false;
+    return true;
+  });
+
+  document.getElementById('toolbarCount').textContent = `${filtradas.length} de ${ocs.length} OCs`;
+
+  if (filtradas.length === 0) {
+    document.getElementById('content').innerHTML =
+      `<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No hay OCs para este filtro</div></div>`;
+    return;
+  }
+
+  const html = `<div class="oc-grid">${filtradas.map(oc => renderOCCard(oc)).join('')}</div>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderOCCard(oc) {
+  const pbClass = oc.estadoOC === 'lista' ? 'pb-green'
+    : oc.estadoOC === 'parcial' ? 'pb-purple'
+    : oc.estadoOC === 'bloqueada' ? 'pb-red' : 'pb-amber';
+
+  const badgeClass = oc.estadoOC === 'lista' ? 'badge-lista'
+    : oc.estadoOC === 'parcial' ? 'badge-parcial'
+    : oc.estadoOC === 'bloqueada' ? 'badge-bloqueada' : 'badge-alisto';
+  const badgeText = oc.estadoOC === 'lista' ? 'Lista'
+    : oc.estadoOC === 'parcial' ? 'Parcial'
+    : oc.estadoOC === 'bloqueada' ? 'Bloqueada' : 'En proceso';
+
+  const diasTxt = oc.diasVenc === null ? '' :
+    oc.diasVenc < 0 ? `${Math.abs(oc.diasVenc)}d vencida` :
+    oc.diasVenc === 0 ? 'Hoy' : `${oc.diasVenc}d restantes`;
+
+  const alertaHtml = oc.nBloq > 0
+    ? `<div class="oc-alerta">⚠ ${oc.nBloq} línea${oc.nBloq>1?'s':''} bloqueada${oc.nBloq>1?'s':''} por producción</div>`
+    : '';
+
+  const progPct = oc.progreso;
+  const progLabel = progPct > 0 ? `${progPct}% entregado` : '';
+
+  return `
+  <div class="oc-card ${oc.estadoOC}" onclick="abrirDetalle('${oc.oc}')">
+    <div class="oc-card-header">
+      <div style="min-width:0">
+        <div class="oc-num">${oc.oc}</div>
+        <div class="oc-cliente">${oc.cliente}</div>
+      </div>
+      <span class="oc-status-badge ${badgeClass}">${badgeText}</span>
+    </div>
+    <div class="oc-fecha-row">
+      <span class="oc-fecha-label">Entrega:</span>
+      <span class="oc-fecha-val ${oc.claseVenc}">${oc.fechaEntrega || '—'}</span>
+      ${diasTxt ? `<span class="dias-badge ${oc.claseVenc}">${diasTxt}</span>` : ''}
+      <span style="margin-left:auto;font-size:11px;color:var(--text-dim)">${oc.lineas.length} líneas · ${oc.volumen.toFixed(2)} m³</span>
+    </div>
+    ${alertaHtml}
+    <div class="oc-progress-wrap">
+      <div class="oc-progress-labels">
+        <span class="oc-progress-pct" style="color:${oc.estadoOC==='lista'?'var(--green)':oc.estadoOC==='bloqueada'?'var(--red)':'var(--text-mid)'}">
+          ${oc.pendienteUnds.toLocaleString()} unds pendientes
+        </span>
+        <span class="oc-progress-nums">${oc.totalCajas.toFixed(0)} cajas · ${progLabel}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar ${pbClass}" style="width:${progPct}%"></div>
+      </div>
+    </div>
+    <div class="oc-lineas-row">
+      ${oc.nDisp>0 ? `<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--green)"></span>${oc.nDisp} listas</span>` : ''}
+      ${oc.nParc>0 ? `<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--purple)"></span>${oc.nParc} parciales</span>` : ''}
+      ${oc.nBloq>0 ? `<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--red)"></span>${oc.nBloq} bloqueadas</span>` : ''}
+      ${oc.nNoEnt>0 ? `<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--text-dim)"></span>${oc.nNoEnt} no entregadas</span>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── ABRIR DETALLE ─────────────────────────────────────────────────────────────
+function abrirDetalle(ocNum) {
+  ocSeleccionada = ocNum;
+  modo = 'detalle';
+  document.getElementById('btnResumen').classList.remove('active');
+  document.getElementById('btnDetalle').classList.add('active');
+  document.getElementById('btnDetalle').disabled = false;
+  renderDetalle(ocNum);
+}
+
+// ── RENDER DETALLE ────────────────────────────────────────────────────────────
+function renderDetalle(ocNum) {
+  if (!allData) return;
+  document.getElementById('toolbar').style.display = 'none';
+  const ocs = procesarOCs();
+  const oc  = ocs.find(o => o.oc === ocNum);
+  if (!oc) { renderResumen(); return; }
+
+  const diasTxt = oc.diasVenc === null ? '' :
+    oc.diasVenc < 0 ? `⚠ Vencida hace ${Math.abs(oc.diasVenc)} días` :
+    oc.diasVenc === 0 ? '⚡ Vence hoy' : `${oc.diasVenc} días restantes`;
+
+  const lineasHtml = oc.lineas.map(l => renderLineaCard(l)).join('');
+
+  const html = `
+  <div class="detalle-header">
+    <button class="btn-volver" onclick="volverResumen()">← Volver</button>
+    <div>
+      <div class="detalle-oc-num">${oc.oc}</div>
+      <div class="detalle-cliente">${oc.cliente} · ${diasTxt}</div>
+    </div>
+  </div>
+
+  <div class="detalle-resumen">
+    <div class="resumen-card">
+      <div class="resumen-label">Unidades pendientes</div>
+      <div class="resumen-val" style="color:${oc.nBloq>0?'var(--red)':'var(--amber)'}">${oc.pendienteUnds.toLocaleString()}</div>
+    </div>
+    <div class="resumen-card">
+      <div class="resumen-label">Total cajas</div>
+      <div class="resumen-val">${oc.totalCajas.toFixed(0)}</div>
+    </div>
+    <div class="resumen-card">
+      <div class="resumen-label">Volumen total</div>
+      <div class="resumen-val">${oc.volumen.toFixed(2)} <span style="font-size:16px;color:var(--text-mid)">m³</span></div>
+    </div>
+    <div class="resumen-card">
+      <div class="resumen-label">Líneas</div>
+      <div class="resumen-val">${oc.lineas.length} <span style="font-size:14px;color:var(--text-mid)">(${oc.nBloq} bloq)</span></div>
+    </div>
+  </div>
+
+  <div class="lineas-list">${lineasHtml}</div>`;
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderLineaCard(l) {
+  const progPct = l.totalUnds > 0 ? Math.round((l.entregada / l.totalUnds) * 100) : 0;
+  const pbClass = l.estadoLinea === 'disponible' ? 'pb-green'
+    : l.estadoLinea === 'parcial' ? 'pb-purple'
+    : l.estadoLinea === 'bloqueada' ? 'pb-red' : 'pb-amber';
+
+  const statusLabel = {
+    'disponible': '✓ Disponible',
+    'parcial': '◑ Parcial',
+    'bloqueada': '✗ Sin stock',
+    'no-entregado': '— No entregado',
+    'entregado': '✓ Entregado',
+  };
+  const statusColor = {
+    'disponible': 'var(--green)', 'parcial': 'var(--purple)',
+    'bloqueada': 'var(--red)', 'no-entregado': 'var(--text-dim)',
+    'entregado': 'var(--green)',
+  };
+
+  // Info de OP en producción si está bloqueada
+  let bloqueoHtml = '';
+  if (l.estadoLinea === 'bloqueada') {
+    if (l.opsEnProd.length > 0) {
+      const op = l.opsEnProd[0];
+      const fechaFin = op['Fecha Final'] || op.fechaFin || '';
+      const fechaStr = fechaFin ? `· Est. fin: ${fechaFin.substring(0,10)}` : '';
+      bloqueoHtml = `<div class="linea-bloqueo">
+        <strong>Falta producción</strong>
+        <span class="op-tag">${op.opCode || op['OP Code'] || 'OP pendiente'}</span>
+        <span>${op.estacion || ''} ${fechaStr}</span>
+      </div>`;
+    } else {
+      bloqueoHtml = `<div class="linea-bloqueo"><strong>Sin stock</strong> — No hay OP activa para este producto</div>`;
+    }
+  }
+
+  const progresHtml = (l.estadoLinea === 'parcial' || progPct > 0) ? `
+    <div class="linea-progress">
+      <div class="linea-progress-top">
+        <span class="linea-progress-label">Progreso de entrega</span>
+        <span class="linea-progress-pct" style="color:${statusColor[l.estadoLinea]}">${progPct}%</span>
+      </div>
+      <div class="progress-track"><div class="progress-bar ${pbClass}" style="width:${progPct}%"></div></div>
+    </div>` : '';
+
+  return `
+  <div class="linea-card ${l.estadoLinea}">
+    <div class="linea-body">
+      <div class="linea-top">
+        <div>
+          <div class="linea-producto">${l.producto}</div>
+          <div class="linea-codigo">Cód: ${l.codigo}</div>
+        </div>
+        <span style="font-size:12px;font-weight:700;color:${statusColor[l.estadoLinea]}">${statusLabel[l.estadoLinea]||''}</span>
+      </div>
+      <div class="linea-nums">
+        <div class="linea-num-item">
+          <span class="linea-num-label">Pedido</span>
+          <span class="linea-num-val">${l.totalUnds.toLocaleString()}</span>
+        </div>
+        <div class="linea-num-item">
+          <span class="linea-num-label">Stock disponible</span>
+          <span class="linea-num-val ${l.stockDisp >= l.pendiente ? 'ok' : l.stockDisp > 0 ? 'warn' : 'danger'}">${l.stockDisp.toLocaleString()}</span>
+        </div>
+        <div class="linea-num-item">
+          <span class="linea-num-label">Pendiente</span>
+          <span class="linea-num-val ${l.pendiente > 0 ? 'warn' : 'muted'}">${l.pendiente.toLocaleString()}</span>
+        </div>
+        <div class="linea-num-item">
+          <span class="linea-num-label">Cajas</span>
+          <span class="linea-num-val">${l.cajas.toFixed(0)}</span>
+        </div>
+      </div>
+      ${progresHtml}
+      ${bloqueoHtml}
+    </div>
+  </div>`;
+}
+
+// ── VOLVER ────────────────────────────────────────────────────────────────────
+function volverResumen() {
+  ocSeleccionada = null;
+  modo = 'resumen';
+  document.getElementById('btnResumen').classList.add('active');
+  document.getElementById('btnDetalle').classList.remove('active');
+  document.getElementById('btnDetalle').disabled = true;
+  document.getElementById('toolbar').style.display = 'flex';
+  renderResumen();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+fetchData();
+</script>
+</body>
+</html>
