@@ -512,6 +512,69 @@
     text-align: right;
   }
 
+  /* ── DISPONIBILIDAD CON CATEGORÍAS ── */
+  .disp-filtros {
+    display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+  }
+  .disp-cat-btn {
+    padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid var(--border2); background: transparent;
+    color: var(--text-dim); cursor: pointer; transition: .15s;
+    font-family: 'Barlow', sans-serif; text-transform: uppercase; letter-spacing: .04em;
+  }
+  .disp-cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .disp-cat-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+  .disp-wrap { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* Summary cards de categoría */
+  .disp-cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+
+  .disp-cat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: .15s;
+  }
+  .disp-cat-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .disp-cat-card.expandida { border-color: var(--accent); }
+
+  .dcc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .dcc-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; }
+  .dcc-pct { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 20px; }
+  .dcc-sub { display: flex; gap: 10px; font-size: 10px; color: var(--text-dim); margin-bottom: 6px; }
+  .dcc-track { height: 5px; background: rgba(255,255,255,.06); border-radius: 100px; overflow: hidden; }
+  .dcc-fill  { height: 100%; border-radius: 100px; transition: width .4s; }
+  .dcc-dots  { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .dcc-dot   { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Detalle expandido de una categoría */
+  .disp-detalle {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .disp-detalle-header {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px 90px 100px;
+    padding: 7px 14px; background: var(--surface3);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em;
+    gap: 8px;
+  }
+  .disp-detalle-row {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px 90px 100px;
+    padding: 8px 14px; border-bottom: 1px solid var(--border);
+    align-items: center; gap: 8px; transition: .1s;
+  }
+  .disp-detalle-row:last-child { border-bottom: none; }
+  .disp-detalle-row:hover { background: rgba(255,255,255,.02); }
+  .ddr-nombre { font-size: 12px; line-height: 1.3; }
+  .ddr-cod { font-size: 10px; color: var(--text-dim); }
+  .ddr-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; text-align: right; }
+  .ddr-bar { display: flex; align-items: center; gap: 6px; }
+  .ddr-bar-track { flex: 1; height: 4px; background: rgba(255,255,255,.06); border-radius: 100px; overflow: hidden; }
+  .ddr-bar-fill  { height: 100%; border-radius: 100px; }
+  .ddr-bar-pct   { font-size: 10px; font-weight: 700; min-width: 30px; text-align: right; }
+
   /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -562,24 +625,12 @@
   <div class="tab-panel" id="panel-disp">
     <div class="panel-header">
       <div class="panel-title">Disponibilidad vs Pedidos</div>
-      <div style="font-size:12px;color:var(--text-dim)">Stock PT vs OCs activas por SKU</div>
+      <div class="disp-filtros" id="dispFiltros">
+        <button class="disp-cat-btn active" onclick="setDispCat('TODAS',this)">Todas</button>
+      </div>
     </div>
-    <div class="disp-wrap">
-      <table class="disp-table">
-        <thead>
-          <tr>
-            <th style="width:40px"></th>
-            <th>Producto</th>
-            <th style="text-align:right">Stock PT</th>
-            <th style="text-align:right">OC pendiente</th>
-            <th style="text-align:right">Diferencia</th>
-            <th class="bar-cell">Cobertura</th>
-          </tr>
-        </thead>
-        <tbody id="dispBody">
-          <tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:40px">Cargando…</td></tr>
-        </tbody>
-      </table>
+    <div class="disp-wrap" id="dispWrap">
+      <div style="color:var(--text-dim);text-align:center;padding:40px">Cargando…</div>
     </div>
   </div>
 
@@ -615,9 +666,37 @@
 </div>
 
 <script>
-const DATA_OPS  = 'https://csotoajoy.github.io/grupoerlo/ps_data.json';
-const DATA_INV  = 'https://csotoajoy.github.io/grupoerlo/ps_inventario.json';
+const DATA_ALL   = 'https://csotoajoy.github.io/grupoerlo/ps_all.json';
 const REFRESH_MS = 30000;
+
+// ── MAPA DE CATEGORÍAS ───────────────────────────────────────────────────────
+const CATEGORIAS = {
+  'Roll On 75ml Tradicional': ['10-03','10-11','10-08','10-09','10-12','10-18','10-06','10-07','10-14','10-10','10-19','10-72','10-70','10-02','10-16','10-01'],
+  'Roll On 75ml Fino':        ['10-04','10-74','10-90','10-75','10-76','10-77','10-78','10-80','10-79','10-81','10-82','10-83','10-84','10-85','10-86','10-87','10-88','10-89','10-91','10-92','10-93','10-94','10-95','10-96'],
+  'Roll On 50ml':             ['10-21','10-30','10-26','10-32','10-28','10-22','10-23','10-24','10-25','10-33','10-31','10-27','10-73','10-71','10-29','10-34','10-35','10-20'],
+  'Bodies':                   ['80-00','80-01','80-02','80-03','80-04','80-05','80-06','80-07','80-08','80-10','80-09','80-11','80-12','80-14','80-13','80-15','80-16','80-17','80-18','80-19','80-20','80-21','80-22'],
+  'Perfumes Glamour':         ['40-12','40-11','40-14','40-16','40-19','40-18','40-15','40-10','40-13','40-17','40-09','40-20','40-21','40-23','40-22','40-26','40-25','40-24'],
+  'Perfumes':                 ['40-02','40-03','40-08','40-00'],
+  'Cremas Algamarinas':       ['30-02','30-03','30-00','30-01','30-17'],
+  'Cremas Aromas':            ['30-12','30-11','30-14','30-10','30-13','30-09'],
+  'Talco 375gr':              ['50-18','50-02','50-06','50-17','50-19','50-21','50-23','50-03','50-04','50-05'],
+  'Talco 150gr':              ['50-07','50-29','50-13','50-12','50-26','50-24','50-25','50-14','50-15','50-20','50-22','50-11','50-10'],
+  'Talco Baby 575gr':         ['50-01'],
+  'Talco Rosas':              ['50-09'],
+  'Gel':                      ['20-00','20-01','70-00'],
+  'Shampoo Baby':             ['60-00','60-01'],
+  'Shampoo Frachel':          ['60-02','60-06','60-09','60-04','60-05','60-08','60-10','60-07'],
+  'Ofertas/Tripack':          ['30-22','30-19','30-23','30-21','30-20','30-18','10-55','10-59','10-56','10-53','10-58','10-57','10-61','10-60','10-54','10-52'],
+};
+
+// Índice inverso: código → categoría
+const COD_A_CAT = {};
+Object.entries(CATEGORIAS).forEach(([cat, codigos]) => {
+  codigos.forEach(c => { COD_A_CAT[c] = cat; });
+});
+
+let dispCatActual = 'TODAS';
+let dispDetalleAbierto = null;
 
 const PRIORIDAD_COLOR = {
   'URGENTE':   '#e74c3c',
@@ -648,10 +727,11 @@ const MAQUINAS_GANTT = [
   'Llenadora de Gel',
 ];
 
-let opsData = null;
-let invData = null;
+let allData = null;
 let filtroInsumos = 'all';
 let activeTab = 'gantt';
+let dispCatActualSel = 'TODAS';
+let dispDetalleActual = null;
 
 // ── RELOJ ──
 function updateClock() {
@@ -675,12 +755,8 @@ function switchTab(tab) {
 // ── FETCH ──
 async function fetchAll() {
   try {
-    const [r1, r2] = await Promise.all([
-      fetch(DATA_OPS + '?t=' + Date.now()),
-      fetch(DATA_INV + '?t=' + Date.now()),
-    ]);
-    opsData = await r1.json();
-    invData = await r2.json();
+    const r = await fetch(DATA_ALL + '?t=' + Date.now());
+    allData = await r.json();
     document.getElementById('statusDot').style.background = '#2ecc71';
     renderAll();
   } catch(e) {
@@ -699,12 +775,12 @@ function renderAll() {
 // MÓDULO 1 — GANTT
 // ─────────────────────────────────────────
 function renderGantt() {
-  if (!opsData) return;
-  const ops = opsData.ops || [];
+  if (!allData) return;
+  const ops = allData.ordenes || [];
   const wrap = document.getElementById('ganttWrap');
 
-  if (opsData.actualizado) {
-    const d = new Date(opsData.actualizado);
+  if (allData.actualizado) {
+    const d = new Date(allData.actualizado);
     document.getElementById('ganttUpdated').textContent =
       'Actualizado: ' + d.toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit'});
   }
@@ -806,68 +882,153 @@ function renderGantt() {
 }
 
 // ─────────────────────────────────────────
-// MÓDULO 2 — DISPONIBILIDAD
+// MÓDULO 2 — DISPONIBILIDAD POR CATEGORÍAS
 // ─────────────────────────────────────────
-function renderDisp() {
-  if (!opsData || !invData) return;
-  const ops = opsData.ops || [];
-  const pt  = (invData.invPT || []);
+function setDispCat(cat, btn) {
+  dispCatActualSel = cat;
+  dispDetalleActual = null;
+  document.querySelectorAll('.disp-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDisp();
+}
 
-  // Construir mapa OC pendiente por código
-  const ocMap = {};
-  ops.filter(o => o.estado !== 'Completada').forEach(op => {
-    // stockPT es el stock, unds_meta es la meta de la OP
-    // Para disponibilidad usamos el campo código del inventario
+function toggleDispDetalle(cat) {
+  dispDetalleActual = dispDetalleActual === cat ? null : cat;
+  renderDisp();
+}
+
+function renderDisp() {
+  if (!allData) return;
+  const pt  = allData.inventario_pt  || [];
+  const ocs = allData.ordenes_compra || [];
+
+  // Índice stock PT por código
+  const stockIdx = {};
+  pt.forEach(p => { stockIdx[p.codigo] = Math.max(0, parseFloat(p.unds) || 0); });
+
+  // Demanda pendiente por código desde OCs (status != Entregado/Cancelado)
+  const demandaIdx = {};
+  ocs.forEach(oc => {
+    const st = (oc.Status || oc.status || '').toLowerCase();
+    if (st === 'entregado' || st === 'cancelado') return;
+    const cod  = oc.Code || oc.codigo || '';
+    const pend = parseFloat(oc['Cantidad Pendiente'] || oc['Total Unds'] || oc.cantidad || 0);
+    if (cod) demandaIdx[cod] = (demandaIdx[cod] || 0) + pend;
   });
 
-  // Cruzar inventario PT con OPs activas
-  const rows = pt.map(item => {
-    const codigo = item.codigo || item.code || '';
-    const stock  = Math.max(0, Number(item.unds) || 0);
-    // Buscar OPs activas para este SKU/código
-    const opsActivas = ops.filter(o =>
-      o.estado !== 'Completada' &&
-      (o.sku === item.descripcion || o.sku === codigo)
-    );
-    const ocPendiente = opsActivas.reduce((s, o) => s + (Number(o.cantidad) || 0), 0);
-    const diff = stock - ocPendiente;
-    return { codigo, nombre: item.descripcion || codigo, stock, ocPendiente, diff };
-  }).filter(r => r.ocPendiente > 0 || r.stock > 0)
-    .sort((a,b) => a.diff - b.diff); // primero los más críticos
+  // Construir datos por categoría
+  const dataCats = {};
+  Object.entries(CATEGORIAS).forEach(([cat, codigos]) => {
+    const items = codigos.map(cod => {
+      const stock   = stockIdx[cod] || 0;
+      const demanda = demandaIdx[cod] || 0;
+      const ptItem  = pt.find(p => p.codigo === cod);
+      const nombre  = ptItem ? ptItem.descripcion : cod;
+      const cobertura = demanda > 0 ? Math.min(100, Math.round((stock/demanda)*100)) : (stock > 0 ? 100 : 0);
+      return { cod, nombre, stock, demanda, cobertura, diff: stock - demanda };
+    });
 
-  const tbody = document.getElementById('dispBody');
-  if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:40px">Sin datos de inventario disponibles.</td></tr>';
-    return;
+    const conDemanda = items.filter(i => i.demanda > 0 || i.stock > 0);
+    const nTotal  = conDemanda.length || codigos.length;
+    const nOk     = items.filter(i => i.cobertura >= 100).length;
+    const nWarn   = items.filter(i => i.cobertura >= 50 && i.cobertura < 100).length;
+    const nRed    = items.filter(i => i.cobertura < 50).length;
+    const pctCat  = nTotal > 0 ? Math.round((nOk / nTotal) * 100) : 0;
+
+    dataCats[cat] = { items, nTotal, nOk, nWarn, nRed, pctCat,
+      color: pctCat >= 80 ? '#2ecc71' : pctCat >= 50 ? '#f39c12' : '#e74c3c' };
+  });
+
+  // Construir botones de filtro si no existen
+  const filtrosEl = document.getElementById('dispFiltros');
+  if (filtrosEl.children.length <= 1) {
+    Object.keys(CATEGORIAS).forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'disp-cat-btn';
+      btn.textContent = cat;
+      btn.onclick = () => setDispCat(cat, btn);
+      filtrosEl.appendChild(btn);
+    });
   }
 
-  tbody.innerHTML = rows.map(r => {
-    let color, semColor;
-    if (r.stock <= 0)             { color = '#e74c3c'; semColor = '#e74c3c'; }
-    else if (r.diff < 0)          { color = '#e74c3c'; semColor = '#e74c3c'; }
-    else if (r.diff < r.ocPendiente * .2) { color = '#f39c12'; semColor = '#f39c12'; }
-    else                           { color = '#2ecc71'; semColor = '#2ecc71'; }
+  const wrap = document.getElementById('dispWrap');
 
-    const pct = r.ocPendiente > 0 ? Math.min(100, Math.round((r.stock / r.ocPendiente) * 100)) : 100;
-    const barColor = pct >= 100 ? '#2ecc71' : pct >= 50 ? '#f39c12' : '#e74c3c';
+  // Filtrar categorías a mostrar
+  const catsAMostrar = dispCatActualSel === 'TODAS'
+    ? Object.keys(CATEGORIAS)
+    : [dispCatActualSel];
 
-    return `<tr>
-      <td><span class="semaforo" style="background:${semColor}"></span></td>
-      <td>
-        <div class="sku-name">${r.nombre}</div>
-        ${r.codigo ? `<div style="font-size:11px;color:var(--text-dim)">${r.codigo}</div>` : ''}
-      </td>
-      <td class="num-cell" style="color:${color}">${formatNum(r.stock)}</td>
-      <td class="num-cell">${formatNum(r.ocPendiente)}</td>
-      <td class="num-cell" style="color:${r.diff >= 0 ? '#2ecc71' : '#e74c3c'}">${r.diff >= 0 ? '+' : ''}${formatNum(r.diff)}</td>
-      <td class="bar-cell">
-        <div style="font-size:11px;color:${barColor};margin-bottom:3px;text-align:right">${pct}%</div>
-        <div class="mini-bar-track">
-          <div class="mini-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+  let html = '';
+
+  if (dispCatActualSel === 'TODAS') {
+    // Vista grid de summaries
+    html += '<div class="disp-cat-grid">';
+    catsAMostrar.forEach(cat => {
+      const d = dataCats[cat];
+      const expandida = dispDetalleActual === cat;
+      const dotsHtml = d.items.slice(0,20).map(i => {
+        const c = i.cobertura >= 100 ? '#2ecc71' : i.cobertura >= 50 ? '#f39c12' : '#e74c3c';
+        return `<div class="dcc-dot" title="${i.nombre}: ${i.cobertura}%" style="background:${c}"></div>`;
+      }).join('');
+
+      html += `<div class="disp-cat-card ${expandida?'expandida':''}" onclick="toggleDispDetalle('${cat}')">
+        <div class="dcc-header">
+          <div class="dcc-nombre">${cat}</div>
+          <div class="dcc-pct" style="color:${d.color}">${d.pctCat}%</div>
         </div>
-      </td>
-    </tr>`;
+        <div class="dcc-sub">
+          <span style="color:#2ecc71">✓ ${d.nOk}</span>
+          <span style="color:#f39c12">~ ${d.nWarn}</span>
+          <span style="color:#e74c3c">✗ ${d.nRed}</span>
+          <span>${d.nTotal} SKUs</span>
+        </div>
+        <div class="dcc-track"><div class="dcc-fill" style="width:${d.pctCat}%;background:${d.color}"></div></div>
+        <div class="dcc-dots">${dotsHtml}</div>
+      </div>`;
+    });
+    html += '</div>';
+
+    // Detalle expandido debajo del grid si hay uno seleccionado
+    if (dispDetalleActual && dataCats[dispDetalleActual]) {
+      html += renderDispDetalle(dispDetalleActual, dataCats[dispDetalleActual]);
+    }
+  } else {
+    // Vista detalle de una sola categoría
+    html += renderDispDetalle(dispCatActualSel, dataCats[dispCatActualSel]);
+  }
+
+  wrap.innerHTML = html;
+}
+
+function renderDispDetalle(cat, d) {
+  const itemsOrdenados = [...d.items].sort((a,b) => a.cobertura - b.cobertura);
+  const rows = itemsOrdenados.map(i => {
+    const c = i.cobertura >= 100 ? '#2ecc71' : i.cobertura >= 50 ? '#f39c12' : '#e74c3c';
+    return `<div class="disp-detalle-row">
+      <div>
+        <div class="ddr-nombre">${i.nombre}</div>
+        <div class="ddr-cod">${i.cod}</div>
+      </div>
+      <div class="ddr-num" style="color:${i.stock>0?'var(--text)':'#e74c3c'}">${formatNum(i.stock)}</div>
+      <div class="ddr-num">${formatNum(i.demanda)}</div>
+      <div class="ddr-num" style="color:${i.diff>=0?'#2ecc71':'#e74c3c'}">${i.diff>=0?'+':''}${formatNum(i.diff)}</div>
+      <div class="ddr-bar">
+        <div class="ddr-bar-track"><div class="ddr-bar-fill" style="width:${i.cobertura}%;background:${c}"></div></div>
+        <div class="ddr-bar-pct" style="color:${c}">${i.cobertura}%</div>
+      </div>
+    </div>`;
   }).join('');
+
+  return `<div class="disp-detalle" style="margin-top:10px">
+    <div class="disp-detalle-header">
+      <div>${cat}</div>
+      <div style="text-align:right">Stock PT</div>
+      <div style="text-align:right">OC pendiente</div>
+      <div style="text-align:right">Diferencia</div>
+      <div>Cobertura</div>
+    </div>
+    ${rows}
+  </div>`;
 }
 
 // ─────────────────────────────────────────
@@ -881,18 +1042,23 @@ function setFilter(f, btn) {
 }
 
 function renderInsumos() {
-  if (!invData) return;
-  const skus = invData.invSKU || [];
+  if (!allData) return;
+  const insumos = allData.insumos || [];
   const grid = document.getElementById('insumosGrid');
 
-  const items = skus.map(s => {
-    const unds   = Number(s.unds) || 0;
-    const minimo = Number(s.minimo) || 0;
+  const items = insumos.map(s => {
+    const unds   = parseFloat(s.Cantidad) || 0;
+    const minimo = parseFloat(s.cantidadMinima || 0);
+    // Extraer producto si viene como objeto
+    let producto = s['Producto al que aplica'];
+    if (typeof producto === 'object' && producto !== null) {
+      producto = producto.Value || producto.Title || '—';
+    }
     let nivel;
     if (unds <= 0)            nivel = 'red';
     else if (unds <= minimo)  nivel = 'amber';
     else                      nivel = 'green';
-    return { ...s, unds, minimo, nivel };
+    return { ...s, unds, minimo, nivel, producto };
   }).filter(s => filtroInsumos === 'all' || s.nivel === filtroInsumos)
     .sort((a,b) => {
       const order = { red:0, amber:1, green:2 };
@@ -909,10 +1075,10 @@ function renderInsumos() {
   grid.innerHTML = items.map(s => {
     const color = colores[s.nivel];
     return `<div class="insumo-card" style="border-left-color:${color}">
-      <div class="insumo-tipo">${s.tipoSKU || s.tipo || '—'} · ${s.status || ''}</div>
-      <div class="insumo-name">${s.titulo || s.descripcion || '—'}</div>
-      <div class="insumo-stock" style="color:${color}">${formatNum(s.unds)}</div>
-      <div class="insumo-minimo">Mínimo: ${formatNum(s.minimo)}</div>
+      <div class="insumo-tipo">${s.Subcategoría || s.subcategoria || '—'}</div>
+      <div class="insumo-name">${s.Titulo || s.insumo || '—'}</div>
+      <div class="insumo-stock" style="color:${color}">${formatNum(s.unds)} <span style="font-size:11px;color:${color}88">${s.UOM||s.uom||''}</span></div>
+      <div class="insumo-minimo">Mínimo: ${formatNum(s.minimo)} · ${s.producto || ''}</div>
     </div>`;
   }).join('');
 }
@@ -921,42 +1087,53 @@ function renderInsumos() {
 // MÓDULO 4 — KPIs
 // ─────────────────────────────────────────
 function renderKPIs() {
-  if (!opsData) return;
-  const ops = opsData.ops || [];
+  if (!allData) return;
+  const ops = allData.ordenes || [];
+  const ocs = allData.ordenes_compra || [];
   const wrap = document.getElementById('kpisWrap');
-
-  const hoy = new Date().toDateString();
   document.getElementById('kpiDate').textContent = new Date().toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'});
 
+  // KPIs de producción
   const activas     = ops.filter(o => o.estado === 'En Producción').length;
   const completadas = ops.filter(o => o.estado === 'Completada').length;
   const bloqueadas  = ops.filter(o => o.prioridad === 'BLOQUEADA').length;
   const total       = ops.length;
   const eficiencia  = total > 0 ? Math.round((completadas / total) * 100) : 0;
-  const unidadesHoy = ops.filter(o => o.estado === 'Completada')
-    .reduce((s,o) => s + (Number(o.cantidad)||0), 0);
+
+  // KPIs de OCs
+  const hoy = new Date().toISOString().substring(0,10);
+  const ocsActivas    = ocs.filter(o => !['entregado','cancelado'].includes((o.Status||'').toLowerCase()));
+  const ocsVencidas   = ocsActivas.filter(o => (o['Fecha de Entrega']||'') < hoy);
+  const ocsParciales  = ocsActivas.filter(o => (o.Status||'').toLowerCase() === 'parcial');
+  const totalUnidsPend = ocsActivas.reduce((s,o) => s + (parseFloat(o['Cantidad Pendiente']||o['Total Unds']||0)), 0);
+
+  // SKUs más atrasados
+  const skuAtraso = {};
+  ocsVencidas.forEach(o => {
+    const prod = o.Producto || o.producto || '';
+    if (!skuAtraso[prod]) skuAtraso[prod] = { unds: 0, nOCs: 0 };
+    skuAtraso[prod].unds  += parseFloat(o['Cantidad Pendiente']||o['Total Unds']||0);
+    skuAtraso[prod].nOCs  += 1;
+  });
+  const topAtrasados = Object.entries(skuAtraso)
+    .sort((a,b) => b[1].unds - a[1].unds).slice(0,8);
 
   // Por estación
   const estMap = {};
   ops.forEach(op => {
     if (!op.estacion) return;
-    if (!estMap[op.estacion]) estMap[op.estacion] = { total:0, completadas:0, activas:0, unidades:0 };
+    if (!estMap[op.estacion]) estMap[op.estacion] = { total:0, completadas:0, activas:0 };
     estMap[op.estacion].total++;
     if (op.estado === 'En Producción') estMap[op.estacion].activas++;
-    if (op.estado === 'Completada') {
-      estMap[op.estacion].completadas++;
-      estMap[op.estacion].unidades += Number(op.cantidad)||0;
-    }
+    if (op.estado === 'Completada')    estMap[op.estacion].completadas++;
   });
 
-  const maxUnd = Math.max(...Object.values(estMap).map(e => e.unidades), 1);
-
-  let html = `
+  wrap.innerHTML = `
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-card-label">Estaciones activas</div>
         <div class="kpi-card-val" style="color:#2ecc71">${activas}</div>
-        <div class="kpi-card-sub">de ${Object.keys(estMap).length} estaciones con OPs</div>
+        <div class="kpi-card-sub">de ${Object.keys(estMap).length} con OPs</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-card-label">OPs completadas</div>
@@ -964,39 +1141,48 @@ function renderKPIs() {
         <div class="kpi-card-sub">de ${total} órdenes totales</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-card-label">OPs bloqueadas</div>
-        <div class="kpi-card-val" style="color:${bloqueadas>0?'#e74c3c':'#2ecc71'}">${bloqueadas}</div>
-        <div class="kpi-card-sub">${bloqueadas > 0 ? 'Requieren atención' : 'Sin bloqueos'}</div>
+        <div class="kpi-card-label">OCs vencidas</div>
+        <div class="kpi-card-val" style="color:${ocsVencidas.length>0?'#e74c3c':'#2ecc71'}">${ocsVencidas.length}</div>
+        <div class="kpi-card-sub">de ${ocsActivas.length} OCs activas</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-card-label">Eficiencia global</div>
-        <div class="kpi-card-val" style="color:${eficiencia>=70?'#2ecc71':eficiencia>=40?'#f39c12':'#e74c3c'}">${eficiencia}%</div>
-        <div class="kpi-card-sub">OPs completadas / total</div>
+        <div class="kpi-card-label">Unidades pendientes</div>
+        <div class="kpi-card-val" style="color:#f39c12">${formatNum(Math.round(totalUnidsPend))}</div>
+        <div class="kpi-card-sub">${ocsParciales.length} líneas parciales</div>
       </div>
     </div>
 
+    ${topAtrasados.length > 0 ? `
     <div>
-      <div class="por-estacion-title">Rendimiento por estación</div>
-      ${Object.entries(estMap).sort((a,b) => b[1].unidades - a[1].unidades).map(([est, d]) => {
-        const pct = Math.round((d.unidades / maxUnd) * 100);
-        const ef  = d.total > 0 ? Math.round((d.completadas / d.total) * 100) : 0;
+      <div class="por-estacion-title">SKUs con mayor atraso en OCs</div>
+      ${topAtrasados.map(([prod, d]) => {
+        const pct = Math.min(100, Math.round((d.unds / (topAtrasados[0][1].unds||1)) * 100));
+        return `<div class="est-kpi-row">
+          <div class="est-kpi-name" style="font-size:12px">${prod}</div>
+          <div><div class="est-kpi-bar-track"><div class="est-kpi-bar-fill" style="width:${pct}%;background:#e74c3c"></div></div></div>
+          <div class="est-kpi-num" style="color:#e74c3c">${formatNum(Math.round(d.unds))}</div>
+          <div class="est-kpi-num">${d.nOCs} OC${d.nOCs>1?'s':''}</div>
+          <div></div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+
+    <div>
+      <div class="por-estacion-title">Estado por estación</div>
+      ${Object.entries(estMap).sort((a,b) => b[1].activas - a[1].activas).map(([est, d]) => {
+        const ef = d.total > 0 ? Math.round((d.completadas / d.total) * 100) : 0;
         return `<div class="est-kpi-row">
           <div class="est-kpi-name">${est}</div>
-          <div>
-            <div class="est-kpi-bar-track">
-              <div class="est-kpi-bar-fill" style="width:${pct}%"></div>
-            </div>
-          </div>
-          <div class="est-kpi-num" style="color:#3498db">${d.activas > 0 ? '🟢' : '⚫'} ${d.activas}</div>
+          <div><div class="est-kpi-bar-track"><div class="est-kpi-bar-fill" style="width:${ef}%"></div></div></div>
+          <div class="est-kpi-num" style="color:${d.activas>0?'#2ecc71':'#4a5a78'}">${d.activas>0?'🟢':'⚫'} ${d.activas}</div>
           <div class="est-kpi-num">${d.total} OPs</div>
           <div class="est-kpi-num" style="color:${ef>=70?'#2ecc71':ef>=40?'#f39c12':'#e74c3c'}">${ef}%</div>
         </div>`;
       }).join('')}
-    </div>
-  `;
-
-  wrap.innerHTML = html;
+    </div>`;
 }
+
+
 
 // ── UTILS ──
 function formatNum(n) {
