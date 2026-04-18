@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estación — Grupo Erlo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0f1520;
+    --surface2: #151d2b;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f4ff;
+    --text-dim: #6a7a99;
+    --text-mid: #a0b0cc;
+    --accent-urgente: #ff4444;
+    --accent-a: #ff8c00;
+    --accent-b: #00b4ff;
+    --accent-c: #44cc77;
+    --accent-bloqueada: #cc44ff;
+    --glow-urgente: rgba(255,68,68,0.25);
+    --glow-a: rgba(255,140,0,0.25);
+    --glow-b: rgba(0,180,255,0.25);
+    --glow-c: rgba(68,204,119,0.25);
+    --glow-bloqueada: rgba(204,68,255,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(10px,1.5vh,20px) clamp(16px,2.5vw,40px);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px,1.5vw,20px);
+  }
+
+  .logo-box {
+    width: clamp(36px,4vw,56px);
+    height: clamp(36px,4vw,56px);
+    background: linear-gradient(135deg, #1a3a6e, #0d2244);
+    border: 1px solid rgba(0,160,255,0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(14px,2vw,22px);
+    color: #4af;
+    letter-spacing: -1px;
+  }
+
+  .company-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(14px,1.8vw,22px);
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .station-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(18px,2.8vw,36px);
+    color: var(--text);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .clock-area {
+    text-align: right;
+  }
+
+  .clock {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px,3.5vw,48px);
+    color: var(--text);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .date {
+    font-size: clamp(10px,1.2vw,15px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(12px,2vh,28px) clamp(16px,2.5vw,40px);
+    gap: clamp(10px,1.5vh,20px);
+    overflow: hidden;
+  }
+
+  /* ── OP ACTIVA ── */
+  .op-activa {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: clamp(16px,2.5vh,36px) clamp(20px,3vw,48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s, box-shadow 0.4s;
+  }
+
+  .op-activa::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--prioridad-color, #444);
+    border-radius: 12px 12px 0 0;
+  }
+
+  .op-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .op-label {
+    font-size: clamp(10px,1.1vw,14px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: clamp(4px,0.8vh,10px);
+  }
+
+  .op-sku {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px,5.5vw,88px);
+    line-height: 1;
+    color: var(--text);
+    max-width: 75%;
+  }
+
+  .prioridad-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(12px,1.6vw,22px);
+    padding: clamp(4px,0.6vh,8px) clamp(10px,1.2vw,18px);
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    border: 1px solid;
+    flex-shrink: 0;
+  }
+
+  .op-meta {
+    display: flex;
+    gap: clamp(20px,4vw,60px);
+    align-items: flex-end;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-size: clamp(9px,1vw,13px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .meta-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px,3.5vw,52px);
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .meta-value.highlight {
+    color: var(--prioridad-color, var(--text));
+  }
+
+  /* ── BARRA PROGRESO ── */
+  .progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px,1vh,12px);
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .progress-title {
+    font-size: clamp(10px,1.1vw,14px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .progress-pct {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(16px,2.2vw,30px);
+    color: var(--prioridad-color, var(--text));
+  }
+
+  .progress-track {
+    height: clamp(12px,1.8vh,24px);
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    background: var(--prioridad-color, #444);
+    box-shadow: 0 0 20px var(--prioridad-glow, transparent);
+    transition: width 1s ease;
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent 60%, rgba(255,255,255,0.15));
+    border-radius: 100px;
+  }
+
+  /* ── COLA DE OPs ── */
+  .cola {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: clamp(10px,1.5vh,20px) clamp(16px,2vw,28px);
+    flex-shrink: 0;
+  }
+
+  .cola-title {
+    font-size: clamp(9px,1vw,13px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: clamp(8px,1vh,14px);
+  }
+
+  .cola-items {
+    display: flex;
+    gap: clamp(8px,1.5vw,20px);
+    overflow: hidden;
+  }
+
+  .cola-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: clamp(8px,1.2vh,14px) clamp(12px,1.5vw,20px);
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cola-sku {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(13px,1.6vw,22px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+  }
+
+  .cola-cant {
+    font-size: clamp(10px,1.1vw,14px);
+    color: var(--text-dim);
+  }
+
+  .cola-badge {
+    font-size: clamp(9px,0.9vw,12px);
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ESTADO SIN OP ── */
+  .sin-op {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px,3vh,40px);
+    text-align: center;
+  }
+
+  .sin-op-logo {
+    width: clamp(80px,12vw,160px);
+    height: clamp(80px,12vw,160px);
+    background: linear-gradient(135deg, #1a3a6e, #0d2244);
+    border: 2px solid rgba(0,160,255,0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(32px,6vw,72px);
+    color: #4af;
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,160,255,0); }
+    50% { opacity: 0.85; box-shadow: 0 0 40px 8px rgba(0,160,255,0.12); }
+  }
+
+  .sin-op-msg {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(18px,3vw,42px);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .sin-op-frase {
+    font-size: clamp(14px,1.8vw,24px);
+    color: rgba(160,176,204,0.6);
+    max-width: 600px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(6px,1vh,12px) clamp(16px,2.5vw,40px);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .refresh-info {
+    font-size: clamp(9px,1vw,13px);
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #44cc77;
+    display: inline-block;
+    margin-right: 6px;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .cambiar-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: clamp(4px,0.6vh,8px) clamp(8px,1vw,14px);
+    color: var(--text-dim);
+    font-family: 'Barlow', sans-serif;
+    font-size: clamp(9px,1vw,13px);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .cambiar-btn:hover {
+    border-color: rgba(0,160,255,0.4);
+    color: #4af;
+  }
+
+  .updated-at {
+    font-size: clamp(9px,1vw,12px);
+    color: var(--text-dim);
+  }
+
+  /* ── SETUP SCREEN ── */
+  .setup-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
+  .setup-card {
+    background: var(--surface);
+    border: 1px solid rgba(0,160,255,0.2);
+    border-radius: 16px;
+    padding: 48px;
+    width: min(600px, 90vw);
+    text-align: center;
+  }
+
+  .setup-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 36px;
+    color: var(--text);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .setup-sub {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-bottom: 36px;
+  }
+
+  .setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .setup-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 10px;
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+
+  .setup-btn:hover, .setup-btn.selected {
+    background: rgba(0,160,255,0.1);
+    border-color: rgba(0,160,255,0.4);
+    color: #4af;
+  }
+
+  .setup-btn span {
+    display: block;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    letter-spacing: 0;
+  }
+
+  .setup-confirm {
+    background: rgba(0,160,255,0.15);
+    border: 1px solid rgba(0,160,255,0.4);
+    border-radius: 10px;
+    padding: 14px 32px;
+    color: #4af;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .setup-confirm:hover {
+    background: rgba(0,160,255,0.25);
+  }
+
+  .setup-reset {
+    margin-top: 14px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-card">
+    <div class="setup-title">Configurar estación</div>
+    <div class="setup-sub">Seleccioná la estación de esta pantalla. La configuración se guarda automáticamente.</div>
+    <div class="setup-grid" id="setupGrid"></div>
+    <button class="setup-confirm" onclick="confirmarEstacion()">Confirmar</button>
+    <br>
+    <button class="setup-reset" onclick="resetConfig()">Restablecer configuración</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="header">
+  <div class="logo-area">
+    <div class="logo-box">
+      <img src="data:image/jpeg;base64,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" style="max-height:100%;max-width:100%;object-fit:contain;padding:4px" onerror="this.outerHTML='GE'">
+    </div>
+    <div>
+      <div class="company-name">Grupo Erlo</div>
+      <div class="station-label" id="stationLabel">—</div>
+    </div>
+  </div>
+  <div class="clock-area">
+    <div class="clock" id="clock">00:00</div>
+    <div class="date" id="dateLabel">—</div>
+  </div>
+</div>
+
+<div class="main" id="mainContent">
+  <!-- Contenido dinámico -->
+</div>
+
+<div class="footer">
+  <div class="refresh-info">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="refreshInfo">Actualizando…</span>
+  </div>
+  <div class="updated-at" id="updatedAt"></div>
+  <button class="cambiar-btn" onclick="cambiarEstacion()">⇄ Cambiar estación</button>
+</div>
+
+<script>
+// ── CONFIGURACIÓN ──
+const DATA_URL = 'https://csotoajoy.github.io/grupoerlo/ps_all.json';
+const REFRESH_MS = 30000;
+
+const ESTACIONES = [
+  { id: 'A-Cambio de Molde',         label: 'A-Cambio de Molde',         desc: 'Cambio de molde en Estación B' },
+  { id: 'A-Preparar Resina',         label: 'A-Preparar Resina',         desc: 'Pesaje y preparación de resina' },
+  { id: 'B-Inyección Soplado',       label: 'B-Inyección Soplado',       desc: 'Sopladora · Inyectoras · Ametralladora' },
+  { id: 'B-Maquina Bolitas',         label: 'B-Maquina Bolitas',         desc: 'Producción de esferas roll-on' },
+  { id: 'C-Etiquetado y Serigrafía', label: 'C-Etiquetado y Serigrafía', desc: 'Etiquetadoras · Serigrafía' },
+  { id: 'C-Armar Tapas',             label: 'C-Armar Tapas',             desc: 'Proceso CAT' },
+  { id: 'D-Llenado',                 label: 'D-Llenado',                 desc: 'Roll-on · Crema · Talco · Shampoo · Gel · Perfumes' },
+  { id: 'A-Quimico',                 label: 'A-Quimico',                 desc: 'Producción de fórmula química' },
+  { id: 'G-Mantenimiento',           label: 'G-Mantenimiento',           desc: 'Mantenimiento de máquinas' },
+];
+
+const FRASES_5S = [
+  'Un lugar para cada cosa, y cada cosa en su lugar.',
+  'La limpieza es el primer paso hacia la calidad.',
+  'Organización hoy, eficiencia mañana.',
+  'El orden en planta refleja el orden en la mente.',
+  'Eliminar lo innecesario libera espacio para lo importante.',
+  'Estandarizar hoy evita errores mañana.',
+  'La disciplina convierte los buenos hábitos en rutina.',
+  'El tiempo invertido en orden se recupera en productividad.',
+  'Una planta limpia es una planta segura.',
+  'Seiso: limpiar es inspeccionar.',
+];
+
+const PRIORIDAD_CFG = {
+  'URGENTE':   { color: '#ff4444', glow: 'rgba(255,68,68,0.3)',   bg: 'rgba(255,68,68,0.12)',   border: 'rgba(255,68,68,0.4)' },
+  'A':         { color: '#ff8c00', glow: 'rgba(255,140,0,0.3)',   bg: 'rgba(255,140,0,0.12)',   border: 'rgba(255,140,0,0.4)' },
+  'B':         { color: '#00b4ff', glow: 'rgba(0,180,255,0.3)',   bg: 'rgba(0,180,255,0.12)',   border: 'rgba(0,180,255,0.4)' },
+  'C':         { color: '#44cc77', glow: 'rgba(68,204,119,0.3)',  bg: 'rgba(68,204,119,0.12)',  border: 'rgba(68,204,119,0.4)' },
+  'BLOQUEADA': { color: '#cc44ff', glow: 'rgba(204,68,255,0.3)',  bg: 'rgba(204,68,255,0.12)',  border: 'rgba(204,68,255,0.4)' },
+};
+
+// ── ESTADO ──
+let estacionActual = localStorage.getItem('erlo_estacion') || null;
+let fraseIdx = Math.floor(Math.random() * FRASES_5S.length);
+let logoTurn = 0;
+let sinOpInterval = null;
+let data = null;
+
+// ── SETUP ──
+function initSetup() {
+  const grid = document.getElementById('setupGrid');
+  grid.innerHTML = '';
+  ESTACIONES.forEach(e => {
+    const btn = document.createElement('button');
+    btn.className = 'setup-btn' + (estacionActual === e.id ? ' selected' : '');
+    btn.innerHTML = `${e.label}<span>${e.desc}</span>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.setup-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      estacionActual = e.id;
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function confirmarEstacion() {
+  if (!estacionActual) return;
+  localStorage.setItem('erlo_estacion', estacionActual);
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('stationLabel').textContent = estacionActual;
+  iniciar();
+}
+
+function cambiarEstacion() {
+  if (sinOpInterval) { clearInterval(sinOpInterval); sinOpInterval = null; }
+  document.getElementById("setupScreen").style.display = "flex";
+  initSetup();
+}
+
+function resetConfig() {
+  localStorage.removeItem('erlo_estacion');
+  estacionActual = null;
+  initSetup();
+}
+
+// ── RELOJ ──
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}`;
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  document.getElementById('dateLabel').textContent =
+    `${dias[now.getDay()]} ${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
+}
+
+// ── FETCH DATOS ──
+async function fetchData() {
+  try {
+    const res = await fetch(DATA_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    data = await res.json();
+    document.getElementById('statusDot').style.background = '#44cc77';
+    document.getElementById('refreshInfo').textContent = 'En vivo · actualiza cada 30s';
+    if (data.actualizado) {
+      const d = new Date(data.actualizado);
+      document.getElementById('updatedAt').textContent =
+        'Datos: ' + d.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
+    }
+    render();
+  } catch(e) {
+    document.getElementById('statusDot').style.background = '#ff4444';
+    document.getElementById('refreshInfo').textContent = 'Sin conexión · reintentando…';
+  }
+}
+
+// ── HELPERS ──
+function redondearBloques25(kilos) {
+  return Math.max(25, Math.ceil(kilos / 25) * 25);
+}
+function unidsDesdeKilos(kilos, pesoGr) {
+  if (!pesoGr || pesoGr <= 0) return null;
+  return Math.floor((kilos * 1000) / pesoGr);
+}
+
+// ── RENDER ──
+function render() {
+  if (!data || !estacionActual) return;
+  const ORDEN_EST = ['A-Cambio de Molde','A-Preparar Resina','B-Inyección Soplado',
+    'B-Maquina Bolitas','C-Armar Tapas','C-Etiquetado y Serigrafía','D-Llenado','A-Quimico'];
+  let ops = (data.ordenes || data.ops || []).filter(op =>
+    op.estacion === estacionActual && op.estado !== 'Completada'
+  );
+  ops.sort((a,b) => {
+    const pp = {'URGENTE':0,'A':1,'B':2,'C':3,'BLOQUEADA':4};
+    return (pp[a.prioridad]||9) - (pp[b.prioridad]||9);
+  });
+  const activa = ops.find(op => op.estado === 'En Producción') ||
+                 ops.find(op => op.estado === 'Pausada') || ops[0] || null;
+  const cola = ops.filter(op => op !== activa).slice(0, 4);
+  const main = document.getElementById('mainContent');
+  if (sinOpInterval) { clearInterval(sinOpInterval); sinOpInterval = null; }
+  if (!activa) renderSinOP(main);
+  else renderOP(main, activa, cola);
+}
+
+
+function renderOP(container, op, cola) {
+  const cfg  = PRIORIDAD_CFG[op.prioridad] || PRIORIDAD_CFG['C'];
+  const est  = op.estacion || '';
+  const sku  = op.sku || op.productoSku || op.producto_sku || '';
+  const opCode    = op.opCode || op['OP Code'] || '';
+  const kilos     = parseFloat(op.kilosResina || op['Kilos Resina'] || 0);
+  const masterB   = op.master_batch || op['Master Batch'] || op.masterBatch || '';
+  const tipoRes   = op.tipo_resina || op['Tipo de Resina'] || op.tipoResina || '';
+  const maquina   = op.maquina || op.Maquina || '';
+  const molde     = op.molde || op.Molde || '';
+  const justif    = op['Justificación'] || op.justificacion || '';
+  const cantidad  = parseFloat(op.cantidad || 0);
+  const undsMeta  = parseFloat(op['Unds Meta'] || op.undsMeta || 0);
+  const stockPT   = parseFloat(op.stockPT || 0);
+  const pct       = undsMeta > 0 ? Math.min(100, Math.round((stockPT/undsMeta)*100)) : 0;
+
+  let body = '';
+
+  if (est === 'A-Cambio de Molde') {
+    body = `
+      <div class="op-header">
+        <div style="flex:1;min-width:0">
+          <div class="op-label">A — Cambio de Molde</div>
+          <div class="op-sku" style="font-size:clamp(22px,4vw,64px)">${molde || sku}</div>
+          ${maquina?`<div style="font-size:clamp(12px,1.5vw,20px);color:var(--text-mid);margin-top:6px">Máquina: ${maquina}</div>`:''}
+        </div>
+        <div class="prioridad-badge" style="color:${cfg.color};background:${cfg.bg};border-color:${cfg.border}">${op.prioridad}</div>
+      </div>
+      <div class="op-meta">
+        <div class="meta-item"><div class="meta-label">Responsable</div><div class="meta-value" style="font-size:clamp(14px,2vw,30px)">Jasson</div></div>
+        <div class="meta-item" style="margin-left:auto"><div class="meta-label">Estado</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px);color:${cfg.color}">${op.estado||'Pendiente'}</div></div>
+      </div>`;
+
+  } else if (est === 'A-Preparar Resina') {
+    const kb = redondearBloques25(kilos || cantidad);
+    const pt = justif.match(/PT: ([^|]+)/)?.[1]?.trim() || sku;
+    body = `
+      <div class="op-header">
+        <div style="flex:1;min-width:0">
+          <div class="op-label">A — Preparar Resina${op.estado==='Pausada'?' · PAUSADA':''}</div>
+          <div class="op-sku" style="font-size:clamp(22px,4vw,64px)">${tipoRes || sku}</div>
+          <div style="font-size:clamp(11px,1.4vw,18px);color:var(--text-dim);margin-top:6px">Para: ${pt}</div>
+        </div>
+        <div class="prioridad-badge" style="color:${cfg.color};background:${cfg.bg};border-color:${cfg.border}">${op.prioridad}</div>
+      </div>
+      <div class="op-meta" style="flex-wrap:wrap;gap:clamp(14px,3vw,48px)">
+        <div class="meta-item">
+          <div class="meta-label">Kilos a preparar</div>
+          <div class="meta-value highlight">${kb} <span style="font-size:.45em;color:var(--text-dim)">kg</span></div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">Bloques de 25 kg</div>
+        </div>
+        ${masterB?`<div class="meta-item"><div class="meta-label">Master Batch</div><div class="meta-value" style="font-size:clamp(14px,2.2vw,32px);color:#f59e0b">${masterB}</div></div>`:''}
+        ${molde?`<div class="meta-item"><div class="meta-label">Molde asignado</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px)">${molde}</div></div>`:''}
+        <div class="meta-item" style="margin-left:auto"><div class="meta-label">Estado</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px);color:${cfg.color}">${op.estado||'Pendiente'}</div></div>
+      </div>`;
+
+  } else if (est === 'B-Inyección Soplado' || est === 'B-Maquina Bolitas') {
+    const kb = redondearBloques25(kilos || cantidad);
+    const pesoGr = est==='B-Maquina Bolitas' ? 3 : sku.includes('75') ? 16 : 8;
+    const aproxUnds = unidsDesdeKilos(kb, pesoGr);
+    body = `
+      <div class="op-header">
+        <div style="flex:1;min-width:0">
+          <div class="op-label">${est}${op.estado==='Pausada'?' · PAUSADA':''}</div>
+          <div class="op-sku">${sku}</div>
+          ${maquina?`<div style="font-size:clamp(12px,1.5vw,20px);color:var(--text-mid);margin-top:4px">${maquina}${molde?' · '+molde:''}</div>`:''}
+        </div>
+        <div class="prioridad-badge" style="color:${cfg.color};background:${cfg.bg};border-color:${cfg.border}">${op.prioridad}</div>
+      </div>
+      <div class="op-meta" style="flex-wrap:wrap;gap:clamp(14px,3vw,48px)">
+        <div class="meta-item">
+          <div class="meta-label">Kilos de resina</div>
+          <div class="meta-value highlight">${kb} <span style="font-size:.45em;color:var(--text-dim)">kg</span></div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px">≈ ${aproxUnds?formatNum(aproxUnds)+' uds':'—'}</div>
+        </div>
+        ${masterB?`<div class="meta-item"><div class="meta-label">Master Batch</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px);color:#f59e0b">${masterB}</div></div>`:''}
+        ${tipoRes?`<div class="meta-item"><div class="meta-label">Resina</div><div class="meta-value" style="font-size:clamp(12px,1.6vw,22px)">${tipoRes}</div></div>`:''}
+        <div class="meta-item" style="margin-left:auto"><div class="meta-label">Estado</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px);color:${cfg.color}">${op.estado||'Pendiente'}</div></div>
+      </div>`;
+
+  } else if (est === 'C-Etiquetado y Serigrafía' || est === 'C-Armar Tapas') {
+    // Buscar stock de envases en inventario SKU
+    const skuItems = (data.inventario_sku || []);
+    const keyword = sku.replace(/ROLL ON|75ML|50ML|\d{2}-\d{2}/gi,'').trim().split(' ').filter(w=>w.length>3)[0]||'';
+    const matches = keyword ? skuItems.filter(s => s.descripcion && s.descripcion.toLowerCase().includes(keyword.toLowerCase())) : [];
+    const envBase = matches.find(s=>(s.status||'').toLowerCase()==='envase');
+    const envEtiq = matches.find(s=>(s.status||'').toLowerCase().includes('etiquetado'));
+    body = `
+      <div class="op-header">
+        <div style="flex:1;min-width:0">
+          <div class="op-label">${est}${op.estado==='Pausada'?' · PAUSADA':''}</div>
+          <div class="op-sku">${sku}</div>
+          ${opCode?`<div style="font-size:clamp(10px,1.2vw,15px);color:var(--text-dim);margin-top:4px">${opCode}</div>`:''}
+        </div>
+        <div class="prioridad-badge" style="color:${cfg.color};background:${cfg.bg};border-color:${cfg.border}">${op.prioridad}</div>
+      </div>
+      <div class="op-meta" style="flex-wrap:wrap;gap:clamp(14px,3vw,48px)">
+        <div class="meta-item"><div class="meta-label">Uds a etiquetar</div><div class="meta-value highlight">${formatNum(cantidad)}</div></div>
+        ${envBase?`<div class="meta-item"><div class="meta-label">${envBase.descripcion}</div><div class="meta-value" style="font-size:clamp(14px,2vw,28px);color:${parseFloat(envBase.unds||0)>0?'#44cc77':'#ff4444'}">${formatNum(Math.max(0,parseFloat(envBase.unds||0)))}</div></div>`:''}
+        ${envEtiq?`<div class="meta-item"><div class="meta-label">${envEtiq.descripcion}</div><div class="meta-value" style="font-size:clamp(14px,2vw,28px);color:#a0b0cc">${formatNum(Math.max(0,parseFloat(envEtiq.unds||0)))}</div></div>`:''}
+        <div class="meta-item" style="margin-left:auto"><div class="meta-label">Estado</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px);color:${cfg.color}">${op.estado||'Pendiente'}</div></div>
+      </div>
+      ${pct>0?`<div class="progress-section" style="margin-top:clamp(12px,2vh,28px)"><div class="progress-header"><div class="progress-title">Progreso</div><div class="progress-pct">${pct}%</div></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${cfg.color};box-shadow:0 0 16px ${cfg.glow}"></div></div></div>`:''}`;
+
+  } else {
+    // D-Llenado, A-Quimico, otros
+    body = `
+      <div class="op-header">
+        <div style="flex:1;min-width:0">
+          <div class="op-label">${est}${op.estado==='Pausada'?' · PAUSADA':''}</div>
+          <div class="op-sku">${sku}</div>
+          ${opCode?`<div style="font-size:clamp(10px,1.2vw,15px);color:var(--text-dim);margin-top:4px">${opCode}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div class="prioridad-badge" style="color:${cfg.color};background:${cfg.bg};border-color:${cfg.border}">${op.prioridad}</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:clamp(16px,2.5vw,36px)">${formatNum(cantidad)} <span style="font-size:.5em;color:var(--text-dim)">${op.unidad_produccion||'uds'}</span></div>
+        </div>
+      </div>
+      <div class="op-meta">
+        <div class="meta-item"><div class="meta-label">Cantidad</div><div class="meta-value highlight">${formatNum(cantidad)}</div></div>
+        <div class="meta-item" style="margin-left:auto"><div class="meta-label">Estado</div><div class="meta-value" style="font-size:clamp(13px,1.8vw,26px);color:${cfg.color}">${op.estado||'Pendiente'}</div></div>
+      </div>
+      ${pct>0?`<div class="progress-section" style="margin-top:clamp(12px,2vh,28px)"><div class="progress-header"><div class="progress-title">Progreso</div><div class="progress-pct">${pct}%</div></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${cfg.color};box-shadow:0 0 16px ${cfg.glow}"></div></div></div>`:''}
+      ${justif?`<div style="margin-top:clamp(8px,1.5vh,20px);padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;font-size:clamp(10px,1.1vw,14px);color:var(--text-dim);line-height:1.5">${justif}</div>`:''}`;
+  }
+
+  container.innerHTML = `
+    <div class="op-activa" id="opCard" style="--prioridad-color:${cfg.color};--prioridad-glow:${cfg.glow};border-color:${cfg.border};box-shadow:0 0 40px ${cfg.glow}">
+      ${body}
+    </div>
+    ${cola.length>0?`<div class="cola"><div class="cola-title">En cola (${cola.length})</div><div class="cola-items">${cola.map(o=>{
+      const c=PRIORIDAD_CFG[o.prioridad]||PRIORIDAD_CFG['C'];
+      const nom=o.sku||o.productoSku||'—';
+      const kb=['A-Preparar Resina','B-Inyección Soplado','B-Maquina Bolitas'].includes(o.estacion);
+      const cant=kb?`${redondearBloques25(parseFloat(o.kilosResina||o.cantidad||0))} kg`:`${formatNum(parseFloat(o.cantidad||0))} uds`;
+      return `<div class="cola-item"><div class="cola-badge" style="background:${c.bg};color:${c.color};border:1px solid ${c.border}">${o.prioridad}</div><div class="cola-sku">${nom}</div><div class="cola-cant">${cant}</div></div>`;
+    }).join('')}</div></div>`:''}`;
+}
+
+function renderSinOP(container) {
+  const frase = FRASES_5S[fraseIdx];
+  container.innerHTML = `
+    <div class="sin-op">
+      <div class="sin-op-logo"><img src="data:image/jpeg;base64,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" style="max-height:80px;max-width:180px;object-fit:contain" onerror="this.outerHTML='<span style=\\'font-size:clamp(32px,6vw,72px);font-family:Barlow Condensed,sans-serif;font-weight:900;color:#4af\\'>GE</span>'"></div>
+      <div class="sin-op-msg">Sin orden asignada</div>
+      <div class="sin-op-frase">${frase}</div>
+    </div>`;
+  sinOpInterval = setInterval(() => {
+    fraseIdx = (fraseIdx + 1) % FRASES_5S.length;
+    logoTurn++;
+    renderSinOP(document.getElementById('mainContent'));
+  }, 300000);
+}
+
+function formatNum(n) {
+  if (!n && n !== 0) return '—';
+  return Number(n).toLocaleString('es-CR');
+}
+
+// ── INICIO ──
+function iniciar() {
+  fetchData();
+  setInterval(fetchData, REFRESH_MS);
+}
+
+// ── BOOT ──
+updateClock();
+setInterval(updateClock, 1000);
+initSetup();
+
+if (estacionActual) {
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('stationLabel').textContent = estacionActual;
+  iniciar();
+}
+</script>
+</body>
+</html>
