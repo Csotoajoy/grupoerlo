@@ -1,0 +1,20 @@
+{
+  "actualizado": "2026-06-15T12:00:00Z",
+  "pedidos": [
+    {
+      "OC": "OC-200-1136",
+      "Cliente": "SUPERMERCADO Y RESTAURANTE XIE SOCIEDAD ANONIMA SUPER FUX XIN",
+      "Cod Cliente": "200",
+      "Producto": "GEL PLASTIMAX 250GR",
+      "Code": "20-00",
+      "Total Unds": 360.0,
+      "Total Cajas": 6.0,
+      "Cantidad Entregada": 0,
+      "Cantidad Pendiente": 360.0,
+      "Status": "Alisto",
+      "Fecha de Pedido": "2026-01-26",
+      "Fecha de Entrega": "2026-01-30",
+      "Peso Volumetrico": 0.144
+    }
+  ]
+}
