@@ -195,6 +195,30 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .linea-stat span.green{color:var(--green);}
 .linea-status-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;text-align:center;}
 .linea-alerta{margin-top:8px;font-size:11px;color:var(--red);grid-column:1/-1;}
+
+/* ═══════════════════════════════════════════════
+   MATRIZ % CAMIÓN / AGING EN ALISTO
+═══════════════════════════════════════════════ */
+.matrix-wrap{padding:20px 24px;}
+.matrix-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--text-mid);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.matrix-sub{font-size:12px;color:var(--text-dim);margin-bottom:14px;}
+.matrix-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:8px;max-height:calc(100vh - 220px);}
+.matrix-table{border-collapse:collapse;width:100%;min-width:600px;font-size:13px;}
+.matrix-table thead th{background:var(--surface3);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-weight:700;padding:10px 14px;text-align:center;white-space:nowrap;position:sticky;top:0;z-index:3;}
+.mtx-head-fixed{text-align:left!important;position:sticky;left:0;z-index:4;}
+.mtx-col-head.aging-ok{color:var(--green);}
+.mtx-col-head.aging-warn{color:var(--amber);}
+.mtx-col-head.aging-crit{color:var(--red);}
+.matrix-table tbody td{padding:8px 14px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.mtx-oc{font-family:'Barlow Condensed',sans-serif;font-weight:700;position:sticky;left:0;background:var(--surface);z-index:1;}
+.mtx-cell{text-align:center;min-width:90px;}
+.mtx-bar-wrap{position:relative;height:18px;background:var(--surface3);border-radius:3px;overflow:hidden;display:flex;align-items:center;}
+.mtx-bar{position:absolute;left:0;top:0;bottom:0;background:var(--blue);opacity:.55;}
+.mtx-val{position:relative;z-index:1;font-size:11px;padding-left:6px;font-weight:600;}
+.mtx-total{text-align:right;font-weight:700;color:var(--text-mid);}
+.matrix-table tfoot td{background:rgba(243,156,18,0.08);font-weight:700;padding:10px 14px;border-top:2px solid var(--border2);position:sticky;bottom:0;}
+.mtx-total-col{text-align:center;color:var(--accent);}
+.mtx-total-label{text-transform:uppercase;font-size:12px;letter-spacing:.04em;color:var(--text-mid);position:sticky;left:0;}
 </style>
 </head>
 <body>
@@ -211,6 +235,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
   <div class="header-center">
     <button class="modo-btn active" id="btnKanban" onclick="setModo('kanban')">⊞ Kanban</button>
     <button class="modo-btn" id="btnLista" onclick="setModo('lista')">≡ Lista</button>
+    <button class="modo-btn" id="btnMatriz" onclick="setModo('matriz')">📊 Matriz</button>
     <button class="modo-btn" id="btnDetalle" onclick="setModo('detalle')" disabled>◎ Detalle OC</button>
   </div>
   <div class="header-right">
@@ -299,7 +324,7 @@ setInterval(fetchData, REFRESH_MS);
 // ── MODO ─────────────────────────────────────────────────────────────────────
 function setModo(m) {
   modo = m;
-  ['btnKanban','btnLista','btnDetalle'].forEach(id => {
+  ['btnKanban','btnLista','btnMatriz','btnDetalle'].forEach(id => {
     document.getElementById(id).classList.toggle('active', id === 'btn'+m.charAt(0).toUpperCase()+m.slice(1));
   });
   document.getElementById('toolbar').style.display = m === 'lista' ? 'flex' : 'none';
@@ -319,11 +344,19 @@ function render() {
   if (!allData) return;
   if (modo === 'kanban') renderKanban();
   else if (modo === 'lista') renderLista();
+  else if (modo === 'matriz') renderMatriz();
   else if (modo === 'detalle' && ocSeleccionada) renderDetalle(ocSeleccionada);
   else renderLista();
 }
 
 // ── PROCESAR OCs ─────────────────────────────────────────────────────────────
+// Normaliza el % de camión venga como fracción (0.0105) o como número de % (1.05)
+function normalizarPct(v) {
+  const n = parseFloat(v) || 0;
+  if (!n) return 0;
+  return n <= 1.5 ? n * 100 : n;
+}
+
 function procesarOCs() {
   const ocs_raw = allData.ordenes_compra || [];
   const inv_pt  = allData.inventario_pt  || [];
@@ -356,7 +389,7 @@ function procesarOCs() {
         fechaEntrega: linea['Fecha de Entrega'] || linea.fechaEntrega || '',
         fechaPedido:  linea['Fecha de Pedido']  || linea.fechaPedido  || '',
         lineas: [], totalUnds:0, totalCajas:0,
-        entregadasUnds:0, pendienteUnds:0, volumen:0,
+        entregadasUnds:0, pendienteUnds:0, volumen:0, pctCamion:0,
       };
     }
 
@@ -369,6 +402,11 @@ function procesarOCs() {
     const stockDisp  = stockIdx[codigo] || 0;
     const opsEnProd  = opsIdx[codigo]   || [];
     const faltaStock = pendiente > stockDisp;
+    const pctCamionLinea = normalizarPct(
+      linea['Porcentaje de Camion'] || linea['Porcentaje de Camión'] ||
+      linea['Porcentaje De Camion'] || linea['% Camion'] ||
+      linea['PorcentajeCamion'] || linea['Porcentaje Camion'] || 0
+    );
 
     let estadoLinea = 'disponible';
     if (status==='no entregado') estadoLinea='no-entregado';
@@ -386,6 +424,7 @@ function procesarOCs() {
     ocMap[oc].entregadasUnds+= entregada;
     ocMap[oc].pendienteUnds += pendiente;
     ocMap[oc].volumen       += vol;
+    ocMap[oc].pctCamion     += pctCamionLinea;
   });
 
   const hoy = new Date(); hoy.setHours(0,0,0,0);
@@ -585,6 +624,93 @@ function renderKOCCard(oc, hoy) {
   </div>`;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MATRIZ % CAMIÓN / AGING (días en Alisto sin despachar)
+// Aging = hoy - fecha de pedido (aproximación acordada hasta que el flujo
+// registre la fecha real de cambio a estado "Alistado")
+// ─────────────────────────────────────────────────────────────────────────────
+function calcAging(oc, hoy) {
+  if (!oc.fechaPedido) return null;
+  const fp = new Date(oc.fechaPedido + 'T00:00:00');
+  if (isNaN(fp)) return null;
+  return Math.max(0, Math.round((hoy - fp) / 864e5));
+}
+
+function claseAging(dias) {
+  if (dias <= 0) return 'aging-ok';
+  if (dias <= 3) return 'aging-warn';
+  return 'aging-crit';
+}
+
+function renderMatriz() {
+  document.getElementById('toolbar').style.display = 'none';
+  const ocs = procesarOCs();
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+
+  const filas = ocs.map(oc => ({...oc, diasAlisto: calcAging(oc, hoy)}))
+    .filter(oc => oc.diasAlisto !== null)
+    .sort((a,b) => b.diasAlisto - a.diasAlisto || a.oc.localeCompare(b.oc));
+
+  if (!filas.length) {
+    document.getElementById('content').innerHTML =
+      `<div class="matrix-wrap"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No hay OCs activas para mostrar</div></div></div>`;
+    return;
+  }
+
+  const cols = [...new Set(filas.map(f => f.diasAlisto))].sort((a,b)=>a-b);
+  const totalesCol = {}; cols.forEach(c => totalesCol[c] = 0);
+  let totalGeneral = 0;
+  filas.forEach(f => { totalesCol[f.diasAlisto] += f.pctCamion; totalGeneral += f.pctCamion; });
+
+  const headHtml = cols.map(c =>
+    `<th class="mtx-col-head ${claseAging(c)}">${c}</th>`
+  ).join('');
+
+  const filasHtml = filas.map(f => {
+    const celdas = cols.map(c => {
+      if (c !== f.diasAlisto) return `<td class="mtx-cell"></td>`;
+      const w = Math.min(100, f.pctCamion);
+      return `<td class="mtx-cell"><div class="mtx-bar-wrap"><div class="mtx-bar" style="width:${w}%"></div><span class="mtx-val">${f.pctCamion.toFixed(2)}%</span></div></td>`;
+    }).join('');
+    return `<tr>
+      <td class="mtx-oc">${f.oc}</td>
+      <td>${f.cliente}</td>
+      ${celdas}
+      <td class="mtx-total">${f.pctCamion.toFixed(2)}%</td>
+    </tr>`;
+  }).join('');
+
+  const totalesHtml = cols.map(c =>
+    `<td class="mtx-total-col">${totalesCol[c] ? totalesCol[c].toFixed(2)+'%' : ''}</td>`
+  ).join('');
+
+  document.getElementById('content').innerHTML = `
+  <div class="matrix-wrap">
+    <div class="matrix-title">% de camión por días en Alisto</div>
+    <div class="matrix-sub">Aging = días desde que el pedido ingresó, sin despachar todavía · ${filas.length} OCs activas</div>
+    <div class="matrix-scroll">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th class="mtx-head-fixed">OC</th>
+            <th class="mtx-head-fixed" style="left:90px">Cliente</th>
+            ${headHtml}
+            <th class="mtx-head-fixed" style="left:auto">Total</th>
+          </tr>
+        </thead>
+        <tbody>${filasHtml}</tbody>
+        <tfoot>
+          <tr>
+            <td class="mtx-total-label" colspan="2">Total general</td>
+            ${totalesHtml}
+            <td class="mtx-total-col">${totalGeneral.toFixed(2)}%</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>`;
+}
+
 // ── LISTA ─────────────────────────────────────────────────────────────────────
 function renderLista() {
   if (!allData) return;
@@ -646,7 +772,7 @@ function renderOCCard(oc) {
 function abrirDetalle(ocNum) {
   ocSeleccionada = ocNum;
   modo = 'detalle';
-  ['btnKanban','btnLista','btnDetalle'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  ['btnKanban','btnLista','btnMatriz','btnDetalle'].forEach(id=>document.getElementById(id).classList.remove('active'));
   const btn=document.getElementById('btnDetalle');
   btn.classList.add('active');
   btn.disabled=false;
