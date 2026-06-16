@@ -270,6 +270,11 @@ const URLS = (typeof ERLO_CONFIG !== 'undefined') ? ERLO_CONFIG.DATA : {
   RUTAS:      'https://csotoajoy.github.io/grupoerlo/ps_rutas.json',
 };
 const REFRESH_MS = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.REFRESH_MS) || 30000;
+// Capacidad estándar de camión en m³, usada para calcular % de camión = volumen OC / esta capacidad.
+// Confirmado con la fórmula real de Excel: =[@[Peso Volumetrico]]/'Unidades de Empaque'!$J$16
+// donde J16 = "Peso volumétrico del camión" = 10. El Peso Volumetrico por OC sale de
+// =SUMIF(Piezas[No. Pedido];[@No. Pedido];Piezas[Peso Volumetrico2]) — lo mismo que hace ocMap[oc].volumen aquí.
+const CAPACIDAD_CAMION_M3 = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.CAPACIDAD_CAMION_M3) || 10;
 const RUTAS_URL  = (URLS.RUTAS) || 'https://csotoajoy.github.io/grupoerlo/ps_rutas.json';
 
 let allData  = null;
@@ -350,13 +355,6 @@ function render() {
 }
 
 // ── PROCESAR OCs ─────────────────────────────────────────────────────────────
-// Normaliza el % de camión venga como fracción (0.0105) o como número de % (1.05)
-function normalizarPct(v) {
-  const n = parseFloat(v) || 0;
-  if (!n) return 0;
-  return n <= 1.5 ? n * 100 : n;
-}
-
 function procesarOCs() {
   const ocs_raw = allData.ordenes_compra || [];
   const inv_pt  = allData.inventario_pt  || [];
@@ -389,7 +387,7 @@ function procesarOCs() {
         fechaEntrega: linea['Fecha de Entrega'] || linea.fechaEntrega || '',
         fechaPedido:  linea['Fecha de Pedido']  || linea.fechaPedido  || '',
         lineas: [], totalUnds:0, totalCajas:0,
-        entregadasUnds:0, pendienteUnds:0, volumen:0, pctCamion:0,
+        entregadasUnds:0, pendienteUnds:0, volumen:0,
       };
     }
 
@@ -402,11 +400,6 @@ function procesarOCs() {
     const stockDisp  = stockIdx[codigo] || 0;
     const opsEnProd  = opsIdx[codigo]   || [];
     const faltaStock = pendiente > stockDisp;
-    const pctCamionLinea = normalizarPct(
-      linea['Porcentaje de Camion'] || linea['Porcentaje de Camión'] ||
-      linea['Porcentaje De Camion'] || linea['% Camion'] ||
-      linea['PorcentajeCamion'] || linea['Porcentaje Camion'] || 0
-    );
 
     let estadoLinea = 'disponible';
     if (status==='no entregado') estadoLinea='no-entregado';
@@ -424,7 +417,6 @@ function procesarOCs() {
     ocMap[oc].entregadasUnds+= entregada;
     ocMap[oc].pendienteUnds += pendiente;
     ocMap[oc].volumen       += vol;
-    ocMap[oc].pctCamion     += pctCamionLinea;
   });
 
   const hoy = new Date(); hoy.setHours(0,0,0,0);
@@ -447,7 +439,8 @@ function procesarOCs() {
       claseVenc = diasVenc<0?'vencida':diasVenc<=3?'urgente':'ok';
     }
     const progreso = oc.totalUnds>0?Math.round((oc.entregadasUnds/oc.totalUnds)*100):0;
-    return {...oc, estadoOC, nBloq, nParc, nDisp, nNoEnt, diasVenc, claseVenc, progreso};
+    const pctCamion = oc.volumen>0 ? (oc.volumen / CAPACIDAD_CAMION_M3) * 100 : 0;
+    return {...oc, estadoOC, nBloq, nParc, nDisp, nNoEnt, diasVenc, claseVenc, progreso, pctCamion};
   });
 }
 
@@ -687,7 +680,7 @@ function renderMatriz() {
   document.getElementById('content').innerHTML = `
   <div class="matrix-wrap">
     <div class="matrix-title">% de camión por días en Alisto</div>
-    <div class="matrix-sub">Aging = días desde que el pedido ingresó, sin despachar todavía · ${filas.length} OCs activas</div>
+    <div class="matrix-sub">Aging = días desde que el pedido ingresó, sin despachar todavía · % camión calculado sobre ${CAPACIDAD_CAMION_M3} m³ por camión · ${filas.length} OCs activas</div>
     <div class="matrix-scroll">
       <table class="matrix-table">
         <thead>
