@@ -1,0 +1,62 @@
+{
+  "generado": "2026-06-16",
+  "ventana_viaje_dias": 2,
+  "rutas": [
+    {
+      "id": "R-REY",
+      "nombre": "El Rey",
+      "color": "#ef4444",
+      "dedicada": true,
+      "clientes": ["11"]
+    },
+    {
+      "id": "R-FORCO",
+      "nombre": "Grupo Forco",
+      "color": "#f97316",
+      "dedicada": true,
+      "clientes": ["67"]
+    },
+    {
+      "id": "R-OCCIDENTE",
+      "nombre": "Occidente",
+      "color": "#3b82f6",
+      "dedicada": false,
+      "clientes": ["53","49","171","85","178","19","245","15","43"]
+    },
+    {
+      "id": "R-CANAL",
+      "nombre": "Canal / Caribe",
+      "color": "#8b5cf6",
+      "dedicada": false,
+      "clientes": ["166","241","37","223","5","229","93","207","145"]
+    },
+    {
+      "id": "R-SUR",
+      "nombre": "Zona Sur",
+      "color": "#f59e0b",
+      "dedicada": false,
+      "clientes": ["41","70","240","46","191","44","66","204","7","170","234","181","195","236","180","185","248","213","205","173","189","235","190","227","175","242","2","108","200","249","21","232","165","103","243","169","168","3","244","39","96","78","68","247","101"]
+    },
+    {
+      "id": "R-NORTE",
+      "nombre": "Zona Norte",
+      "color": "#10b981",
+      "dedicada": false,
+      "clientes": ["1","215","214","146","27","28","4","13","18","71","147","12"]
+    },
+    {
+      "id": "R-HEREDIA",
+      "nombre": "Heredia Este",
+      "color": "#06b6d4",
+      "dedicada": false,
+      "clientes": ["222","105","72","32","51"]
+    },
+    {
+      "id": "R-VARIOS",
+      "nombre": "Varios",
+      "color": "#64748b",
+      "dedicada": false,
+      "clientes": ["210","225"]
+    }
+  ]
+}
