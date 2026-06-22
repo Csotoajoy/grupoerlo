@@ -697,7 +697,7 @@ function renderMatriz() {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
 
   const filas = ocs.map(oc => ({...oc, diasAlisto: calcAging(oc, hoy)}))
-    .filter(oc => oc.diasAlisto !== null)
+   .filter(oc => oc.diasAlisto !== null && oc.estadoOC !== 'entregado' && oc.estadoOC !== 'bloqueado')
     .sort((a,b) => b.diasAlisto - a.diasAlisto || a.oc.localeCompare(b.oc));
 
   if (!filas.length) {
