@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan de Trabajo · Grupo Erlo</title>
+<style>
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#1c2128; --surface3:#21262d;
+  --border:#30363d; --text:#e6edf3; --text-mid:#8b949e; --text-dim:#484f58;
+  --green:#2ecc71; --amber:#f39c12; --red:#e74c3c; --blue:#3498db;
+  --purple:#9b59b6; --teal:#1abc9c; --accent:#f0a500;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:13px;}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:200;}
+.hdr-logo{color:var(--accent);font-weight:700;font-size:16px;}
+.hdr-title{color:var(--text-mid);font-size:12px;}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.clock{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--text-dim);}
+.dot.ok{background:var(--green);box-shadow:0 0 6px var(--green);}
+.rbtn{background:var(--surface2);border:1px solid var(--border);color:var(--text-mid);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;}
+.rbtn:hover{color:var(--text);}
+
+/* KPI */
+.kpi-bar{display:flex;gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.kpi{flex:1;background:var(--surface);padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.kv{font-size:18px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
+.kl{font-size:9px;color:var(--text-mid);text-transform:uppercase;letter-spacing:.4px;text-align:center;}
+
+/* LAYOUT */
+.page{display:flex;height:calc(100vh - 104px);overflow:hidden;}
+
+/* NAV */
+.nav{width:210px;min-width:210px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:6px 0;}
+.nav-sec{padding:6px 12px 2px;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;}
+.nav-maq{padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:7px;border-left:3px solid transparent;transition:all .15s;}
+.nav-maq:hover{background:var(--surface2);}
+.nav-maq.active{background:var(--surface2);border-left-color:var(--accent);}
+.nav-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.nav-name{font-size:12px;font-weight:500;flex:1;}
+.nav-sacos{margin-left:auto;font-size:10px;color:var(--text-dim);font-variant-numeric:tabular-nums;}
+.nav-molde{padding:4px 12px 4px 28px;cursor:pointer;font-size:11px;color:var(--text-mid);border-left:3px solid transparent;transition:all .12s;display:flex;justify-content:space-between;}
+.nav-molde:hover{background:var(--surface2);color:var(--text);}
+.nav-molde.active{color:var(--text);background:rgba(240,165,0,.06);border-left-color:rgba(240,165,0,.4);}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:14px;}
+
+/* MAQ HEADER */
+.maq-hdr{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;}
+.maq-icon{font-size:22px;}
+.maq-nm{font-size:17px;font-weight:700;}
+.maq-sub{font-size:11px;color:var(--text-mid);margin-top:2px;}
+.maq-badge{margin-left:auto;display:flex;gap:20px;align-items:center;}
+.maq-stat{text-align:center;}
+.maq-stat-v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;}
+.maq-stat-l{font-size:9px;color:var(--text-mid);text-transform:uppercase;}
+
+/* RESINA BAR */
+.res-bar{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;margin-bottom:12px;font-size:12px;}
+.res-track{flex:1;height:8px;border-radius:4px;background:var(--surface3);}
+.res-fill{height:100%;border-radius:4px;}
+
+/* MOLDE CARD */
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;}
+.mc-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+.mc-chev{color:var(--text-dim);font-size:10px;transition:transform .2s;flex-shrink:0;}
+.mc-chev.open{transform:rotate(90deg);}
+.mc-name{font-size:13px;font-weight:600;flex:1;}
+.mc-stats{display:flex;gap:16px;align-items:center;}
+.mc-stat{text-align:right;}
+.mc-stat-v{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;}
+.mc-stat-l{font-size:9px;color:var(--text-dim);text-transform:uppercase;}
+
+/* SACO BLOCK VISUAL */
+.saco-block{display:flex;flex-wrap:wrap;gap:3px;margin:2px 0;}
+.saco{width:14px;height:18px;border-radius:2px;background:var(--accent);opacity:.85;}
+.saco.empty{background:var(--surface3);border:1px solid var(--border);}
+
+/* TABLE */
+.ct{width:100%;border-collapse:collapse;}
+.ct th{padding:6px 12px;font-size:9px;color:var(--text-dim);text-align:left;font-weight:600;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap;}
+.ct td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.ct tr:last-child td{border-bottom:none;}
+.ct tr:hover td{background:rgba(255,255,255,.02);}
+.row-skip td{opacity:.4;}
+
+/* ORDER NUM */
+.ord{width:26px;height:26px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-mid);flex-shrink:0;}
+.ord.t1{background:rgba(240,165,0,.2);border-color:var(--accent);color:var(--accent);}
+.ord.t2{background:rgba(231,76,60,.1);border-color:var(--red);color:var(--red);}
+.ord.t3{background:rgba(243,156,18,.1);border-color:var(--amber);color:var(--amber);}
+
+/* PRIOR */
+.bp{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700;}
+.bp-A{background:rgba(231,76,60,.2);color:#e74c3c;}
+.bp-B{background:rgba(243,156,18,.2);color:#f39c12;}
+.bp-C{background:rgba(52,152,219,.2);color:#3498db;}
+
+/* SACO PILL */
+.saco-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:5px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.3);color:var(--accent);}
+.saco-sub{font-size:10px;color:var(--text-dim);margin-top:2px;}
+
+/* KG bar */
+.kgb{display:flex;align-items:center;gap:6px;}
+.kgt{width:70px;height:5px;border-radius:3px;background:var(--surface3);}
+.kgf{height:100%;border-radius:3px;}
+
+/* STOCK */
+.sp{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;font-size:11px;font-variant-numeric:tabular-nums;}
+.sp-ok{background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.25);}
+.sp-warn{background:rgba(243,156,18,.1);color:var(--amber);border:1px solid rgba(243,156,18,.25);}
+.sp-no{background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.25);}
+.sp-ok2{background:rgba(52,152,219,.1);color:var(--blue);border:1px solid rgba(52,152,219,.25);}
+
+/* PESO BADGE */
+.peso-badge{font-size:10px;padding:1px 5px;border-radius:3px;font-variant-numeric:tabular-nums;}
+.pb-med{background:rgba(46,204,113,.1);color:var(--green);border:1px solid rgba(46,204,113,.2);}
+.pb-est{background:rgba(155,89,182,.1);color:var(--purple);border:1px solid rgba(155,89,182,.2);}
+
+.prod-ref{font-size:10px;color:var(--text-dim);}
+.no-dem{padding:12px 16px;text-align:center;color:var(--text-dim);font-size:12px;}
+.tag-oc{font-size:10px;color:var(--amber);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-logo">ERLO</div>
+  <div class="hdr-title">Plan de Trabajo · Inyección &amp; Soplado</div>
+  <div class="hdr-r">
+    <span class="dot" id="dot"></span>
+    <div class="clock" id="clk">00:00</div>
+    <button class="rbtn" onclick="fetchLive()">↻ Actualizar</button>
+  </div>
+</div>
+
+<div class="kpi-bar">
+  <div class="kpi"><div class="kv" id="kSacos" style="color:var(--accent)">—</div><div class="kl">Sacos totales</div></div>
+  <div class="kpi"><div class="kv" id="kKg" style="color:var(--accent)">—</div><div class="kl">Kg totales</div></div>
+  <div class="kpi"><div class="kv" id="kMoldes">—</div><div class="kl">Moldes activos</div></div>
+  <div class="kpi"><div class="kv" id="kColores">—</div><div class="kl">Corridas</div></div>
+  <div class="kpi"><div class="kv" id="kPiezas" style="color:var(--green)">—</div><div class="kl">Piezas a producir</div></div>
+  <div class="kpi"><div class="kv" id="kResMed" style="color:var(--green)">—</div><div class="kl">Con peso medido</div></div>
+  <div class="kpi"><div class="kv" id="kResKg" style="color:var(--amber)">—</div><div class="kl">Resina disponible</div></div>
+</div>
+
+<div class="page">
+  <nav class="nav" id="navPanel"></nav>
+  <div class="main" id="mainPanel"><div style="padding:48px;text-align:center;color:var(--text-dim)">Cargando…</div></div>
+</div>
+
+<script>
+const PLAN_BASE = {"Ametralladora": {"tipo_resina": "Alta Tradicional Inyección", "moldes": [{"molde": "Molde Roll On Grande (75ml)", "total_sacos": 74, "total_kg": 1850.0, "deficit_total": 113661, "colores": [{"sku": "ENVASE ROLL ON CAFÉ – 75ML", "inv_actual": 2805, "demanda_total": 60000, "deficit": 57195, "peso_gr": 15.395, "peso_fuente": "medido", "kg_exactos": 880.51, "sacos": 36, "kg_reales": 900.0, "prioridad": "A", "productos": ["ROLL ON WILL COUNTY 75ML"]}, {"sku": "ENVASE ROLL ON ROSA – 75ML", "inv_actual": 16129, "demanda_total": 45000, "deficit": 28871, "peso_gr": 15.5, "peso_fuente": "medido", "kg_exactos": 447.49, "sacos": 18, "kg_reales": 450.0, "prioridad": "A", "productos": ["ROLL ON SWEET HONEY 75ML"]}, {"sku": "ENVASE ROLL ON NEGRO – 75ML", "inv_actual": 534, "demanda_total": 10000, "deficit": 9466, "peso_gr": 15.588, "peso_fuente": "medido", "kg_exactos": 147.56, "sacos": 6, "kg_reales": 150.0, "prioridad": "B", "productos": ["ROLL ON BLACK SOFT 75ML", "ROLL ON PARIS DACKAR 75ML"]}, {"sku": "ENVASE ROLL ON CREMA – 75ML", "inv_actual": 0, "demanda_total": 5000, "deficit": 5000, "peso_gr": 15.25, "peso_fuente": "medido", "kg_exactos": 76.25, "sacos": 4, "kg_reales": 100.0, "prioridad": "B", "productos": ["ROLL ON CANDY 75ML"]}, {"sku": "ENVASE ROLL ON NARANJA – 75ML", "inv_actual": 796, "demanda_total": 5000, "deficit": 4204, "peso_gr": 15.25, "peso_fuente": "medido", "kg_exactos": 64.11, "sacos": 3, "kg_reales": 75.0, "prioridad": "B", "productos": ["ROLL ON MUSK NARANJA 75ML"]}, {"sku": "ENVASE ROLL ON AZUL REY 75ML", "inv_actual": 370, "demanda_total": 5000, "deficit": 4630, "peso_gr": 15.4, "peso_fuente": "medido", "kg_exactos": 71.31, "sacos": 3, "kg_reales": 75.0, "prioridad": "B", "productos": ["ROLL ON ROSE MEN 75ML"]}, {"sku": "ENVASE ROLL ON VINO – 75ML", "inv_actual": 2915, "demanda_total": 5000, "deficit": 2085, "peso_gr": 15.363, "peso_fuente": "medido", "kg_exactos": 32.03, "sacos": 2, "kg_reales": 50.0, "prioridad": "B", "productos": ["ROLL ON IMARY 75ML"]}, {"sku": "ENVASE ROLL ON BEIGE PERLADO –  75ML", "inv_actual": 4231, "demanda_total": 5000, "deficit": 769, "peso_gr": 15.262, "peso_fuente": "medido", "kg_exactos": 11.74, "sacos": 1, "kg_reales": 25.0, "prioridad": "B", "productos": ["ROLL ON FARM AWAY 75ML"]}, {"sku": "ENVASE ROLL ON TURQUESA – 75ML", "inv_actual": 3559, "demanda_total": 5000, "deficit": 1441, "peso_gr": 13.75, "peso_fuente": "medido", "kg_exactos": 19.82, "sacos": 1, "kg_reales": 25.0, "prioridad": "B", "productos": ["ROLL ON MUSK CELESTE 75ML"]}, {"sku": "ENVASE ROLL ON BLANCO – 75ML", "inv_actual": 67243, "demanda_total": 15000, "deficit": 0, "peso_gr": 14.875, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["ROLL ON FIEL 75ML", "ROLL ON INDIRA 75ML", "ROLL ON TRIUNFO 75ML"]}, {"sku": "ENVASE ROLL ON AZUL OSCURO 75ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON MORADO – 75ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON NARANJA CLARO – 75ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON PAPAYA – 75ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}, {"molde": "Talco Pequeño Cuadrado (150gr)", "total_sacos": 9, "total_kg": 225.0, "deficit_total": 7755, "colores": [{"sku": "ENVASE TALCO CELESTE – 150GR", "inv_actual": 668, "demanda_total": 6500, "deficit": 5832, "peso_gr": 24.85, "peso_fuente": "medido", "kg_exactos": 144.92, "sacos": 6, "kg_reales": 150.0, "prioridad": "A", "productos": ["TALCO BABY PEQ 150GR"]}, {"sku": "ENVASE TALCO CAFÉ – 150GR", "inv_actual": 0, "demanda_total": 1500, "deficit": 1500, "peso_gr": 32.883, "peso_fuente": "medido", "kg_exactos": 49.32, "sacos": 2, "kg_reales": 50.0, "prioridad": "B", "productos": ["TALCO WILL COUNTY 150GR"]}, {"sku": "ENVASE TALCO AZUL – 150GR", "inv_actual": 577, "demanda_total": 1000, "deficit": 423, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 7.61, "sacos": 1, "kg_reales": 25.0, "prioridad": "B", "productos": ["TALCO ROSE MEN 150GR"]}, {"sku": "ENVASE TALCO NEGRO – 150GR", "inv_actual": 1413, "demanda_total": 1000, "deficit": 0, "peso_gr": 24.35, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["TALCO CHIEF 150GR"]}, {"sku": "ENVASE TALCO ROSA – 150GR", "inv_actual": 5024, "demanda_total": 1500, "deficit": 0, "peso_gr": 24.262, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["TALCO SWEET HONEY 150GR"]}, {"sku": "ENVASE TALCO BLANCO – 150GR", "inv_actual": 6065, "demanda_total": 2000, "deficit": 0, "peso_gr": 24.496, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": ["TALCO FIEL 150GR", "TALCO INDIRA 150GR"]}, {"sku": "ENVASE TALCO CREMA – 150GR", "inv_actual": 2362, "demanda_total": 1000, "deficit": 0, "peso_gr": 24.212, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": ["TALCO CANDY 150GR"]}]}, {"molde": "Molde Roll On Pequeño (50ml)", "total_sacos": 1, "total_kg": 25.0, "deficit_total": 3716, "colores": [{"sku": "ENVASE ROLL ON TURQUESA – 50ML", "inv_actual": -3716, "demanda_total": 0, "deficit": 3716, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 18.58, "sacos": 1, "kg_reales": 25.0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON AZUL OSCURO 50ML", "inv_actual": 3389, "demanda_total": 0, "deficit": 0, "peso_gr": 8.588, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON AZUL REY 50ML", "inv_actual": 4330, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON BLANCO – 50ML", "inv_actual": 70824, "demanda_total": 0, "deficit": 0, "peso_gr": 8.262, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON CAFÉ – 50ML", "inv_actual": 10358, "demanda_total": 0, "deficit": 0, "peso_gr": 8.375, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON BEIGE PERLADO – 50ML", "inv_actual": 1640, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON NARANJA – 50ML", "inv_actual": 85, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON NARANJA CLARO – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON NEGRO – 50ML", "inv_actual": 2068, "demanda_total": 0, "deficit": 0, "peso_gr": 8.463, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON PAPAYA – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON ROSA – 50ML", "inv_actual": 30177, "demanda_total": 0, "deficit": 0, "peso_gr": 8.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "ENVASE ROLL ON VINO – 50ML", "inv_actual": 1586, "demanda_total": 0, "deficit": 0, "peso_gr": 8.625, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}, {"molde": "Envase Emanuel V2 (250ml)", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "ENVASE EMANUEL TRANSPARENTE V2– 250ML", "inv_actual": 9053, "demanda_total": 6000, "deficit": 0, "peso_gr": 23.625, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["COLONIA EMANUEL 250ML", "ACEITE PARA BEBÉ EMANUEL 250ML"]}]}, {"molde": "Molde Envase Polvo de Hornear", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "ENVASE POLVO DE HORNEAR BLANCO – 100ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 15.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}]}, "Inyectora 1": {"tipo_resina": "Alta Tradicional Inyección", "moldes": [{"molde": "Tapa Roll On Grande (75ml)", "total_sacos": 30, "total_kg": 750.0, "deficit_total": 101153, "colores": [{"sku": "TAPA ROLL ON CAFÉ OSCURO – 75ML", "inv_actual": 16384, "demanda_total": 60000, "deficit": 43616, "peso_gr": 6.639, "peso_fuente": "medido", "kg_exactos": 289.57, "sacos": 12, "kg_reales": 300.0, "prioridad": "A", "productos": ["ROLL ON WILL COUNTY 75ML"]}, {"sku": "TAPA ROLL ON NEGRO – 75ML", "inv_actual": 0, "demanda_total": 25000, "deficit": 25000, "peso_gr": 6.5, "peso_fuente": "medido", "kg_exactos": 162.5, "sacos": 7, "kg_reales": 175.0, "prioridad": "B", "productos": ["ROLL ON BLACK SOFT 75ML", "ROLL ON MUSK CELESTE 75ML", "ROLL ON MUSK NARANJA 75ML"]}, {"sku": "TAPA ROLL ON ROSA – 75ML", "inv_actual": 23284, "demanda_total": 45000, "deficit": 21716, "peso_gr": 6.429, "peso_fuente": "medido", "kg_exactos": 139.61, "sacos": 6, "kg_reales": 150.0, "prioridad": "A", "productos": ["ROLL ON SWEET HONEY 75ML"]}, {"sku": "TAPA ROLL ON VINO – 75ML", "inv_actual": 4474, "demanda_total": 10000, "deficit": 5526, "peso_gr": 7.0, "peso_fuente": "medido", "kg_exactos": 38.68, "sacos": 2, "kg_reales": 50.0, "prioridad": "B", "productos": ["ROLL ON FARM AWAY 75ML", "ROLL ON IMARY 75ML"]}, {"sku": "TAPA ROLL ON AZUL – 75ML", "inv_actual": 3536, "demanda_total": 5000, "deficit": 1464, "peso_gr": 6.598, "peso_fuente": "medido", "kg_exactos": 9.66, "sacos": 1, "kg_reales": 25.0, "prioridad": "B", "productos": ["ROLL ON ROSE MEN 75ML"]}, {"sku": "TAPA ROLL ON FUCCIA – 75ML", "inv_actual": 4396, "demanda_total": 5000, "deficit": 604, "peso_gr": 7.0, "peso_fuente": "medido", "kg_exactos": 4.23, "sacos": 1, "kg_reales": 25.0, "prioridad": "B", "productos": ["ROLL ON CANDY 75ML"]}, {"sku": "TAPA ROLL ON BLANCO AZULADO – 75ML", "inv_actual": 1773, "demanda_total": 5000, "deficit": 3227, "peso_gr": 6.737, "peso_fuente": "medido", "kg_exactos": 21.74, "sacos": 1, "kg_reales": 25.0, "prioridad": "C", "productos": ["ROLL ON FIEL 75ML"]}, {"sku": "TAPA ROLL ON BLANCO – 75ML", "inv_actual": 6078, "demanda_total": 5000, "deficit": 0, "peso_gr": 6.7, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["ROLL ON INDIRA 75ML"]}, {"sku": "TAPA ROLL ON BEIGE PERLADO – 75ML", "inv_actual": 5030, "demanda_total": 0, "deficit": 0, "peso_gr": 6.588, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON GRIS – 75ML", "inv_actual": 4179, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON NARANJA CLARO – 75ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}, {"molde": "Tapa de Talco", "total_sacos": 5, "total_kg": 125.0, "deficit_total": 20813, "colores": [{"sku": "TAPA TALCO CELESTE – ESTANDAR", "inv_actual": 14623, "demanda_total": 24500, "deficit": 9877, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 49.38, "sacos": 2, "kg_reales": 50.0, "prioridad": "A", "productos": ["TALCO BABY PEQ 150GR", "TALCO BABY GRD 575GR", "TALCO FIEL 150GR"]}, {"sku": "TAPA TALCO ROJA – ESTANDAR", "inv_actual": 6405, "demanda_total": 15500, "deficit": 9095, "peso_gr": 4.136, "peso_fuente": "medido", "kg_exactos": 37.62, "sacos": 2, "kg_reales": 50.0, "prioridad": "A", "productos": ["TALCO FARM AWAY 150GR", "TALCO FARM AWAY 375GR", "TALCO ROSAS 350GR"]}, {"sku": "TAPA TALCO ROSA – ESTANDAR", "inv_actual": 8659, "demanda_total": 10500, "deficit": 1841, "peso_gr": 4.17, "peso_fuente": "medido", "kg_exactos": 7.68, "sacos": 1, "kg_reales": 25.0, "prioridad": "A", "productos": ["TALCO SWEET HONEY 150GR", "TALCO SWEET HONEY 375GR", "TALCO INDIRA 150GR"]}, {"sku": "TAPA TALCO CAFÉ – ESTANDAR", "inv_actual": 9175, "demanda_total": 8500, "deficit": 0, "peso_gr": 4.109, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "A", "productos": ["TALCO WILL COUNTY 150GR", "TALCO WILL COUNTY 375GR"]}, {"sku": "TAPA TALCO NEGRA – ESTANDAR", "inv_actual": 16871, "demanda_total": 6000, "deficit": 0, "peso_gr": 2.999, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "A", "productos": ["TALCO CHIEF 150GR", "TALCO CHIEF 375GR"]}, {"sku": "TAPA TALCO AZUL – ESTANDAR", "inv_actual": 7480, "demanda_total": 3000, "deficit": 0, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["TALCO ROSE MEN 150GR", "TALCO ROSE MEN 375GR"]}, {"sku": "TAPA TALCO FUCCIA - ESTANDAR", "inv_actual": 6838, "demanda_total": 3000, "deficit": 0, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": ["TALCO CANDY 150GR", "TALCO CANDY 375GR"]}]}, {"molde": "Tapa Gel Kilo", "total_sacos": 5, "total_kg": 125.0, "deficit_total": 6717, "colores": [{"sku": "TAPA GEL TRANSPARENTE – 950ML", "inv_actual": -717, "demanda_total": 6000, "deficit": 6717, "peso_gr": 17.286, "peso_fuente": "medido", "kg_exactos": 116.12, "sacos": 5, "kg_reales": 125.0, "prioridad": "B", "productos": ["GEL PLASTIMAX 950GR"]}]}, {"molde": "Tapa Gel Pequeño", "total_sacos": 4, "total_kg": 100.0, "deficit_total": 8000, "colores": [{"sku": "TAPA GEL TRANSPARENTE – 250ML", "inv_actual": 0, "demanda_total": 8000, "deficit": 8000, "peso_gr": 11.412, "peso_fuente": "medido", "kg_exactos": 91.3, "sacos": 4, "kg_reales": 100.0, "prioridad": "B", "productos": ["GEL PLASTIMAX 250GR", "GEL TERAPEUTICO ICE MAX 250GR"]}]}, {"molde": "Tapa Roll On Pequeño (50ml)", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "TAPA ROLL ON AZUL – 50ML", "inv_actual": 2400, "demanda_total": 0, "deficit": 0, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON BLANCO – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON CAFÉ OSCURO – 50ML", "inv_actual": 21104, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON CREMA – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON BEIGE PERLADO – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON GRIS – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON NARANJA CLARO – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON NEGRO – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 5.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON ROSA – 50ML", "inv_actual": 22258, "demanda_total": 0, "deficit": 0, "peso_gr": 5.247, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA ROLL ON VINO – 50ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": 4.875, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}, {"molde": "Tapa Polvo de Hornear", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "TAPA POLVO DE HORNEAR ROJA – DONPERUCHO", "inv_actual": 1010, "demanda_total": 0, "deficit": 0, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}, {"sku": "TAPA POLVO DE HORNEAR ROJA – ESTANDAR", "inv_actual": 4125, "demanda_total": 0, "deficit": 0, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}]}, "Inyectora 2": {"tipo_resina": "PP Clarificado Inyeccion", "moldes": [{"molde": "Tapa Flip Crema", "total_sacos": 6, "total_kg": 150.0, "deficit_total": 22062, "colores": [{"sku": "TAPA FLIP BLANCA – ESTANDAR", "inv_actual": 1204, "demanda_total": 22100, "deficit": 20896, "peso_gr": 3.966, "peso_fuente": "medido", "kg_exactos": 82.87, "sacos": 4, "kg_reales": 100.0, "prioridad": "A", "productos": ["CREMA ALGAMARINA VIT A 437ML", "CREMA ALGAMARINA ALOE 437ML", "CREMA ALGAMARINA VIT E 437ML"]}, {"sku": "TAPA FLIP BEIGE PERLADO – ESTANDAR", "inv_actual": 3183, "demanda_total": 3500, "deficit": 317, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 1.27, "sacos": 1, "kg_reales": 25.0, "prioridad": "A", "productos": ["CREMA FARM AWAY 237ML"]}, {"sku": "TAPA FLIP VINO – ESTANDAR", "inv_actual": 2651, "demanda_total": 3500, "deficit": 849, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 5.1, "sacos": 1, "kg_reales": 25.0, "prioridad": "B", "productos": ["CREMA IMARY 237ML"]}, {"sku": "TAPA FLIP ROSA – ESTANDAR", "inv_actual": 5075, "demanda_total": 3500, "deficit": 0, "peso_gr": 4.088, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "A", "productos": ["CREMA SWEET HONEY 237ML"]}, {"sku": "TAPA FLIP AMARILLA - ESTANDAR", "inv_actual": 10283, "demanda_total": 3600, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "A", "productos": ["SHAMP BABY PEQ 310ML"]}, {"sku": "TAPA FLIP FUCCIA – ESTANDAR", "inv_actual": 15375, "demanda_total": 3500, "deficit": 0, "peso_gr": 4.0, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["CREMA CANDY 237ML"]}, {"sku": "TAPA FLIP CELESTE – ESTANDAR", "inv_actual": 13053, "demanda_total": 3500, "deficit": 0, "peso_gr": 4.237, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["CREMA FIEL 237ML"]}, {"sku": "TAPA FLIP BLANCO AZULADO – ESTANDAR", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}]}, "Sopladora": {"tipo_resina": "Alta Soplado Tradicional", "moldes": [{"molde": "Talco Ovalado (375gr)", "total_sacos": 30, "total_kg": 750.0, "deficit_total": 14745, "colores": [{"sku": "ENVASE TALCO CAFÉ – 375GR", "inv_actual": 2161, "demanda_total": 7000, "deficit": 4839, "peso_gr": 51.625, "peso_fuente": "medido", "kg_exactos": 249.83, "sacos": 10, "kg_reales": 250.0, "prioridad": "A", "productos": ["TALCO WILL COUNTY 375GR"]}, {"sku": "ENVASE TALCO ROSA – 375GR", "inv_actual": 2419, "demanda_total": 6000, "deficit": 3581, "peso_gr": 42.5, "peso_fuente": "medido", "kg_exactos": 152.18, "sacos": 7, "kg_reales": 175.0, "prioridad": "A", "productos": ["TALCO SWEET HONEY 375GR"]}, {"sku": "ENVASE TALCO BEIGE PERLADO – 375GR", "inv_actual": 1827, "demanda_total": 4000, "deficit": 2173, "peso_gr": 53.188, "peso_fuente": "medido", "kg_exactos": 115.6, "sacos": 5, "kg_reales": 125.0, "prioridad": "A", "productos": ["TALCO FARM AWAY 375GR"]}, {"sku": "ENVASE TALCO NEGRO – 375GR", "inv_actual": 3823, "demanda_total": 5000, "deficit": 1177, "peso_gr": 50.75, "peso_fuente": "medido", "kg_exactos": 59.74, "sacos": 3, "kg_reales": 75.0, "prioridad": "A", "productos": ["TALCO CHIEF 375GR"]}, {"sku": "ENVASE TALCO AZUL – 375GR", "inv_actual": 1025, "demanda_total": 2000, "deficit": 975, "peso_gr": 55.575, "peso_fuente": "medido", "kg_exactos": 54.19, "sacos": 3, "kg_reales": 75.0, "prioridad": "B", "productos": ["TALCO ROSE MEN 375GR"]}, {"sku": "ENVASE TALCO PAPAYA – 375GR", "inv_actual": 0, "demanda_total": 2000, "deficit": 2000, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 44.0, "sacos": 2, "kg_reales": 50.0, "prioridad": "C", "productos": ["TALCO CANDY 375GR"]}, {"sku": "ENVASE TALCO BLANCO – 375GR", "inv_actual": 8998, "demanda_total": 4000, "deficit": 0, "peso_gr": 54.833, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": ["TALCO FIEL 375GR", "TALCO INDIRA 375GR"]}]}, {"molde": "Shampoo Grande (946ml)", "total_sacos": 18, "total_kg": 450.0, "deficit_total": 8000, "colores": [{"sku": "ENVASE SHAMPOO BABY – 946ML", "inv_actual": 0, "demanda_total": 8000, "deficit": 8000, "peso_gr": 54.25, "peso_fuente": "medido", "kg_exactos": 434.0, "sacos": 18, "kg_reales": 450.0, "prioridad": "A", "productos": ["SHAMP BABY GRD 946ML"]}]}, {"molde": "Crema Pequeña (237ml)", "total_sacos": 16, "total_kg": 400.0, "deficit_total": 10589, "colores": [{"sku": "ENVASE CREMA AROMA ROSA – 237ML", "inv_actual": 0, "demanda_total": 3500, "deficit": 3500, "peso_gr": 43.6, "peso_fuente": "medido", "kg_exactos": 152.6, "sacos": 7, "kg_reales": 175.0, "prioridad": "A", "productos": ["CREMA SWEET HONEY 237ML"]}, {"sku": "ENVASE CREMA AROMA CREMA – 237ML", "inv_actual": 12, "demanda_total": 3500, "deficit": 3488, "peso_gr": 27.0, "peso_fuente": "medido", "kg_exactos": 94.18, "sacos": 4, "kg_reales": 100.0, "prioridad": "B", "productos": ["CREMA CANDY 237ML"]}, {"sku": "ENVASE CREMA AROMA BIEGE PERLADO – 237ML", "inv_actual": 1346, "demanda_total": 3500, "deficit": 2154, "peso_gr": 24.698, "peso_fuente": "medido", "kg_exactos": 53.21, "sacos": 3, "kg_reales": 75.0, "prioridad": "A", "productos": ["CREMA FARM AWAY 237ML"]}, {"sku": "ENVASE CREMA AROMA BLANCO – 237ML", "inv_actual": 5553, "demanda_total": 7000, "deficit": 1447, "peso_gr": 26.625, "peso_fuente": "medido", "kg_exactos": 38.53, "sacos": 2, "kg_reales": 50.0, "prioridad": "B", "productos": ["CREMA FIEL 237ML", "CREMA INDIRA 237ML"]}, {"sku": "ENVASE CREMA AROMA VINO – 237ML", "inv_actual": 4669, "demanda_total": 3500, "deficit": 0, "peso_gr": 24.49, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["CREMA IMARY 237ML"]}]}, {"molde": "Talco Baby Grande (575gr)", "total_sacos": 14, "total_kg": 350.0, "deficit_total": 5981, "colores": [{"sku": "ENVASE TALCO CELESTE - 575GR", "inv_actual": 9019, "demanda_total": 15000, "deficit": 5981, "peso_gr": 54.857, "peso_fuente": "medido", "kg_exactos": 328.09, "sacos": 14, "kg_reales": 350.0, "prioridad": "A", "productos": ["TALCO BABY GRD 575GR"]}]}, {"molde": "Cremas Algamarina (437ml)", "total_sacos": 6, "total_kg": 150.0, "deficit_total": 3761, "colores": [{"sku": "ENVASE CREMA ALGAMARINA CLARIFICADO – 437ML", "inv_actual": 2839, "demanda_total": 6600, "deficit": 3761, "peso_gr": 35.0, "peso_fuente": "medido", "kg_exactos": 131.64, "sacos": 6, "kg_reales": 150.0, "prioridad": "A", "productos": ["CREMA ALGAMARINA VIT A 437ML", "CREMA ALGAMARINA ALOE 437ML", "CREMA ALGAMARINA VIT E 437ML"]}]}, {"molde": "Gel Pequeño (250ml)", "total_sacos": 6, "total_kg": 150.0, "deficit_total": 8000, "colores": [{"sku": "ENVASE GEL PEQUEÑO BLANCO – 250ML", "inv_actual": 0, "demanda_total": 5000, "deficit": 5000, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 75.0, "sacos": 3, "kg_reales": 75.0, "prioridad": "B", "productos": ["GEL TERAPEUTICO ICE MAX 250GR"]}, {"sku": "ENVASE GEL PEQUEÑO CLARIFICADO – 250ML", "inv_actual": 0, "demanda_total": 3000, "deficit": 3000, "peso_gr": 19.962, "peso_fuente": "medido", "kg_exactos": 59.89, "sacos": 3, "kg_reales": 75.0, "prioridad": "B", "productos": ["GEL PLASTIMAX 250GR"]}, {"sku": "ENVASE GEL PEQUEÑO NEGRO – 250ML", "inv_actual": 0, "demanda_total": 0, "deficit": 0, "peso_gr": null, "peso_fuente": "estimado", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "C", "productos": []}]}, {"molde": "Shampoo Pequeño (310ml)", "total_sacos": 4, "total_kg": 100.0, "deficit_total": 3600, "colores": [{"sku": "ENVASE SHAMPOO BABY – 310ML", "inv_actual": 0, "demanda_total": 3600, "deficit": 3600, "peso_gr": 26.863, "peso_fuente": "medido", "kg_exactos": 96.71, "sacos": 4, "kg_reales": 100.0, "prioridad": "A", "productos": ["SHAMP BABY PEQ 310ML"]}]}, {"molde": "Talco Rosas (350gr)", "total_sacos": 2, "total_kg": 50.0, "deficit_total": 812, "colores": [{"sku": "ENVASE TALCO BLANCO – 350GR", "inv_actual": 9188, "demanda_total": 10000, "deficit": 812, "peso_gr": 42.0, "peso_fuente": "medido", "kg_exactos": 34.1, "sacos": 2, "kg_reales": 50.0, "prioridad": "A", "productos": ["TALCO ROSAS 350GR"]}]}, {"molde": "Shampoo Frachel (500ml)", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "ENVASE SHAMPOO AROMAS – 500ML", "inv_actual": 8871, "demanda_total": 7000, "deficit": 0, "peso_gr": 40.375, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["SHAMP FRACHEL AGUACATE 500ML", "SHAMP FRACHEL FRESA 500ML", "SHAMP FRACHEL MANZANA 500ML"]}]}, {"molde": "Gel Grande (950ml)", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "ENVASE GEL GRANDE CLARIFICADO – 950ML", "inv_actual": 14302, "demanda_total": 6000, "deficit": 0, "peso_gr": 58.25, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["GEL PLASTIMAX 950GR"]}]}, {"molde": "Envase Emanuel V2 (250ml)", "total_sacos": 0, "total_kg": 0.0, "deficit_total": 0, "colores": [{"sku": "ENVASE EMANUEL TRANSPARENTE V2– 250ML", "inv_actual": 9053, "demanda_total": 6000, "deficit": 0, "peso_gr": 23.625, "peso_fuente": "medido", "kg_exactos": 0, "sacos": 0, "kg_reales": 0, "prioridad": "B", "productos": ["COLONIA EMANUEL 250ML", "ACEITE PARA BEBÉ EMANUEL 250ML"]}]}]}};
+const PESOS_GR  = {"TAPA POLVO DE HORNEAR ROJA – DONPERUCHO": 4.0, "ENVASE TALCO ROSA – 375GR": 42.5, "ENVASE POLVO DE HORNEAR BLANCO – 100ML": 15.0, "ENVASE TALCO BLANCO – 350GR": 42.0, "TAPA TALCO CELESTE – ESTANDAR": 5.0, "TAPA POLVO DE HORNEAR ROJA – ESTANDAR": 4.0, "ENVASE TALCO NEGRO – 375GR": 50.75, "TAPA ROLL ON CAFÉ OSCURO – 75ML": 6.639, "ENVASE ROLL ON NARANJA – 75ML": 15.25, "TAPA ROLL ON AZUL – 75ML": 6.598, "ENVASE ROLL ON CREMA – 75ML": 15.25, "TAPA ROLL ON BEIGE PERLADO – 75ML": 6.588, "ENVASE ROLL ON ROSA – 75ML": 15.5, "ENVASE TALCO BLANCO – 375GR": 54.833, "TAPA ROLL ON ROSA – 75ML": 6.429, "ENVASE ROLL ON BLANCO – 75ML": 14.875, "ENVASE GEL GRANDE CLARIFICADO – 950ML": 58.25, "TAPA ROLL ON BLANCO AZULADO – 75ML": 6.737, "ENVASE TALCO CELESTE – 150GR": 24.85, "ENVASE TALCO CELESTE - 575GR": 54.857, "ENVASE EMANUEL TRANSPARENTE V2– 250ML": 23.625, "TAPA TALCO NEGRA – ESTANDAR": 2.999, "TAPA FLIP BLANCA – ESTANDAR": 3.966, "ENVASE CREMA AROMA VINO – 237ML": 24.49, "TAPA TALCO ROSA – ESTANDAR": 4.17, "ENVASE CREMA AROMA BIEGE PERLADO – 237ML": 24.698, "TAPA TALCO CAFÉ – ESTANDAR": 4.109, "ENVASE CREMA AROMA ROSA – 237ML": 43.6, "ENVASE TALCO CAFÉ – 375GR": 51.625, "ENVASE CREMA AROMA CREMA – 237ML": 27.0, "ENVASE CREMA AROMA BLANCO – 237ML": 26.625, "ENVASE CREMA ALGAMARINA CLARIFICADO – 437ML": 35.0, "TAPA TALCO ROJA – ESTANDAR": 4.136, "TAPA ROLL ON ROSA – 50ML": 5.247, "TAPA ROLL ON CAFÉ OSCURO – 50ML": 5.0, "ENVASE SHAMPOO AROMAS – 500ML": 40.375, "TAPA ROLL ON NEGRO – 50ML": 5.0, "TAPA ROLL ON VINO – 50ML": 4.875, "ENVASE SHAMPOO BABY – 946ML": 54.25, "TAPA GEL TRANSPARENTE – 950ML": 17.286, "TAPA ROLL ON NEGRO – 75ML": 6.5, "TAPA FLIP FUCCIA – ESTANDAR": 4.0, "TAPA FLIP ROSA – ESTANDAR": 4.088, "ENVASE TALCO BEIGE PERLADO – 375GR": 53.188, "ENVASE SHAMPOO BABY – 310ML": 26.863, "ENVASE GEL PEQUEÑO CLARIFICADO – 250ML": 19.962, "ENVASE ROLL ON CAFÉ – 75ML": 15.395, "TAPA GEL TRANSPARENTE – 250ML": 11.412, "ENVASE ROLL ON ROSA – 50ML": 8.0, "ENVASE ROLL ON BLANCO – 50ML": 8.262, "ENVASE COLONIA TRANSPARENTE – 250ML": 21.0, "ENVASE TALCO ROSA – 150GR": 24.262, "ENVASE TALCO BLANCO – 150GR": 24.496, "ENVASE TALCO AZUL – 375GR": 55.575, "ENVASE ROLL ON CAFÉ – 50ML": 8.375, "ENVASE ROLL ON VINO – 75ML": 15.363, "ENVASE ROLL ON AZUL REY 75ML": 15.4, "ENVASE ROLL ON NEGRO – 75ML": 15.588, "ENVASE TALCO CAFÉ – 150GR": 32.883, "TAPA TALCO AZUL – ESTANDAR": 4.0, "TAPA FLIP CELESTE – ESTANDAR": 4.237, "ENVASE ROLL ON NEGRO – 50ML": 8.463, "ENVASE ROLL ON AZUL OSCURO 50ML": 8.588, "ENVASE ROLL ON BEIGE PERLADO –  75ML": 15.262, "ENVASE ROLL ON VINO – 50ML": 8.625, "ENVASE TALCO CREMA – 150GR": 24.212, "ENVASE TALCO NEGRO – 150GR": 24.35, "TAPA ROLL ON NARANJA CLARO – 50ML": 5.0, "TAPA ROLL ON GRIS – 50ML": 5.0, "TAPA ROLL ON BEIGE PERLADO – 50ML": 5.0, "TAPA ROLL ON CREMA – 50ML": 5.0, "TAPA ROLL ON BLANCO – 50ML": 5.0, "TAPA ROLL ON AZUL – 50ML": 4.0, "TAPA TALCO FUCCIA - ESTANDAR": 4.0, "TAPA ROLL ON BLANCO – 75ML": 6.7, "TAPA ROLL ON FUCCIA – 75ML": 7.0, "TAPA ROLL ON VINO – 75ML": 7.0, "TAPA FLIP BEIGE PERLADO – ESTANDAR": 4.0, "ENVASE ROLL ON TURQUESA – 75ML": 13.75};
+const SACO_KG   = 25;
+
+const MAQ_COLORS = {Ametralladora:'#e67e22','Inyectora 1':'#3498db','Inyectora 2':'#9b59b6',Sopladora:'#1abc9c'};
+const MAQ_ICONS  = {Ametralladora:'⚙️','Inyectora 1':'🔧','Inyectora 2':'🔩',Sopladora:'💨'};
+
+const URLS = (typeof ERLO_CONFIG!=='undefined'&&ERLO_CONFIG.DATA)||{
+  ALL:'https://csotoajoy.github.io/grupoerlo/ps_all.json',
+  PEDIDOS:'https://csotoajoy.github.io/grupoerlo/ps_pedidos.json'
+};
+const REFRESH_MS = 60000;
+
+let liveSkuInv={}, liveResinas={}, liveOCs={};
+let plan={};
+let activeMaq=Object.keys(PLAN_BASE)[0];
+let openMoldes=new Set();
+
+// CLOCK
+function tick(){const n=new Date();document.getElementById('clk').textContent=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');}
+setInterval(tick,1000);tick();
+
+// FETCH
+async function fetchLive(){
+  const dot=document.getElementById('dot');
+  dot.className='dot';
+  try{
+    const t=Date.now();
+    const [aRes,pRes]=await Promise.all([fetch(URLS.ALL+'?t='+t),fetch(URLS.PEDIDOS+'?t='+t)]);
+    const [aJson,pJson]=await Promise.all([aRes.json(),pRes.json()]);
+    liveSkuInv={};
+    (aJson.inventario_sku||[]).forEach(s=>{
+      const k=(s.descripcion||'').trim().toUpperCase();
+      liveSkuInv[k]=(liveSkuInv[k]||0)+(parseFloat(s.unds)||0);
+    });
+    liveResinas={};
+    (aJson.insumos||[]).forEach(i=>{
+      if(i.Subcategoría==='Resinas'||i.Subcategoría==='Master Batch')
+        liveResinas[i.Titulo]=parseFloat(i.Cantidad)||0;
+    });
+    const hoy=new Date().toISOString().substring(0,10);
+    liveOCs={};
+    (pJson.pedidos||aJson.ordenes_compra||[]).forEach(o=>{
+      const st=(o.Status||'').toLowerCase();
+      if(st==='entregado'||st==='cancelado')return;
+      const cod=o.Code||''; if(!cod)return;
+      const pend=parseFloat(o['Cantidad Pendiente']||o['Total Unds']||0);
+      const venc=(o['Fecha de Entrega']||'')<hoy;
+      if(!liveOCs[cod])liveOCs[cod]={pendiente:0,vencidas:0};
+      liveOCs[cod].pendiente+=pend;
+      if(venc)liveOCs[cod].vencidas++;
+    });
+    dot.className='dot ok';
+  }catch(e){dot.className='dot';}
+  buildPlan();
+  renderAll();
+}
+
+function getSKUInv(skuName){
+  const k=skuName.trim().toUpperCase();
+  return liveSkuInv[k]!==undefined ? liveSkuInv[k] : 0;
+}
+
+// BUILD PLAN
+function buildPlan(){
+  plan={};
+  let totSacos=0,totMoldes=0,totColores=0,totPiezas=0,totMed=0;
+
+  Object.entries(PLAN_BASE).forEach(([maqName,maqBase])=>{
+    plan[maqName]={tipo_resina:maqBase.tipo_resina,color:MAQ_COLORS[maqName],icon:MAQ_ICONS[maqName],moldes:[]};
+    maqBase.moldes.forEach(mb=>{
+      const colores=mb.colores.map(c=>{
+        const inv=getSKUInv(c.sku)||c.inv_actual;
+        const dem=c.demanda_total;
+        const def=Math.max(0,dem-inv);
+        const pesoGr=PESOS_GR[c.sku]||PESOS_GR[c.sku.trim()]||null;
+        let kgExactos=0,sacos=0,kgReales=0;
+        if(def>0){
+          if(pesoGr){kgExactos=(def*pesoGr)/1000;}
+          else{kgExactos=c.kg_exactos||c.kg_reales||0;}
+          sacos=Math.ceil(kgExactos/SACO_KG)||1;
+          kgReales=sacos*SACO_KG;
+        }
+        return{...c,inv_actual:Math.round(inv),deficit:Math.round(def),peso_gr:pesoGr,peso_fuente:pesoGr?'medido':'estimado',kg_exactos:Math.round(kgExactos*100)/100,sacos,kg_reales:kgReales};
+      });
+      colores.sort((a,b)=>b.sacos-a.sacos||({'A':0,'B':1,'C':2}[a.prioridad]||3)-({'A':0,'B':1,'C':2}[b.prioridad]||3));
+      const totS=colores.reduce((s,c)=>s+c.sacos,0);
+      const totD=colores.reduce((s,c)=>s+c.deficit,0);
+      plan[maqName].moldes.push({molde:mb.molde,total_sacos:totS,total_kg:totS*SACO_KG,deficit_total:Math.round(totD),colores});
+      if(totS>0){totMoldes++;totColores+=colores.filter(c=>c.sacos>0).length;}
+      totSacos+=totS;totPiezas+=totD;
+    });
+    plan[maqName].moldes.sort((a,b)=>b.total_sacos-a.total_sacos);
+  });
+
+  // Count medidos
+  Object.values(plan).forEach(m=>m.moldes.forEach(md=>md.colores.forEach(c=>{if(c.sacos>0&&c.peso_fuente==='medido')totMed++;})));
+
+  document.getElementById('kSacos').textContent=totSacos.toLocaleString('es-CR');
+  document.getElementById('kKg').textContent=(totSacos*SACO_KG).toLocaleString('es-CR')+' kg';
+  document.getElementById('kMoldes').textContent=totMoldes;
+  document.getElementById('kColores').textContent=totColores;
+  document.getElementById('kPiezas').textContent=Math.round(totPiezas/1000).toLocaleString('es-CR')+'k';
+  document.getElementById('kResMed').textContent=totMed+' SKUs';
+  const rTot=Object.values(liveResinas).reduce((a,b)=>a+b,0)||(6800+3750+1050+325+2186);
+  document.getElementById('kResKg').textContent=Math.round(rTot).toLocaleString('es-CR')+' kg';
+}
+
+// NAV
+function renderNav(){
+  const nav=document.getElementById('navPanel');
+  let html='<div class="nav-sec">Máquinas</div>';
+  Object.entries(plan).forEach(([nm,md])=>{
+    const active=nm===activeMaq;
+    const totS=md.moldes.reduce((s,m)=>s+m.total_sacos,0);
+    html+=`<div class="nav-maq ${active?'active':''}" onclick="selMaq('${nm}')">
+      <div class="nav-dot" style="background:${md.color}"></div>
+      <div class="nav-name">${nm}</div>
+      <div class="nav-sacos">${totS}s</div>
+    </div>`;
+    if(active){
+      md.moldes.filter(m=>m.total_sacos>0).forEach(m=>{
+        const shortName=m.molde.replace(/ \(.*?\)/,'');
+        html+=`<div class="nav-molde" onclick="scrollToMolde('${encodeURIComponent(m.molde)}')">
+          <span>· ${shortName}</span><span style="color:var(--text-dim)">${m.total_sacos}s</span>
+        </div>`;
+      });
+    }
+  });
+  nav.innerHTML=html;
+}
+
+function selMaq(nm){
+  activeMaq=nm;
+  openMoldes=new Set(plan[nm].moldes.filter(m=>m.total_sacos>0).map(m=>m.molde));
+  renderAll();
+}
+
+function scrollToMolde(enc){
+  const nm=decodeURIComponent(enc);
+  openMoldes.add(nm);
+  renderMain();
+  setTimeout(()=>{
+    const el=document.querySelector(`[data-molde-id="${enc}"]`);
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  },50);
+}
+
+function toggleMolde(molde){
+  if(openMoldes.has(molde))openMoldes.delete(molde);
+  else openMoldes.add(molde);
+  renderMain();
+}
+
+// MAIN
+function renderMain(){
+  const md=plan[activeMaq]; if(!md)return;
+  const main=document.getElementById('mainPanel');
+  const totS=md.moldes.reduce((s,m)=>s+m.total_sacos,0);
+  const totKg=totS*SACO_KG;
+  const rDisp=liveResinas[md.tipo_resina]||0;
+  const rFill=Math.min(100,totKg>0?Math.round((rDisp/totKg)*100):100);
+  const rCol=rFill>=80?'var(--green)':rFill>=40?'var(--amber)':'var(--red)';
+
+  let html=`<div class="maq-hdr">
+    <div class="maq-icon">${md.icon}</div>
+    <div>
+      <div class="maq-nm" style="color:${md.color}">${activeMaq}</div>
+      <div class="maq-sub">Resina: ${md.tipo_resina}</div>
+    </div>
+    <div class="maq-badge">
+      <div class="maq-stat"><div class="maq-stat-v" style="color:var(--accent)">${totS}</div><div class="maq-stat-l">Sacos</div></div>
+      <div class="maq-stat"><div class="maq-stat-v" style="color:var(--accent)">${totKg.toLocaleString('es-CR')}</div><div class="maq-stat-l">Kg totales</div></div>
+    </div>
+  </div>
+  <div class="res-bar">
+    <span style="color:var(--text-mid);font-size:11px;white-space:nowrap">Resina disponible</span>
+    <div class="res-track"><div class="res-fill" style="width:${rFill}%;background:${rCol}"></div></div>
+    <span style="color:${rCol};font-size:12px;font-weight:600;white-space:nowrap">${Math.round(rDisp).toLocaleString('es-CR')} kg / ${totKg.toLocaleString('es-CR')} kg necesarios</span>
+    ${rDisp<totKg?`<span style="color:var(--red);font-size:10px">⚠ Déficit ${Math.round(totKg-rDisp).toLocaleString('es-CR')} kg</span>`:''}
+  </div>`;
+
+  const activos=md.moldes.filter(m=>m.total_sacos>0);
+  const sinDem=md.moldes.filter(m=>m.total_sacos===0);
+
+  activos.forEach((m,mi)=>{
+    const isOpen=openMoldes.has(m.molde);
+    const enc=encodeURIComponent(m.molde);
+    const colActivos=m.colores.filter(c=>c.sacos>0);
+    const maxSacos=colActivos.length>0?colActivos[0].sacos:1;
+
+    // Saco block visual (max 30 sacos shown)
+    const showSacos=Math.min(m.total_sacos,30);
+    let sacosVis='';
+    for(let i=0;i<showSacos;i++)sacosVis+=`<div class="saco"></div>`;
+    if(m.total_sacos>30)sacosVis+=`<span style="font-size:10px;color:var(--text-dim);align-self:center">+${m.total_sacos-30}</span>`;
+
+    html+=`<div class="mc" data-molde-id="${enc}">
+      <div class="mc-hdr" onclick="toggleMolde('${m.molde.replace(/'/g,"\\'")}')">
+        <span class="mc-chev ${isOpen?'open':''}">▶</span>
+        <div style="flex:1">
+          <div class="mc-name">${m.molde}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${sacosVis}</div>
+        </div>
+        <div class="mc-stats">
+          <div class="mc-stat"><div class="mc-stat-v" style="color:var(--accent)">${m.total_sacos}</div><div class="mc-stat-l">Sacos</div></div>
+          <div class="mc-stat"><div class="mc-stat-v" style="color:var(--accent)">${m.total_kg.toLocaleString('es-CR')} kg</div><div class="mc-stat-l">A preparar</div></div>
+          <div class="mc-stat"><div class="mc-stat-v">${colActivos.length}</div><div class="mc-stat-l">Corridas</div></div>
+          <div class="mc-stat"><div class="mc-stat-v" style="color:var(--text-mid)">${m.deficit_total.toLocaleString('es-CR')}</div><div class="mc-stat-l">Piezas</div></div>
+        </div>
+      </div>`;
+
+    if(isOpen){
+      html+=`<table class="ct">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th>SKU / Color</th>
+          <th>Prior</th>
+          <th>Stock SKU</th>
+          <th>Déficit</th>
+          <th>Peso / u</th>
+          <th>Sacos × 25kg</th>
+          <th>Kg exactos</th>
+          <th>Kg a pesar</th>
+          <th>Productos</th>
+        </tr></thead><tbody>`;
+
+      let orden=1;
+      m.colores.forEach(c=>{
+        const skip=c.sacos===0;
+        const invPct=c.demanda_total>0?Math.round((c.inv_actual/c.demanda_total)*100):100;
+        const spCls=invPct>=100?'sp-ok2':invPct>=50?'sp-warn':'sp-no';
+        const ordCls=orden===1?'t1':orden===2?'t2':orden===3?'t3':'';
+        const pct=Math.min(100,maxSacos>0?Math.round((c.sacos/maxSacos)*100):0);
+        const barCol=orden===1?'var(--accent)':orden<=3?'var(--amber)':'var(--text-mid)';
+        const pesoHtml=c.peso_gr
+          ?`<span class="peso-badge pb-med">📏 ${c.peso_gr}g</span>`
+          :`<span class="peso-badge pb-est">~ est.</span>`;
+
+        // Sacos block mini
+        const miniSacos=Math.min(c.sacos,12);
+        let miniVis='<div style="display:flex;flex-wrap:wrap;gap:2px">';
+        for(let i=0;i<miniSacos;i++)miniVis+=`<div style="width:10px;height:13px;border-radius:1px;background:${skip?'var(--surface3)':'var(--accent)'}"></div>`;
+        if(c.sacos>12)miniVis+=`<span style="font-size:9px;color:var(--text-dim);align-self:center">+${c.sacos-12}</span>`;
+        miniVis+='</div>';
+
+        const prodsRef=c.productos&&c.productos.length>0?c.productos.slice(0,2).join(', '):'—';
+
+        html+=`<tr class="${skip?'row-skip':''}">
+          <td>${skip?'<span class="ord">—</span>':`<span class="ord ${ordCls}">${orden}</span>`}</td>
+          <td>
+            <div style="font-weight:500">${c.sku}</div>
+            ${skip?'<div style="font-size:10px;color:var(--green)">✓ Sin déficit</div>':''}
+          </td>
+          <td><span class="bp bp-${c.prioridad}">${c.prioridad}</span></td>
+          <td><span class="sp ${spCls}">${c.inv_actual.toLocaleString('es-CR')}</span><div style="font-size:10px;color:var(--text-dim)">${invPct}% cob.</div></td>
+          <td style="font-variant-numeric:tabular-nums;color:${skip?'var(--text-dim)':'var(--red)'}">${c.deficit.toLocaleString('es-CR')}</td>
+          <td>${pesoHtml}</td>
+          <td>
+            ${skip?'—':`<div class="saco-pill">🎒 ${c.sacos} saco${c.sacos!==1?'s':''}</div>
+            ${miniVis}`}
+          </td>
+          <td style="font-variant-numeric:tabular-nums;font-size:12px;color:var(--text-mid)">${skip?'—':c.kg_exactos+' kg'}</td>
+          <td style="font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:${skip?'var(--text-dim)':'var(--accent)'}">${skip?'—':c.kg_reales.toLocaleString('es-CR')+' kg'}</td>
+          <td><div class="prod-ref">${prodsRef}</div></td>
+        </tr>`;
+        if(!skip)orden++;
+      });
+      html+=`</tbody></table>`;
+    }
+    html+=`</div>`;
+  });
+
+  if(sinDem.length>0){
+    html+=`<div style="margin-top:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text-dim);font-size:12px">
+      ✅ Sin producción requerida: ${sinDem.map(m=>m.molde.replace(/ \(.*?\)/,'')).join(' · ')}
+    </div>`;
+  }
+  main.innerHTML=html;
+}
+
+function renderAll(){renderNav();renderMain();}
+
+// INIT
+buildPlan();
+Object.keys(plan).forEach(maq=>plan[maq].moldes.filter(m=>m.total_sacos>0).forEach(m=>openMoldes.add(m.molde)));
+renderAll();
+fetchLive();
+setInterval(fetchLive,REFRESH_MS);
+</script>
+</body>
+</html>
