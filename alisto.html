@@ -271,6 +271,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
     <button class="modo-btn" id="btnLista" onclick="setModo('lista')">≡ Lista</button>
     <button class="modo-btn" id="btnMatriz" onclick="setModo('matriz')">📊 Matriz</button>
     <button class="modo-btn" id="btnDetalle" onclick="setModo('detalle')" disabled>◎ Detalle OC</button>
+    <button class="modo-btn" id="btnSipoc" onclick="setModo('sipoc')">⬡ Flujo Proceso</button>
   </div>
   <div class="header-right">
     <div class="status-dot" id="statusDot"></div>
@@ -364,7 +365,7 @@ setInterval(fetchData, REFRESH_MS);
 // ── MODO ─────────────────────────────────────────────────────────────────────
 function setModo(m) {
   modo = m;
-  ['btnKanban','btnLista','btnMatriz','btnDetalle'].forEach(id => {
+  ['btnKanban','btnLista','btnMatriz','btnDetalle','btnSipoc'].forEach(id => {
     document.getElementById(id).classList.toggle('active', id === 'btn'+m.charAt(0).toUpperCase()+m.slice(1));
   });
   document.getElementById('toolbar').style.display = m === 'lista' ? 'flex' : 'none';
@@ -385,6 +386,7 @@ function render() {
   if (modo === 'kanban') renderKanban();
   else if (modo === 'lista') renderLista();
   else if (modo === 'matriz') renderMatriz();
+  else if (modo === 'sipoc') renderSipoc();
   else if (modo === 'detalle' && ocSeleccionada) renderDetalle(ocSeleccionada);
   else renderLista();
 }
@@ -465,16 +467,19 @@ function procesarOCs() {
     const nNoEnt = lineas.filter(l=>l.estadoLinea==='no-entregado').length;
 
     let estadoOC;
-    // Bloqueado tiene prioridad absoluta (stock insuficiente, sin importar status SharePoint)
-    if (nBloq > 0) {
+    const s = oc.statusRaw;
+    // Si SharePoint ya marcó el OC como alistado o entregado, respetar ese status.
+    // El operario lo procesó aunque hubiera faltantes al momento del ingreso.
+    if (s === 'entregado') {
+      estadoOC = 'entregado';
+    } else if (s === 'alisto') {
+      estadoOC = 'alistado';
+    } else if (nBloq > 0) {
+      // Bloqueado solo aplica cuando el OC aún no fue procesado (ingresado/desconocido)
       estadoOC = 'bloqueado';
     } else {
-      // Usar el status del OC que viene de SharePoint
-      const s = oc.statusRaw;
-      if (s === 'entregado')    estadoOC = 'entregado';
-      else if (s === 'alisto')  estadoOC = 'alistado';
-      else if (s === 'parcial') estadoOC = 'parcial';
-      else                      estadoOC = 'ingresado'; // ingresado o desconocido
+      if (s === 'parcial') estadoOC = 'parcial';
+      else                 estadoOC = 'ingresado';
     }
 
     let diasVenc=null, claseVenc='ok';
@@ -544,6 +549,188 @@ function detectarViajes(ocs, ventanaDias=2) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ── SIPOC / FLUJO PROCESO ────────────────────────────────────────────────────
+function renderSipoc() {
+  const el = document.getElementById('content');
+  el.innerHTML = `
+<div style="padding:0; display:flex; flex-direction:column; gap:16px; height:100%; box-sizing:border-box;">
+
+  <!-- Botón volver -->
+  <div style="display:flex; align-items:center; gap:14px; padding-top:4px;">
+    <button class="back-btn" onclick="setModo('kanban')">← Volver al Kanban</button>
+    <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; letter-spacing:2px; color:var(--text-mid); text-transform:uppercase;">Flujo de Proceso — Referencia Operativa</span>
+  </div>
+
+  <!-- FLUJO 5 ETAPAS -->
+  <section style="display:flex; gap:0; min-height:0; flex:1 1 auto;">
+    <!-- 1 INGRESO -->
+    <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #3b82f6; border-radius:14px; overflow:hidden;">
+      <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#3b82f6; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">1</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Ingreso</div>
+        </div>
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(59,130,246,0.16); border:1px solid rgba(59,130,246,0.4);">
+          <span style="font-size:12px; color:#93b4f5; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-weight:700; font-size:15px; color:#cfe0fb;">Zeidy</span>
+        </div>
+      </div>
+      <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Recibir pedido</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Digitar en Excel</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Imprimir OC</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Colocar en bandeja <b style="color:#fff;">Ingresados</b></span></li>
+      </ol>
+    </article>
+    <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#f97316); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Bandeja Ingresados</div>
+    </div>
+    <!-- 2 PICKING -->
+    <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #f97316; border-radius:14px; overflow:hidden;">
+      <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#f97316; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">2</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Picking</div>
+        </div>
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(249,115,22,0.16); border:1px solid rgba(249,115,22,0.4);">
+          <span style="font-size:12px; color:#f6b27d; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-weight:700; font-size:15px; color:#fcd6b6;">Oscar / operario asignado</span>
+        </div>
+      </div>
+      <ol style="list-style:none; margin:0; padding:11px 13px; display:flex; flex-direction:column; gap:6px;">
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Tomar OC de bandeja de <b style="color:#fff;">Ingresados</b></span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Recorrer bodega PT con OC en mano</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Hacer el picking de los productos</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Verificar cantidad ítem por ítem</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">5</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Registrar faltantes en tablet</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">6</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Marcar <b style="color:#fff;">Alistado</b> en encuesta de producción</span></li>
+      </ol>
+    </article>
+    <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#f97316,#a855f7); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Faltantes + Alistado</div>
+    </div>
+    <!-- 3 FACTURACIÓN -->
+    <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #a855f7; border-radius:14px; overflow:hidden;">
+      <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#a855f7; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">3</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Facturación</div>
+        </div>
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(168,85,247,0.16); border:1px solid rgba(168,85,247,0.4);">
+          <span style="font-size:12px; color:#c79bf6; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-weight:700; font-size:15px; color:#e3cdfb;">Zeidy</span>
+        </div>
+      </div>
+      <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Revisar faltantes registrados</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Facturar según lo disponible</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Emitir factura electrónica (Hacienda)</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Colocar en bandeja <b style="color:#fff;">Despachados</b></span></li>
+      </ol>
+    </article>
+    <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#a855f7,#06b6d4); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Bandeja Despachados</div>
+    </div>
+    <!-- 4 ENTREGA -->
+    <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #06b6d4; border-radius:14px; overflow:hidden;">
+      <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#06b6d4; color:#03252b; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">4</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Entrega</div>
+        </div>
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(6,182,212,0.16); border:1px solid rgba(6,182,212,0.4);">
+          <span style="font-size:12px; color:#6fd8e8; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-weight:700; font-size:15px; color:#b6ecf3;">Jason / Jesús</span>
+        </div>
+      </div>
+      <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Retirar de bandeja <b style="color:#fff;">Despachados</b></span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Entregar al cliente</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Registrar firma de recibido en celular</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Marcar <b style="color:#fff;">Entregado</b> en encuesta</span></li>
+      </ol>
+    </article>
+    <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#06b6d4,#22c55e); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Entregado + firma</div>
+    </div>
+    <!-- 5 ARCHIVO -->
+    <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #22c55e; border-radius:14px; overflow:hidden;">
+      <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:40px; height:40px; border-radius:10px; background:#22c55e; color:#052e16; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">5</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Archivo</div>
+        </div>
+        <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(34,197,94,0.16); border:1px solid rgba(34,197,94,0.4);">
+          <span style="font-size:12px; color:#7ee2a8; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-weight:700; font-size:15px; color:#bdf0d2;">Zeidy</span>
+        </div>
+      </div>
+      <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Recibir confirmación de entrega</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Archivar expediente</span></li>
+        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Dar <b style="color:#fff;">seguimiento a cobros</b></span></li>
+      </ol>
+    </article>
+  </section>
+
+  <!-- BARRA DE ESTADOS -->
+  <section style="flex:0 0 auto; display:flex; align-items:stretch; gap:14px; background:#10161f; border:1px solid #1f2a37; border-radius:12px; padding:10px 16px;">
+    <div style="flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; padding-right:16px; border-right:1px solid #1f2a37;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:19px; color:#fff; letter-spacing:0.5px;">ESTADO DEL PEDIDO</div>
+      <div style="font-size:12px; color:#8ea2b8; letter-spacing:1px;">Cómo identificar cada pedido</div>
+    </div>
+    <div style="flex:1 1 0; display:flex; align-items:center; gap:11px; padding:4px 14px; border-radius:9px; background:rgba(107,114,128,0.12); border:1px solid rgba(107,114,128,0.4);">
+      <span style="width:18px; height:18px; border-radius:50%; background:#6b7280; flex:0 0 auto;"></span>
+      <div><span style="font-weight:700; font-size:19px; color:#fff;">Ingresado</span><div style="font-size:13px; color:#aab6c4;">En bandeja <b style="color:#cdd6e1;">Ingresados</b></div></div>
+    </div>
+    <div style="flex:1 1 0; display:flex; align-items:center; gap:11px; padding:4px 14px; border-radius:9px; background:rgba(245,158,11,0.13); border:1px solid rgba(245,158,11,0.45);">
+      <span style="width:18px; height:18px; border-radius:50%; background:#f59e0b; flex:0 0 auto;"></span>
+      <div><span style="font-weight:700; font-size:19px; color:#fff;">En proceso</span><div style="font-size:13px; color:#e6c89a;">Encuesta marcada <b style="color:#fcd9a0;">"Alisto"</b></div></div>
+    </div>
+    <div style="flex:1 1 0; display:flex; align-items:center; gap:11px; padding:4px 14px; border-radius:9px; background:rgba(34,197,94,0.13); border:1px solid rgba(34,197,94,0.45);">
+      <span style="width:18px; height:18px; border-radius:50%; background:#22c55e; flex:0 0 auto;"></span>
+      <div><span style="font-weight:700; font-size:19px; color:#fff;">Finalizado</span><div style="font-size:13px; color:#a6e2bf;">Encuesta marcada <b style="color:#bdf0d2;">"Alistado"</b></div></div>
+    </div>
+  </section>
+
+  <!-- PANELES INFERIORES -->
+  <section style="flex:0 0 auto; display:flex; gap:14px; height:260px;">
+    <!-- POKA-YOKE -->
+    <div style="flex:0 0 44%; display:flex; flex-direction:column; background:linear-gradient(180deg,rgba(127,29,29,0.32),rgba(80,15,15,0.22)); border:2px solid rgba(239,68,68,0.55); border-radius:13px; overflow:hidden;">
+      <div style="display:flex; align-items:center; gap:11px; padding:11px 16px; background:rgba(239,68,68,0.16); border-bottom:1px solid rgba(239,68,68,0.4);">
+        <div style="width:36px; height:36px; border-radius:8px; background:#ef4444; color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800;">⚠</div>
+        <div><div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:21px; color:#fff; letter-spacing:0.5px;">REGLAS POKA-YOKE</div><div style="font-weight:700; font-size:13px; color:#fca5a5; letter-spacing:2px;">NUNCA SE PUEDEN SALTAR</div></div>
+      </div>
+      <div style="flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between; padding:9px 16px;">
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">No tocar producto sin haber tomado la <b style="color:#fff;">OC impresa</b> de la bandeja</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Los faltantes se anotan en la <b style="color:#fff;">tablet</b> — nunca de palabra a Zeidy</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">No avisar a Zeidy sin haber marcado <b style="color:#fff;">"Alistado"</b> en la encuesta</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Zeidy <b style="color:#fff;">no factura</b> sin ver el registro de faltantes en el sistema</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Jason / Jesús <b style="color:#fff;">no salen</b> sin el pedido físico y la factura impresa</span></div>
+      </div>
+    </div>
+    <!-- SIPOC PICKING -->
+    <div style="flex:1 1 0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-radius:13px; overflow:hidden;">
+      <div style="display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid #1f2a37;">
+        <div style="width:36px; height:36px; border-radius:8px; background:#f97316; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px;">2</div>
+        <div><div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:21px; color:#fff; letter-spacing:0.5px;">SIPOC — ETAPA DE PICKING</div><div style="font-weight:600; font-size:13px; color:#f6b27d; letter-spacing:1px;">Proveedores · Entradas · Proceso · Salidas · Clientes</div></div>
+      </div>
+      <div style="flex:1 1 auto; display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:#1f2a37;">
+        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">SUPPLIERS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>Zeidy (Ingreso)</li><li>Bandeja <b style="color:#fff;">Ingresados</b></li><li>Bodega PT</li></ul></div>
+        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">INPUTS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>OC impresa</li><li>Pedido digitado</li><li>Alistar el pedido</li><li>Tablet de faltantes</li></ul></div>
+        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">PROCESS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:6px; font-size:12px; color:#cdd6e1;"><li>Alistar en una tarima</li><li>Verificar ítem por ítem</li><li>Registrar faltantes</li><li>Marcar <b style="color:#fff;">"Alistado"</b></li></ul></div>
+        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">OUTPUTS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>Producto alistado</li><li>Faltantes registrados</li><li>Encuesta <b style="color:#fff;">"Alistado"</b></li></ul></div>
+        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">CUSTOMERS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>Zeidy factura</li><li>Jason o Jesús entregan</li><li>Factura con firma del cliente</li></ul></div>
+      </div>
+    </div>
+  </section>
+</div>\`;
+}
+
 // KANBAN RENDER
 // ─────────────────────────────────────────────────────────────────────────────
 function renderKanban() {
