@@ -876,7 +876,7 @@ function renderDetalle(ocNum) {
       <div class="linea-stats">
         <div class="linea-stat"><span class="lbl">Pedido</span><span class="num">${l.totalUnds.toLocaleString()}</span></div>
         <div class="linea-stat"><span class="lbl">Stock</span><span class="num ${l.faltaStock?'red':'green'}">${l.stockDisp.toLocaleString()}</span></div>
-        <div class="linea-stat"><span class="lbl">Pendiente</span><span class="num ${l.pendiente>0?'red':''}">${l.pendiente.toLocaleString()}</span></div>
+        <div class="linea-stat"><span class="lbl">Faltante</span><span class="num ${l.faltaStock?'red':'green'}">${l.faltaStock ? Math.max(0, l.totalUnds - l.stockDisp).toLocaleString() : '—'}</span></div>
         <div class="linea-stat"><span class="lbl">Cajas</span><span class="num">${l.cajas.toFixed(1)}</span></div>
       </div>
       <span class="linea-status-badge" style="${badgeStyle}">${badgeTxt}</span>
@@ -893,7 +893,7 @@ function renderDetalle(ocNum) {
       <span class="detail-venc ${oc.claseVenc}">${diasTxt}</span>
     </div>
     <div class="detail-summary">
-      <div class="summary-card"><div class="summary-label">Unidades pendientes</div><div class="summary-val ${oc.pendienteUnds>0?'red':''}">${Math.round(oc.pendienteUnds).toLocaleString()}</div></div>
+      <div class="summary-card"><div class="summary-label">Unidades faltantes</div><div class="summary-val ${oc.nBloq>0?'red':'green'}">${oc.nBloq>0 ? oc.lineas.filter(l=>l.faltaStock).reduce((s,l)=>s+Math.max(0,l.totalUnds-l.stockDisp),0).toLocaleString() : '—'}</div></div>
       <div class="summary-card"><div class="summary-label">Total cajas</div><div class="summary-val">${oc.totalCajas.toFixed(0)}</div></div>
       <div class="summary-card"><div class="summary-label">Volumen m³</div><div class="summary-val">${oc.volumen.toFixed(2)}</div></div>
       <div class="summary-card"><div class="summary-label">Líneas (${oc.nBloq} bloq)</div><div class="summary-val ${oc.nBloq>0?'red':''}">${oc.lineas.length}</div></div>
