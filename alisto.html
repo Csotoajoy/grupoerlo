@@ -472,7 +472,7 @@ function procesarOCs() {
     // El operario lo procesó aunque hubiera faltantes al momento del ingreso.
     if (s === 'entregado') {
       estadoOC = 'entregado';
-    } else if (s === 'alisto') {
+    } else if (s === 'alisto' || s === 'alistado') {
       estadoOC = 'alistado';
     } else if (nBloq > 0) {
       // Bloqueado solo aplica cuando el OC aún no fue procesado (ingresado/desconocido)
