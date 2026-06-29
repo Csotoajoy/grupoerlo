@@ -35,10 +35,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .refresh-btn{padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:6px;color:var(--text-mid);font-family:'Barlow',sans-serif;font-size:12px;cursor:pointer;transition:.2s;}
 .refresh-btn:hover{background:rgba(255,255,255,0.1);color:var(--text);}
 
-/* ── FILTROS (modo lista) ── */
+/* ── FILTROS ── */
 .toolbar{display:flex;align-items:center;gap:10px;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface2);flex-shrink:0;flex-wrap:wrap;}
 .filter-btn{padding:5px 12px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text-mid);font-family:'Barlow',sans-serif;font-size:11px;cursor:pointer;transition:.2s;text-transform:uppercase;letter-spacing:.05em;}
-.filter-btn.active,.filter-btn.f-red.active{border-color:var(--accent);color:var(--accent);background:rgba(0,128,255,0.1);}
+.filter-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,128,255,0.1);}
 .filter-btn.f-red.active{border-color:var(--red);color:var(--red);background:rgba(231,76,60,0.1);}
 .filter-btn.f-amber.active{border-color:var(--amber);color:var(--amber);background:rgba(243,156,18,0.1);}
 .filter-btn.f-blue.active{border-color:var(--blue);color:var(--blue);background:rgba(52,152,219,0.1);}
@@ -51,8 +51,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 
 /* ── CONTENIDO ── */
 .content{flex:1;overflow-y:auto;overflow-x:hidden;}
-
-/* ── LOADER ── */
 .loader{display:flex;align-items:center;justify-content:center;gap:12px;height:200px;color:var(--text-dim);font-size:14px;}
 .spin{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -60,15 +58,10 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .empty-icon{font-size:48px;opacity:.3;}
 .empty-text{color:var(--text-dim);font-size:14px;}
 
-/* ═══════════════════════════════════════════════
-   KANBAN — PANTALLA PLANTA 55" / 5M+
-═══════════════════════════════════════════════ */
+/* ── KANBAN ── */
 .kanban-wrap{display:flex;gap:0;height:100%;overflow:hidden;}
-
-/* Columnas */
 .kanban-col{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);min-width:0;}
 .kanban-col:last-child{border-right:none;}
-
 .kanban-col-header{padding:16px 20px 14px;border-bottom:2px solid var(--border2);flex-shrink:0;position:sticky;top:0;z-index:10;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .kanban-col-header > div:first-child{min-width:0;}
 .kanban-col-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:25px;letter-spacing:.03em;text-transform:uppercase;line-height:1.05;}
@@ -82,17 +75,12 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .kanban-col-num.col-amber{color:var(--amber);}
 .kanban-col-num.col-blue{color:var(--blue);}
 .kanban-col-num.col-green{color:var(--green);}
-
 .kanban-col-body{flex:1;overflow-y:auto;padding:12px 12px 24px;}
-
-/* Grupo de ruta dentro de columna */
 .ruta-grupo{margin-bottom:16px;}
 .ruta-label{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:6px 6px 0 0;margin-bottom:0;}
 .ruta-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .ruta-nombre{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:21px;text-transform:uppercase;letter-spacing:.06em;color:var(--text);}
 .ruta-subtotal{margin-left:auto;font-size:15px;color:var(--text-mid);font-family:'Barlow Condensed',sans-serif;}
-
-/* Separador de viaje/batch dentro de una ruta */
 .viaje-sep{display:flex;align-items:center;gap:8px;padding:4px 12px 4px;margin:6px 0 4px;}
 .viaje-fecha{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;}
 .viaje-badge{padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;}
@@ -100,8 +88,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .viaje-badge.urgente{background:rgba(243,156,18,0.2);color:var(--amber);}
 .viaje-badge.ok{background:rgba(46,204,113,0.1);color:var(--green);}
 .viaje-sep-line{flex:1;height:1px;background:var(--border);}
-
-/* ── TARJETA OC (KANBAN) ── */
 .koc-card{background:var(--surface2);border-radius:8px;margin-bottom:8px;border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:.15s;position:relative;}
 .koc-card:hover{border-color:var(--border2);background:var(--surface3);}
 .koc-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
@@ -114,7 +100,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .koc-card.vencida:hover{background:rgba(231,76,60,0.18);}
 .koc-card.urgente{background:rgba(243,156,18,0.10);border-color:rgba(243,156,18,0.4);}
 .koc-card.urgente:hover{background:rgba(243,156,18,0.16);}
-
 .koc-main{padding:14px 16px 10px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .koc-left{min-width:0;flex:1;}
 .koc-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;line-height:1;color:var(--text);letter-spacing:-.01em;}
@@ -122,7 +107,6 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .koc-right{text-align:right;flex-shrink:0;}
 .koc-unds{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:40px;line-height:1;color:var(--text);}
 .koc-unds-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;}
-
 .koc-meta{padding:6px 16px 12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .koc-fecha{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;}
 .koc-fecha.vencida{color:var(--red);}
@@ -135,9 +119,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .koc-cajas{font-size:16px;color:var(--text-mid);margin-left:auto;font-family:'Barlow Condensed',sans-serif;}
 .koc-alerta{font-size:13px;color:var(--red);padding:0 16px 10px 18px;display:flex;align-items:center;gap:6px;}
 
-/* ═══════════════════════════════════════════════
-   MODO LISTA (resumen clásico) — igual que antes
-═══════════════════════════════════════════════ */
+/* ── LISTA ── */
 .list-wrap{padding:20px 24px;}
 .lista-group{margin-bottom:10px;}
 .lista-group-header{position:sticky;top:0;z-index:6;display:flex;align-items:center;gap:12px;padding:12px 0 10px;margin:0 0 14px;background:var(--bg);border-bottom:2px solid var(--border2);}
@@ -223,9 +205,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .linea-status-badge{padding:9px 18px;border-radius:8px;font-size:15px;font-weight:700;text-transform:uppercase;text-align:center;flex-shrink:0;}
 .linea-alerta{margin-top:4px;font-size:15px;color:var(--red);flex-basis:100%;width:100%;}
 
-/* ═══════════════════════════════════════════════
-   MATRIZ % CAMIÓN / AGING EN ALISTO
-═══════════════════════════════════════════════ */
+/* ── MATRIZ ── */
 .matrix-wrap{padding:20px 24px;}
 .matrix-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--text-mid);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
 .matrix-sub{font-size:12px;color:var(--text-dim);margin-bottom:14px;}
@@ -253,11 +233,207 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
 .matrix-table tfoot td{background:rgba(243,156,18,0.08);font-weight:700;padding:10px 14px;border-top:2px solid var(--border2);position:sticky;bottom:0;}
 .mtx-total-col{text-align:center;color:var(--accent);}
 .mtx-total-label{text-transform:uppercase;font-size:12px;letter-spacing:.04em;color:var(--text-mid);position:sticky;left:0;}
+
+/* ═══════════════════════════════════════════════
+   PICKER / ALISTO TABLET
+═══════════════════════════════════════════════ */
+.picker-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:#0a1628;
+  display:none;
+  flex-direction:column;
+  font-family:'Barlow',sans-serif;
+}
+.picker-overlay.visible{display:flex;}
+
+/* topbar picker */
+.pk-topbar{
+  background:#0f2040;
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid #1e3d6e;
+  flex-shrink:0;
+}
+.pk-brand{display:flex;align-items:center;gap:10px;}
+.pk-brand-icon{width:32px;height:32px;border-radius:8px;background:#5aadd4;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.pk-brand-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:#eef7fd;letter-spacing:.06em;}
+.pk-brand-sub{font-size:10px;color:#5a8ec4;text-transform:uppercase;letter-spacing:.08em;}
+.pk-topbar-right{color:#fff;font-size:12px;text-align:right;}
+.pk-back-btn{background:#152848;border:1px solid #1e3d6e;color:#90c4e8;border-radius:6px;padding:6px 14px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+
+/* body picker */
+.pk-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;}
+
+/* OC header en picker */
+.pk-oc-header{
+  background:#152848;border:1px solid #1e3d6e;
+  border-left:4px solid #7ec4e8;
+  border-radius:10px;padding:14px 18px;
+}
+.pk-oc-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:#eef7fd;letter-spacing:.04em;}
+.pk-oc-razon{color:#a8d8f0;font-size:13px;font-weight:500;margin-top:3px;}
+.pk-oc-meta{display:flex;gap:16px;margin-top:10px;}
+.pk-stat{text-align:center;}
+.pk-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:#eef7fd;line-height:1;}
+.pk-stat-lbl{font-size:10px;color:#3d6696;text-transform:uppercase;letter-spacing:.05em;}
+
+/* sección label */
+.pk-section-label{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:#3d6696;margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+
+/* operarios */
+.pk-op-grid{display:flex;flex-direction:column;gap:8px;}
+.pk-op-chip{
+  display:flex;align-items:center;gap:12px;
+  background:#152848;border:1.5px solid #1e3d6e;
+  border-radius:8px;padding:11px 14px;cursor:pointer;transition:.15s;
+}
+.pk-op-chip.selected{border-color:#7ec4e8;background:#0d2040;}
+.pk-op-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:#1e3d6e;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#5a8ec4;flex-shrink:0;
+}
+.pk-op-chip.selected .pk-op-avatar{background:#5aadd4;color:#0a1628;}
+.pk-op-name{color:#daeef8;font-size:15px;font-weight:500;flex:1;}
+.pk-op-check{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid #2a5494;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.pk-op-chip.selected .pk-op-check{background:#7ec4e8;border-color:#7ec4e8;}
+.pk-check-mark{display:none;color:#0a1628;font-size:12px;font-weight:700;}
+.pk-op-chip.selected .pk-check-mark{display:block;}
+
+/* timestamp */
+.pk-ts-box{
+  background:#152848;border:1px solid #1e3d6e;
+  border-radius:8px;padding:12px 16px;
+  display:flex;align-items:center;gap:14px;
+}
+.pk-ts-icon{
+  width:34px;height:34px;border-radius:8px;
+  background:#0d2040;border:1px solid #2a5494;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.pk-ts-label{font-size:10px;color:#3d6696;text-transform:uppercase;letter-spacing:.06em;}
+.pk-ts-value{color:#2dd4a0;font-size:15px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums;}
+
+/* progress */
+.pk-progress-wrap{background:#152848;border-radius:3px;height:3px;overflow:hidden;margin-bottom:2px;}
+.pk-progress-bar{height:3px;background:#7ec4e8;border-radius:3px;transition:width .3s;}
+.pk-progress-label{color:#3d6696;font-size:11px;}
+
+/* líneas de picking */
+.pk-lines-list{display:flex;flex-direction:column;gap:8px;}
+.pk-line{
+  background:#152848;border:1px solid #1e3d6e;
+  border-radius:8px;padding:11px 14px;
+}
+.pk-line.st-entregado{border-color:#1a5c45;background:#0a2e24;}
+.pk-line.st-parcial{border-color:#5c4010;background:#2a1f06;}
+.pk-line.st-no{border-color:#5c2020;background:#2a0f0f;}
+.pk-line-top{display:flex;justify-content:space-between;margin-bottom:3px;}
+.pk-line-code{color:#3d6696;font-size:10px;font-weight:600;text-transform:uppercase;}
+.pk-line-qty{color:#c8e6f8;font-size:12px;font-weight:700;}
+.pk-line-desc{color:#daeef8;font-size:13px;margin-bottom:9px;line-height:1.3;}
+.pk-line-actions{display:flex;gap:6px;}
+.pk-btn{
+  padding:7px 0;border-radius:6px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid;flex:1;text-align:center;transition:.12s;
+}
+.pk-btn-ent{background:#0a2e24;border-color:#1a5c45;color:#2dd4a0;}
+.pk-btn-par{background:#2a1f06;border-color:#5c4010;color:#f5c842;}
+.pk-btn-no{background:#2a0f0f;border-color:#5c2020;color:#f07070;}
+.pk-parcial-wrap{display:none;align-items:center;gap:8px;margin-top:9px;}
+.pk-parcial-wrap.visible{display:flex;}
+.pk-parcial-input{
+  background:#0a1628;border:1px solid #5c4010;border-radius:6px;
+  padding:6px 10px;color:#f5c842;font-size:14px;font-weight:700;
+  width:72px;text-align:center;
+}
+.pk-parcial-lbl{color:#3d6696;font-size:11px;}
+.pk-estado-badge{display:inline-block;padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;}
+.pk-b-ent{background:#0a2e24;color:#2dd4a0;border:1px solid #1a5c45;}
+.pk-b-no{background:#2a0f0f;color:#f07070;border:1px solid #5c2020;}
+.pk-b-par{background:#2a1f06;color:#f5c842;border:1px solid #5c4010;}
+.pk-undo-btn{background:none;border:1px solid #1e3d6e;color:#3d6696;border-radius:4px;padding:3px 9px;font-size:10px;cursor:pointer;margin-left:8px;}
+
+/* tags operario/ts en detalle */
+.pk-op-tag{background:#0d2040;color:#a8d8f0;border:1px solid #2a5494;border-radius:4px;padding:2px 9px;font-size:10px;font-weight:600;}
+.pk-ts-tag{background:#0a2e24;color:#2dd4a0;border:1px solid #1a5c45;border-radius:4px;padding:2px 9px;font-size:10px;font-weight:600;}
+
+/* botones CTA */
+.pk-cta-btn{
+  width:100%;padding:14px;
+  background:#5aadd4;color:#0a1628;
+  border:none;border-radius:8px;font-size:15px;font-weight:700;
+  cursor:pointer;text-transform:uppercase;letter-spacing:.05em;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.pk-cta-btn:disabled{background:#152848;color:#3d6696;border:1px solid #1e3d6e;cursor:not-allowed;}
+.pk-confirm-btn{
+  width:100%;padding:13px;
+  background:#2dd4a0;color:#0a1628;
+  border:none;border-radius:8px;font-size:15px;font-weight:700;
+  cursor:pointer;text-transform:uppercase;letter-spacing:.05em;
+}
+.pk-confirm-btn:disabled{background:#152848;color:#3d6696;border:1px solid #1e3d6e;cursor:not-allowed;}
+
+/* confirm bar */
+.pk-confirm-bar{padding:14px 20px;background:#0f2040;border-top:1px solid #1e3d6e;flex-shrink:0;}
+
+/* resumen final */
+.pk-resumen-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(10,22,40,0.93);
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+.pk-resumen-overlay.visible{display:flex;}
+.pk-resumen-card{
+  background:#0f2040;border:1.5px solid #2a5494;
+  border-radius:14px;padding:24px;width:100%;max-width:480px;
+}
+.pk-resumen-title{color:#eef7fd;font-size:18px;font-weight:800;margin-bottom:4px;}
+.pk-resumen-sub{color:#3d6696;font-size:12px;margin-bottom:16px;}
+.pk-resumen-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1e3d6e;font-size:13px;}
+.pk-resumen-row:last-of-type{border-bottom:none;}
+.pk-rkey{color:#3d6696;}
+.pk-rval{color:#daeef8;font-weight:600;text-align:right;max-width:60%;}
+.pk-rval.green{color:#2dd4a0;}
+.pk-rval.amber{color:#f5c842;}
+.pk-rval.red{color:#f07070;}
+.pk-rval.accent{color:#a8d8f0;}
+.pk-resumen-status{
+  margin:14px 0 0;
+  padding:10px 16px;border-radius:8px;
+  font-size:13px;font-weight:600;text-align:center;
+}
+.pk-resumen-status.enviando{background:#0d2040;color:#a8d8f0;border:1px solid #2a5494;}
+.pk-resumen-status.ok{background:#0a2e24;color:#2dd4a0;border:1px solid #1a5c45;}
+.pk-resumen-status.error{background:#2a0f0f;color:#f07070;border:1px solid #5c2020;}
+.pk-resumen-btn{
+  width:100%;padding:13px;background:#5aadd4;color:#0a1628;
+  border:none;border-radius:8px;font-size:14px;font-weight:700;
+  cursor:pointer;margin-top:16px;text-transform:uppercase;letter-spacing:.05em;
+}
+.pk-resumen-btn:disabled{background:#152848;color:#3d6696;cursor:not-allowed;}
+
+/* filtros picker */
+.pk-filter-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;}
+.pk-chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid transparent;letter-spacing:.02em;}
+.pk-chip-all{background:#7ec4e8;color:#0a1628;}
+.pk-chip-ing{background:#0c2d52;color:#a8d8f0;border-color:#2a5494;}
+.pk-chip-ali{background:#0a2e24;color:#2dd4a0;border-color:#1a5c45;}
+.pk-chip-bloq{background:#2a0f0f;color:#f07070;border-color:#5c2020;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ═══════════ HEADER PRINCIPAL ═══════════ -->
 <div class="header">
   <div class="logo-area">
     <div class="logo-box"><img src="erlo-logo.png" alt="Grupo Erlo"></div>
@@ -272,6 +448,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
     <button class="modo-btn" id="btnMatriz" onclick="setModo('matriz')">📊 Matriz</button>
     <button class="modo-btn" id="btnDetalle" onclick="setModo('detalle')" disabled>◎ Detalle OC</button>
     <button class="modo-btn" id="btnSipoc" onclick="setModo('sipoc')">⬡ Flujo Proceso</button>
+    <button class="modo-btn" id="btnPicker" onclick="abrirPicker()" style="background:rgba(90,173,212,0.15);color:#7ec4e8;border:1px solid #2a5494;">☁ Alisto</button>
   </div>
   <div class="header-right">
     <div class="status-dot" id="statusDot"></div>
@@ -280,7 +457,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
   </div>
 </div>
 
-<!-- FILTROS (solo modo lista) -->
+<!-- FILTROS -->
 <div class="toolbar" id="toolbar" style="display:none;">
   <button class="filter-btn active" onclick="setFiltro('todos',this)">Todos</button>
   <button class="filter-btn f-red" onclick="setFiltro('bloqueado',this)">🔴 Bloqueado</button>
@@ -291,9 +468,102 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
   <span class="toolbar-count" id="toolbarCount"></span>
 </div>
 
-<!-- CONTENIDO -->
+<!-- CONTENIDO PRINCIPAL -->
 <div class="content" id="content">
   <div class="loader"><div class="spin"></div>Cargando datos…</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PICKER OVERLAY — MÓDULO ALISTO TABLET
+═══════════════════════════════════════════════ -->
+<div class="picker-overlay" id="pickerOverlay">
+
+  <!-- VISTA: LISTA DE OCs -->
+  <div id="pk-listView" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+    <div class="pk-topbar">
+      <div class="pk-brand">
+        <div class="pk-brand-icon">☁</div>
+        <div>
+          <div class="pk-brand-name">Alisto</div>
+          <div class="pk-brand-sub">Heavenly Digital</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="pk-topbar-right" id="pk-fecha"></div>
+        <button class="pk-back-btn" onclick="cerrarPicker()">✕ Cerrar</button>
+      </div>
+    </div>
+    <div style="padding:10px 20px;background:#0a1628;border-bottom:1px solid #1e3d6e;">
+      <div style="display:flex;align-items:center;gap:8px;background:#152848;border:1px solid #1e3d6e;border-radius:8px;padding:0 12px;">
+        <span style="color:#3d6696;font-size:15px;">🔍</span>
+        <input id="pk-search" style="flex:1;background:transparent;border:none;outline:none;padding:9px 0;color:#fff;font-size:13px;" placeholder="Buscar OC o cliente..." type="text" oninput="renderPickerLista()">
+      </div>
+    </div>
+    <div style="padding:8px 20px;border-bottom:1px solid #1e3d6e;display:flex;gap:6px;">
+      <div class="pk-chip pk-chip-all" onclick="pkFiltro='todos';renderPickerLista()">Todas</div>
+      <div class="pk-chip pk-chip-ing" onclick="pkFiltro='ingresado';renderPickerLista()">Ingresadas</div>
+      <div class="pk-chip pk-chip-ali" onclick="pkFiltro='alistado';renderPickerLista()">Alistadas</div>
+      <div class="pk-chip pk-chip-bloq" onclick="pkFiltro='bloqueado';renderPickerLista()">Bloqueadas</div>
+    </div>
+    <div id="pk-oc-list" style="flex:1;overflow-y:auto;padding:12px 20px;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <!-- VISTA: SELECCIÓN OPERARIO -->
+  <div id="pk-opView" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+    <div class="pk-topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="pk-back-btn" onclick="pkShow('list')">← Volver</button>
+        <div class="pk-brand-name" style="font-size:14px;">Asignar operario</div>
+      </div>
+      <div class="pk-brand-icon" style="width:26px;height:26px;border-radius:6px;font-size:14px;">☁</div>
+    </div>
+    <div class="pk-body" id="pk-op-body"></div>
+  </div>
+
+  <!-- VISTA: PICKING DE LÍNEAS -->
+  <div id="pk-detailView" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+    <div class="pk-topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="pk-back-btn" onclick="pkShow('op')">← Volver</button>
+        <div>
+          <div id="pk-d-num" style="color:#eef7fd;font-size:15px;font-weight:700;"></div>
+          <div id="pk-d-estado" style="font-size:10px;color:#3d6696;"></div>
+        </div>
+      </div>
+      <div class="pk-brand-icon" style="width:26px;height:26px;border-radius:6px;font-size:14px;">☁</div>
+    </div>
+    <div style="padding:12px 20px;background:#0f2040;border-bottom:1px solid #1e3d6e;">
+      <div id="pk-d-razon" style="color:#a8d8f0;font-size:12px;font-weight:500;margin-bottom:6px;"></div>
+      <div id="pk-d-meta" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:20px;">
+        <div class="pk-stat"><div id="pk-d-units" class="pk-stat-val"></div><div class="pk-stat-lbl">Unidades</div></div>
+        <div class="pk-stat"><div id="pk-d-cajas" class="pk-stat-val"></div><div class="pk-stat-lbl">Cajas</div></div>
+        <div class="pk-stat"><div id="pk-d-lineas" class="pk-stat-val"></div><div class="pk-stat-lbl">Líneas</div></div>
+      </div>
+    </div>
+    <div style="padding:6px 20px 0;background:#0a1628;">
+      <div class="pk-progress-wrap"><div class="pk-progress-bar" id="pk-prog-bar" style="width:0%"></div></div>
+      <div class="pk-progress-label" id="pk-prog-lbl" style="padding:3px 0 6px;"></div>
+    </div>
+    <div class="pk-body" style="padding-top:8px;">
+      <div class="pk-lines-list" id="pk-lines-list"></div>
+    </div>
+    <div class="pk-confirm-bar">
+      <button class="pk-confirm-btn" id="pk-confirm-btn" disabled onclick="pkConfirmar()">Marcar todas las líneas para confirmar</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- RESUMEN FINAL (fuera del overlay para z-index) -->
+<div class="pk-resumen-overlay" id="pk-resumen-overlay">
+  <div class="pk-resumen-card">
+    <div class="pk-resumen-title">Despacho confirmado</div>
+    <div class="pk-resumen-sub">Resumen del alisto</div>
+    <div id="pk-resumen-body"></div>
+    <div class="pk-resumen-status enviando" id="pk-resumen-status">⏳ Enviando a SharePoint…</div>
+    <button class="pk-resumen-btn" id="pk-resumen-close-btn" disabled onclick="pkCerrarResumen()">Volver a lista</button>
+  </div>
 </div>
 
 <script src="config.js"></script>
@@ -306,18 +576,30 @@ const URLS = (typeof ERLO_CONFIG !== 'undefined') ? ERLO_CONFIG.DATA : {
   RUTAS:      'https://csotoajoy.github.io/grupoerlo/ps_rutas.json',
 };
 const REFRESH_MS = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.REFRESH_MS) || 30000;
-// Capacidad estándar de camión en m³, usada para calcular % de camión = volumen OC / esta capacidad.
-// Confirmado con la fórmula real de Excel: =[@[Peso Volumetrico]]/'Unidades de Empaque'!$J$16
-// donde J16 = "Peso volumétrico del camión" = 10. El Peso Volumetrico por OC sale de
-// =SUMIF(Piezas[No. Pedido];[@No. Pedido];Piezas[Peso Volumetrico2]) — lo mismo que hace ocMap[oc].volumen aquí.
 const CAPACIDAD_CAMION_M3 = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.CAPACIDAD_CAMION_M3) || 10;
-const RUTAS_URL  = (URLS.RUTAS) || 'https://csotoajoy.github.io/grupoerlo/ps_rutas.json';
+const RUTAS_URL = (URLS.RUTAS) || 'https://csotoajoy.github.io/grupoerlo/ps_rutas.json';
 
-let allData  = null;
-let rutasData= null;   // { ventana_viaje_dias, rutas: [...] }
-let modo     = 'kanban';
-let filtro   = 'todos';
+// ── URL DEL FLOW POWER AUTOMATE ──────────────────────────────────────────────
+const FLOW_URL = 'https://defaultacd58534b1ad4bc78dccf255047274.6e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b79e33ab6b6b4d3795182604a193c125/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=0qKdV9dcpL0YQeMVVhLowSBs8U_S2gnqe8Rpxre8RIc';
+
+const OPERARIOS = ['Oscar','Geanina','Jazmín','David'];
+
+let allData   = null;
+let rutasData = null;
+let modo      = 'kanban';
+let filtro    = 'todos';
 let ocSeleccionada = null;
+
+// ── Estado del picker ────────────────────────────────────────────────────────
+let pkState = {
+  oc: null,           // objeto OC seleccionada
+  ops: [],            // operarios seleccionados
+  tsInicio: null,     // Date de inicio
+  tsFin: null,        // Date de fin
+  lines: {},          // { i: 'entregado'|'parcial'|'no', i+'_qty': number }
+  ocLineas: [],       // líneas de la OC con ID de SharePoint
+};
+let pkFiltro = 'todos';
 
 // ── RELOJ ────────────────────────────────────────────────────────────────────
 function tickClock() {
@@ -343,7 +625,6 @@ async function fetchData() {
     const [inv, ped, ops, rut] = await Promise.all([
       invRes.json(), pedRes.json(), opsRes.json(), rutRes.json()
     ]);
-
     allData = {
       actualizado:    ped.actualizado || inv.actualizado || ops.actualizado || '',
       ordenes_compra: ped.pedidos     || [],
@@ -351,7 +632,6 @@ async function fetchData() {
       ordenes:        ops.ops         || [],
     };
     rutasData = rut;
-
     dot.className = 'status-dot ok';
     render();
   } catch(e) {
@@ -380,7 +660,6 @@ function setFiltro(f, btn) {
   renderLista();
 }
 
-// ── RENDER PRINCIPAL ─────────────────────────────────────────────────────────
 function render() {
   if (!allData) return;
   if (modo === 'kanban') renderKanban();
@@ -414,7 +693,7 @@ function procesarOCs() {
     const oc = linea.OC || linea.oc || '';
     if (!oc) return;
     const status = (linea.Status || linea.status || '').toLowerCase();
-    if (status === 'cancelado') return;  // solo se omite cancelado
+    if (status === 'cancelado') return;
 
     if (!ocMap[oc]) {
       ocMap[oc] = {
@@ -423,7 +702,7 @@ function procesarOCs() {
         codCliente: String(linea['Cod Cliente'] || linea.codCliente || ''),
         fechaEntrega: linea['Fecha de Entrega'] || linea.fechaEntrega || '',
         fechaPedido:  linea['Fecha de Pedido']  || linea.fechaPedido  || '',
-        statusRaw: status,  // status del OC (viene igual en todas las líneas)
+        statusRaw: status,
         lineas: [], totalUnds:0, totalCajas:0,
         entregadasUnds:0, pendienteUnds:0, volumen:0,
       };
@@ -450,6 +729,7 @@ function procesarOCs() {
       producto:linea.Producto||'—', codigo, status,
       totalUnds:totalLinea, entregada, pendiente,
       cajas, stockDisp, faltaStock, opsEnProd, estadoLinea, vol,
+      ID: linea.ID || null,  // ID de SharePoint
     });
     ocMap[oc].totalUnds     += totalLinea;
     ocMap[oc].totalCajas    += cajas;
@@ -468,18 +748,12 @@ function procesarOCs() {
 
     let estadoOC;
     const s = oc.statusRaw;
-    // Si SharePoint ya marcó el OC como alistado o entregado, respetar ese status.
-    // El operario lo procesó aunque hubiera faltantes al momento del ingreso.
-    if (s === 'entregado') {
-      estadoOC = 'entregado';
-    } else if (s === 'alisto' || s === 'alistado') {
-      estadoOC = 'alistado';
-    } else if (nBloq > 0) {
-      // Bloqueado solo aplica cuando el OC aún no fue procesado (ingresado/desconocido)
-      estadoOC = 'bloqueado';
-    } else {
+    if (s === 'entregado') estadoOC = 'entregado';
+    else if (s === 'alisto' || s === 'alistado') estadoOC = 'alistado';
+    else if (nBloq > 0) estadoOC = 'bloqueado';
+    else {
       if (s === 'parcial') estadoOC = 'parcial';
-      else                 estadoOC = 'ingresado';
+      else estadoOC = 'ingresado';
     }
 
     let diasVenc=null, claseVenc='ok';
@@ -496,7 +770,6 @@ function procesarOCs() {
 
 // ── RUTAS ────────────────────────────────────────────────────────────────────
 function buildRutaIdx() {
-  // cod_cliente → { id, nombre, color }
   const idx = {};
   if (!rutasData || !rutasData.rutas) return idx;
   rutasData.rutas.forEach(r => {
@@ -504,16 +777,12 @@ function buildRutaIdx() {
   });
   return idx;
 }
-
 function getRutaDeOC(oc, rutaIdx) {
   const r = rutaIdx[oc.codCliente];
   if (r) return r;
   return {id:'R-VARIOS', nombre:'Varios', color:'#64748b'};
 }
 
-// ── DETECCIÓN DE VIAJES ───────────────────────────────────────────────────────
-// Agrupa OCs de una misma ruta en "viajes" según ventana de días de entrega.
-// Dentro de cada viaje, ordena por fecha de ingreso (fechaPedido).
 function detectarViajes(ocs, ventanaDias=2) {
   const sinFecha = ocs.filter(o=>!o.fechaEntrega)
     .sort((a,b)=>(a.fechaPedido||'').localeCompare(b.fechaPedido||''));
@@ -522,7 +791,6 @@ function detectarViajes(ocs, ventanaDias=2) {
 
   const viajes = [];
   let viaje = null;
-
   conFecha.forEach(oc => {
     const fe = new Date(oc.fechaEntrega+'T00:00:00');
     if (!viaje) {
@@ -538,149 +806,134 @@ function detectarViajes(ocs, ventanaDias=2) {
       }
     }
   });
-
-  // Ordenar dentro de cada viaje por fecha de ingreso (FIFO)
   viajes.forEach(v => {
     v.ocs.sort((a,b)=>(a.fechaPedido||'').localeCompare(b.fechaPedido||''));
   });
-
   if (sinFecha.length) viajes.push({fechaBase:null, fechaStr:null, ocs:sinFecha});
   return viajes;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ── SIPOC / FLUJO PROCESO ────────────────────────────────────────────────────
+// ── SIPOC ────────────────────────────────────────────────────────────────────
 function renderSipoc() {
   const el = document.getElementById('content');
   el.innerHTML = `
 <div style="padding:0; display:flex; flex-direction:column; gap:16px; height:100%; box-sizing:border-box;">
-
-  <!-- Botón volver -->
   <div style="display:flex; align-items:center; gap:14px; padding-top:4px;">
     <button class="back-btn" onclick="setModo('kanban')">← Volver al Kanban</button>
     <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; letter-spacing:2px; color:var(--text-mid); text-transform:uppercase;">Flujo de Proceso — Referencia Operativa</span>
   </div>
-
-  <!-- FLUJO 5 ETAPAS -->
   <section style="display:flex; gap:0; min-height:0; flex:1 1 auto;">
-    <!-- 1 INGRESO -->
     <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #3b82f6; border-radius:14px; overflow:hidden;">
       <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
         <div style="display:flex; align-items:center; gap:10px;">
           <div style="width:40px; height:40px; border-radius:10px; background:#3b82f6; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">1</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Ingreso</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff;">Ingreso</div>
         </div>
         <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(59,130,246,0.16); border:1px solid rgba(59,130,246,0.4);">
-          <span style="font-size:12px; color:#93b4f5; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-size:12px; color:#93b4f5;">RESPONSABLE</span>
           <span style="font-weight:700; font-size:15px; color:#cfe0fb;">Zeidy</span>
         </div>
       </div>
       <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Recibir pedido</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Digitar en Excel</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Imprimir OC</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Colocar en bandeja <b style="color:#fff;">Ingresados</b></span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; color:#d4dde8;">Recibir pedido</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; color:#d4dde8;">Digitar en Excel</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; color:#d4dde8;">Imprimir OC</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(59,130,246,0.18); color:#93b4f5; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; color:#d4dde8;">Colocar en bandeja <b style="color:#fff;">Ingresados</b></span></li>
       </ol>
     </article>
     <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
-      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#f97316); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Bandeja Ingresados</div>
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#f97316); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800;">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; text-transform:uppercase;">Bandeja Ingresados</div>
     </div>
-    <!-- 2 PICKING -->
     <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #f97316; border-radius:14px; overflow:hidden;">
       <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
         <div style="display:flex; align-items:center; gap:10px;">
           <div style="width:40px; height:40px; border-radius:10px; background:#f97316; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">2</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Picking</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff;">Picking</div>
         </div>
         <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(249,115,22,0.16); border:1px solid rgba(249,115,22,0.4);">
-          <span style="font-size:12px; color:#f6b27d; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-size:12px; color:#f6b27d;">RESPONSABLE</span>
           <span style="font-weight:700; font-size:15px; color:#fcd6b6;">Oscar / operario asignado</span>
         </div>
       </div>
       <ol style="list-style:none; margin:0; padding:11px 13px; display:flex; flex-direction:column; gap:6px;">
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Tomar OC de bandeja de <b style="color:#fff;">Ingresados</b></span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Recorrer bodega PT con OC en mano</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Hacer el picking de los productos</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Verificar cantidad ítem por ítem</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">5</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Registrar faltantes en tablet</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">6</span><span style="font-size:15px; line-height:1.22; color:#d4dde8;">Marcar <b style="color:#fff;">Alistado</b> en encuesta de producción</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:15px; color:#d4dde8;">Tomar OC de bandeja <b style="color:#fff;">Ingresados</b></span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:15px; color:#d4dde8;">Recorrer bodega PT con OC</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:15px; color:#d4dde8;">Hacer picking de los productos</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:15px; color:#d4dde8;">Verificar ítem por ítem</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">5</span><span style="font-size:15px; color:#d4dde8;">Registrar faltantes en tablet</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(249,115,22,0.18); color:#f6b27d; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">6</span><span style="font-size:15px; color:#d4dde8;">Marcar <b style="color:#fff;">Alistado</b> en encuesta</span></li>
       </ol>
     </article>
     <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
-      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#f97316,#a855f7); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Faltantes + Alistado</div>
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#f97316,#a855f7); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800;">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; text-transform:uppercase;">Faltantes + Alistado</div>
     </div>
-    <!-- 3 FACTURACIÓN -->
     <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #a855f7; border-radius:14px; overflow:hidden;">
       <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
         <div style="display:flex; align-items:center; gap:10px;">
           <div style="width:40px; height:40px; border-radius:10px; background:#a855f7; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">3</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Facturación</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff;">Facturación</div>
         </div>
         <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(168,85,247,0.16); border:1px solid rgba(168,85,247,0.4);">
-          <span style="font-size:12px; color:#c79bf6; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-size:12px; color:#c79bf6;">RESPONSABLE</span>
           <span style="font-weight:700; font-size:15px; color:#e3cdfb;">Zeidy</span>
         </div>
       </div>
       <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Revisar faltantes registrados</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Facturar según lo disponible</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Emitir factura electrónica (Hacienda)</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Colocar en bandeja <b style="color:#fff;">Despachados</b></span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; color:#d4dde8;">Revisar faltantes registrados</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; color:#d4dde8;">Facturar según lo disponible</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; color:#d4dde8;">Emitir factura electrónica</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(168,85,247,0.18); color:#c79bf6; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; color:#d4dde8;">Colocar en bandeja <b style="color:#fff;">Despachados</b></span></li>
       </ol>
     </article>
     <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
-      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#a855f7,#06b6d4); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Bandeja Despachados</div>
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#a855f7,#06b6d4); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800;">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; text-transform:uppercase;">Bandeja Despachados</div>
     </div>
-    <!-- 4 ENTREGA -->
     <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #06b6d4; border-radius:14px; overflow:hidden;">
       <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
         <div style="display:flex; align-items:center; gap:10px;">
           <div style="width:40px; height:40px; border-radius:10px; background:#06b6d4; color:#03252b; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">4</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Entrega</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff;">Entrega</div>
         </div>
         <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(6,182,212,0.16); border:1px solid rgba(6,182,212,0.4);">
-          <span style="font-size:12px; color:#6fd8e8; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-size:12px; color:#6fd8e8;">RESPONSABLE</span>
           <span style="font-weight:700; font-size:15px; color:#b6ecf3;">Jason / Jesús</span>
         </div>
       </div>
       <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Retirar de bandeja <b style="color:#fff;">Despachados</b></span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Entregar al cliente</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Registrar firma de recibido en celular</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Marcar <b style="color:#fff;">Entregado</b> en encuesta</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; color:#d4dde8;">Retirar de bandeja <b style="color:#fff;">Despachados</b></span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; color:#d4dde8;">Entregar al cliente</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; color:#d4dde8;">Registrar firma de recibido</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(6,182,212,0.18); color:#6fd8e8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">4</span><span style="font-size:16px; color:#d4dde8;">Marcar <b style="color:#fff;">Entregado</b> en encuesta</span></li>
       </ol>
     </article>
     <div style="flex:0 0 46px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;">
-      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#06b6d4,#22c55e); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,0.5);">→</div>
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; line-height:1.12; text-transform:uppercase;">Entregado + firma</div>
+      <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#06b6d4,#22c55e); display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; font-weight:800;">→</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; color:#94a6ba; text-align:center; text-transform:uppercase;">Entregado + firma</div>
     </div>
-    <!-- 5 ARCHIVO -->
     <article style="flex:1 1 0; min-width:0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-top:6px solid #22c55e; border-radius:14px; overflow:hidden;">
       <div style="padding:14px 16px 11px; border-bottom:1px solid #1f2a37;">
         <div style="display:flex; align-items:center; gap:10px;">
           <div style="width:40px; height:40px; border-radius:10px; background:#22c55e; color:#052e16; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;">5</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff; letter-spacing:0.5px;">Archivo</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; color:#fff;">Archivo</div>
         </div>
         <div style="display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:4px 11px; border-radius:999px; background:rgba(34,197,94,0.16); border:1px solid rgba(34,197,94,0.4);">
-          <span style="font-size:12px; color:#7ee2a8; letter-spacing:1px;">RESPONSABLE</span>
+          <span style="font-size:12px; color:#7ee2a8;">RESPONSABLE</span>
           <span style="font-weight:700; font-size:15px; color:#bdf0d2;">Zeidy</span>
         </div>
       </div>
       <ol style="list-style:none; margin:0; padding:12px 14px; display:flex; flex-direction:column; gap:9px;">
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Recibir confirmación de entrega</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Archivar expediente</span></li>
-        <li style="display:flex; gap:9px; align-items:flex-start;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; line-height:1.3; color:#d4dde8;">Dar <b style="color:#fff;">seguimiento a cobros</b></span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">1</span><span style="font-size:16px; color:#d4dde8;">Recibir confirmación de entrega</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">2</span><span style="font-size:16px; color:#d4dde8;">Archivar expediente</span></li>
+        <li style="display:flex; gap:9px;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:rgba(34,197,94,0.18); color:#7ee2a8; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">3</span><span style="font-size:16px; color:#d4dde8;">Dar seguimiento a <b style="color:#fff;">cobros</b></span></li>
       </ol>
     </article>
   </section>
-
-  <!-- BARRA DE ESTADOS -->
   <section style="flex:0 0 auto; display:flex; align-items:stretch; gap:14px; background:#10161f; border:1px solid #1f2a37; border-radius:12px; padding:10px 16px;">
     <div style="flex:0 0 auto; display:flex; flex-direction:column; justify-content:center; padding-right:16px; border-right:1px solid #1f2a37;">
-      <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:19px; color:#fff; letter-spacing:0.5px;">ESTADO DEL PEDIDO</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:19px; color:#fff;">ESTADO DEL PEDIDO</div>
       <div style="font-size:12px; color:#8ea2b8; letter-spacing:1px;">Cómo identificar cada pedido</div>
     </div>
     <div style="flex:1 1 0; display:flex; align-items:center; gap:11px; padding:4px 14px; border-radius:9px; background:rgba(107,114,128,0.12); border:1px solid rgba(107,114,128,0.4);">
@@ -696,43 +949,10 @@ function renderSipoc() {
       <div><span style="font-weight:700; font-size:19px; color:#fff;">Finalizado</span><div style="font-size:13px; color:#a6e2bf;">Encuesta marcada <b style="color:#bdf0d2;">"Alistado"</b></div></div>
     </div>
   </section>
-
-  <!-- PANELES INFERIORES -->
-  <section style="flex:0 0 auto; display:flex; gap:14px; height:260px;">
-    <!-- POKA-YOKE -->
-    <div style="flex:0 0 44%; display:flex; flex-direction:column; background:linear-gradient(180deg,rgba(127,29,29,0.32),rgba(80,15,15,0.22)); border:2px solid rgba(239,68,68,0.55); border-radius:13px; overflow:hidden;">
-      <div style="display:flex; align-items:center; gap:11px; padding:11px 16px; background:rgba(239,68,68,0.16); border-bottom:1px solid rgba(239,68,68,0.4);">
-        <div style="width:36px; height:36px; border-radius:8px; background:#ef4444; color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800;">⚠</div>
-        <div><div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:21px; color:#fff; letter-spacing:0.5px;">REGLAS POKA-YOKE</div><div style="font-weight:700; font-size:13px; color:#fca5a5; letter-spacing:2px;">NUNCA SE PUEDEN SALTAR</div></div>
-      </div>
-      <div style="flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between; padding:9px 16px;">
-        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">No tocar producto sin haber tomado la <b style="color:#fff;">OC impresa</b> de la bandeja</span></div>
-        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Los faltantes se anotan en la <b style="color:#fff;">tablet</b> — nunca de palabra a Zeidy</span></div>
-        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">No avisar a Zeidy sin haber marcado <b style="color:#fff;">"Alistado"</b> en la encuesta</span></div>
-        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Zeidy <b style="color:#fff;">no factura</b> sin ver el registro de faltantes en el sistema</span></div>
-        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Jason / Jesús <b style="color:#fff;">no salen</b> sin el pedido físico y la factura impresa</span></div>
-      </div>
-    </div>
-    <!-- SIPOC PICKING -->
-    <div style="flex:1 1 0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-radius:13px; overflow:hidden;">
-      <div style="display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid #1f2a37;">
-        <div style="width:36px; height:36px; border-radius:8px; background:#f97316; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px;">2</div>
-        <div><div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:21px; color:#fff; letter-spacing:0.5px;">SIPOC — ETAPA DE PICKING</div><div style="font-weight:600; font-size:13px; color:#f6b27d; letter-spacing:1px;">Proveedores · Entradas · Proceso · Salidas · Clientes</div></div>
-      </div>
-      <div style="flex:1 1 auto; display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:#1f2a37;">
-        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">SUPPLIERS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>Zeidy (Ingreso)</li><li>Bandeja <b style="color:#fff;">Ingresados</b></li><li>Bodega PT</li></ul></div>
-        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">INPUTS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>OC impresa</li><li>Pedido digitado</li><li>Alistar el pedido</li><li>Tablet de faltantes</li></ul></div>
-        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">PROCESS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:6px; font-size:12px; color:#cdd6e1;"><li>Alistar en una tarima</li><li>Verificar ítem por ítem</li><li>Registrar faltantes</li><li>Marcar <b style="color:#fff;">"Alistado"</b></li></ul></div>
-        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">OUTPUTS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>Producto alistado</li><li>Faltantes registrados</li><li>Encuesta <b style="color:#fff;">"Alistado"</b></li></ul></div>
-        <div style="background:#131a24; display:flex; flex-direction:column;"><div style="padding:6px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; color:#f6b27d; border-bottom:1px solid #1f2a37;">CUSTOMERS</div><ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; color:#cdd6e1;"><li>Zeidy factura</li><li>Jason o Jesús entregan</li><li>Factura con firma del cliente</li></ul></div>
-      </div>
-    </div>
-  </section>
 </div>`;
 }
 
-// KANBAN RENDER
-// ─────────────────────────────────────────────────────────────────────────────
+// ── KANBAN ────────────────────────────────────────────────────────────────────
 function renderKanban() {
   document.getElementById('toolbar').style.display='none';
   const ocs = procesarOCs();
@@ -740,10 +960,8 @@ function renderKanban() {
   const ventana = (rutasData && rutasData.ventana_viaje_dias) || 2;
   const hoy = new Date(); hoy.setHours(0,0,0,0);
 
-  // Enriquecer con ruta
   ocs.forEach(oc => { oc.ruta = getRutaDeOC(oc, rutaIdx); });
 
-  // Separar por columna
   const cols = {
     bloqueado:  ocs.filter(o=>o.estadoOC==='bloqueado'),
     ingresado:  ocs.filter(o=>o.estadoOC==='ingresado'),
@@ -752,31 +970,26 @@ function renderKanban() {
   };
 
   function renderColumna(ocsCol, colId, titulo, claseColor, ordenStock) {
-    // Agrupar por ruta
     const porRuta = {};
     ocsCol.forEach(oc => {
       const rid = oc.ruta.id;
       if (!porRuta[rid]) porRuta[rid] = {ruta: oc.ruta, ocs:[]};
       porRuta[rid].ocs.push(oc);
     });
-
-    // Ordenar rutas por fecha de entrega más próxima
     const rutasOrdenadas = Object.values(porRuta).sort((a,b) => {
       if (ordenStock) {
         const na = Math.max(...a.ocs.map(o=>o.nBloq||0));
         const nb = Math.max(...b.ocs.map(o=>o.nBloq||0));
-        if (na !== nb) return nb - na; // más líneas sin stock primero
+        if (na !== nb) return nb - na;
       }
       const fa = a.ocs.map(o=>o.fechaEntrega||'9999').sort()[0];
       const fb = b.ocs.map(o=>o.fechaEntrega||'9999').sort()[0];
       return fa.localeCompare(fb);
     });
-
     let html = rutasOrdenadas.map(grupo => {
       const viajes = detectarViajes(grupo.ocs, ventana);
       if (ordenStock) viajes.forEach(v => v.ocs.sort((a,b) => (b.nBloq||0)-(a.nBloq||0) || b.pendienteUnds-a.pendienteUnds));
       const totalCajas = grupo.ocs.reduce((s,o)=>s+o.totalCajas,0);
-
       const viajesHtml = viajes.map(viaje => {
         let sepHtml = '';
         if (viaje.fechaStr) {
@@ -785,165 +998,81 @@ function renderKanban() {
           const cls  = dias<0?'vencida':dias<=3?'urgente':'ok';
           const dTxt = dias<0?`Venció hace ${Math.abs(dias)}d`:dias===0?'HOY':dias===1?'Mañana':`En ${dias}d`;
           const fechaFmt = viaje.fechaStr.split('-').reverse().join('/');
-          sepHtml = `
-            <div class="viaje-sep">
-              <div class="viaje-sep-line"></div>
-              <span class="viaje-fecha">${fechaFmt}</span>
-              <span class="viaje-badge ${cls}">${dTxt} · ${viaje.ocs.length} OC${viaje.ocs.length>1?'s':''}</span>
-              <div class="viaje-sep-line"></div>
-            </div>`;
+          sepHtml = `<div class="viaje-sep"><div class="viaje-sep-line"></div><span class="viaje-fecha">${fechaFmt}</span><span class="viaje-badge ${cls}">${dTxt} · ${viaje.ocs.length} OC${viaje.ocs.length>1?'s':''}</span><div class="viaje-sep-line"></div></div>`;
         }
-        const cardsHtml = viaje.ocs.map(oc => renderKOCCard(oc, hoy)).join('');
-        return sepHtml + cardsHtml;
+        return sepHtml + viaje.ocs.map(oc => renderKOCCard(oc, hoy)).join('');
       }).join('');
-
-      return `
-        <div class="ruta-grupo">
-          <div class="ruta-label">
-            <div class="ruta-dot" style="background:${grupo.ruta.color}"></div>
-            <span class="ruta-nombre" style="color:${grupo.ruta.color}">${grupo.ruta.nombre}</span>
-            <span class="ruta-subtotal">${grupo.ocs.length} OC${grupo.ocs.length>1?'s':''} · ${totalCajas.toFixed(0)} cajas</span>
-          </div>
-          ${viajesHtml}
-        </div>`;
+      return `<div class="ruta-grupo"><div class="ruta-label"><div class="ruta-dot" style="background:${grupo.ruta.color}"></div><span class="ruta-nombre" style="color:${grupo.ruta.color}">${grupo.ruta.nombre}</span><span class="ruta-subtotal">${grupo.ocs.length} OC${grupo.ocs.length>1?'s':''} · ${totalCajas.toFixed(0)} cajas</span></div>${viajesHtml}</div>`;
     }).join('');
-
-    return `
-      <div class="kanban-col">
-        <div class="kanban-col-header">
-          <div>
-            <div class="kanban-col-title ${claseColor}">${titulo}</div>
-            <div class="kanban-col-count">órdenes de compra</div>
-          </div>
-          <div class="kanban-col-num ${claseColor}">${ocsCol.length}</div>
-        </div>
-        <div class="kanban-col-body">${html || '<div class="empty" style="height:120px"><div class="empty-text">Sin órdenes</div></div>'}</div>
-      </div>`;
+    return `<div class="kanban-col"><div class="kanban-col-header"><div><div class="kanban-col-title ${claseColor}">${titulo}</div><div class="kanban-col-count">órdenes de compra</div></div><div class="kanban-col-num ${claseColor}">${ocsCol.length}</div></div><div class="kanban-col-body">${html || '<div class="empty" style="height:120px"><div class="empty-text">Sin órdenes</div></div>'}</div></div>`;
   }
 
-  const html = `<div class="kanban-wrap">
-    ${renderColumna(cols.bloqueado,  'bloqueado',  '⛔ Bloqueado', 'col-red', true)}
-    ${renderColumna(cols.ingresado,  'ingresado',  '📋 Ingresado', 'col-amber')}
-    ${renderColumna(cols.alistado,   'alistado',   '📦 Alistado',  'col-blue')}
-    ${renderColumna(cols.entregado,  'entregado',  '✅ Entregado', 'col-green')}
+  document.getElementById('content').innerHTML = `<div class="kanban-wrap">
+    ${renderColumna(cols.bloqueado,'bloqueado','⛔ Bloqueado','col-red',true)}
+    ${renderColumna(cols.ingresado,'ingresado','📋 Ingresado','col-amber')}
+    ${renderColumna(cols.alistado,'alistado','📦 Alistado','col-blue')}
+    ${renderColumna(cols.entregado,'entregado','✅ Entregado','col-green')}
   </div>`;
-
-  document.getElementById('content').innerHTML = html;
 }
 
 function renderKOCCard(oc, hoy) {
-  const diasTxt = oc.diasVenc===null?'':
-    oc.diasVenc<0?`${Math.abs(oc.diasVenc)}d vencida`:
-    oc.diasVenc===0?'Hoy':oc.diasVenc===1?'Mañana':`${oc.diasVenc}d`;
-
-  const alertaHtml = (oc.nBloq>0 || oc.nNoEnt>0)
-    ? `<div class="koc-alerta">⚠ ${oc.nBloq+oc.nNoEnt} línea${(oc.nBloq+oc.nNoEnt)>1?'s':''} sin stock</div>` : '';
-
-  return `
-  <div class="koc-card ${oc.estadoOC} ${oc.claseVenc}" onclick="abrirDetalle('${oc.oc}')">
-    <div class="koc-main">
-      <div class="koc-left">
-        <div class="koc-num">${oc.oc}</div>
-        <div class="koc-cliente">${oc.cliente}</div>
-      </div>
-      <div class="koc-right">
-        <div class="koc-unds">${Math.round(oc.pendienteUnds).toLocaleString()}</div>
-        <div class="koc-unds-label">unds pend.</div>
-      </div>
-    </div>
-    <div class="koc-meta">
-      <span class="koc-fecha ${oc.claseVenc}">${oc.fechaEntrega||'—'}</span>
-      ${diasTxt?`<span class="koc-dias ${oc.claseVenc}">${diasTxt}</span>`:''}
-      <span class="koc-cajas">${oc.totalCajas.toFixed(0)} cajas · ${oc.lineas.length} líneas</span>
-    </div>
+  const diasTxt = oc.diasVenc===null?'':oc.diasVenc<0?`${Math.abs(oc.diasVenc)}d vencida`:oc.diasVenc===0?'Hoy':oc.diasVenc===1?'Mañana':`${oc.diasVenc}d`;
+  const alertaHtml = (oc.nBloq>0||oc.nNoEnt>0)?`<div class="koc-alerta">⚠ ${oc.nBloq+oc.nNoEnt} línea${(oc.nBloq+oc.nNoEnt)>1?'s':''} sin stock</div>`:'';
+  return `<div class="koc-card ${oc.estadoOC} ${oc.claseVenc}" onclick="abrirDetalle('${oc.oc}')">
+    <div class="koc-main"><div class="koc-left"><div class="koc-num">${oc.oc}</div><div class="koc-cliente">${oc.cliente}</div></div>
+    <div class="koc-right"><div class="koc-unds">${Math.round(oc.pendienteUnds).toLocaleString()}</div><div class="koc-unds-label">unds pend.</div></div></div>
+    <div class="koc-meta"><span class="koc-fecha ${oc.claseVenc}">${oc.fechaEntrega||'—'}</span>
+    ${diasTxt?`<span class="koc-dias ${oc.claseVenc}">${diasTxt}</span>`:''}
+    <span class="koc-cajas">${oc.totalCajas.toFixed(0)} cajas · ${oc.lineas.length} líneas</span></div>
     ${alertaHtml}
   </div>`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MATRIZ % CAMIÓN / AGING (días en Alisto sin despachar)
-// Aging = hoy - fecha de pedido (aproximación acordada hasta que el flujo
-// registre la fecha real de cambio a estado "Alistado")
-// ─────────────────────────────────────────────────────────────────────────────
+// ── MATRIZ ────────────────────────────────────────────────────────────────────
 function calcAging(oc, hoy) {
   if (!oc.fechaPedido) return null;
   const fp = new Date(oc.fechaPedido + 'T00:00:00');
   if (isNaN(fp)) return null;
   return Math.max(0, Math.round((hoy - fp) / 864e5));
 }
-
 function claseAging(dias) {
-  if (dias <= 4) return 'aging-ok';   // 1–4 días: a tiempo
-  if (dias <= 7) return 'aging-warn'; // 5–7 días: atención
-  return 'aging-crit';                // 8+ días: crítico
+  if (dias <= 4) return 'aging-ok';
+  if (dias <= 7) return 'aging-warn';
+  return 'aging-crit';
 }
-
 function renderMatriz() {
   document.getElementById('toolbar').style.display = 'none';
   const ocs = procesarOCs();
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-
   const filas = ocs.map(oc => ({...oc, diasAlisto: calcAging(oc, hoy)}))
-   .filter(oc => oc.diasAlisto !== null && oc.estadoOC !== 'entregado' && oc.estadoOC !== 'bloqueado')
+    .filter(oc => oc.diasAlisto !== null && oc.estadoOC !== 'entregado' && oc.estadoOC !== 'bloqueado')
     .sort((a,b) => b.diasAlisto - a.diasAlisto || a.oc.localeCompare(b.oc));
-
   if (!filas.length) {
-    document.getElementById('content').innerHTML =
-      `<div class="matrix-wrap"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No hay OCs activas para mostrar</div></div></div>`;
+    document.getElementById('content').innerHTML = `<div class="matrix-wrap"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No hay OCs activas</div></div></div>`;
     return;
   }
-
   const cols = [...new Set(filas.map(f => f.diasAlisto))].sort((a,b)=>a-b);
   const totalesCol = {}; cols.forEach(c => totalesCol[c] = 0);
   let totalGeneral = 0;
   filas.forEach(f => { totalesCol[f.diasAlisto] += f.pctCamion; totalGeneral += f.pctCamion; });
-
-  const headHtml = cols.map(c =>
-    `<th class="mtx-col-head ${claseAging(c)}">${c}</th>`
-  ).join('');
-
+  const headHtml = cols.map(c=>`<th class="mtx-col-head ${claseAging(c)}">${c}</th>`).join('');
   const filasHtml = filas.map(f => {
     const celdas = cols.map(c => {
       if (c !== f.diasAlisto) return `<td class="mtx-cell"></td>`;
       const w = Math.min(100, f.pctCamion);
       return `<td class="mtx-cell"><div class="mtx-bar-wrap"><div class="mtx-bar ${claseAging(c)}" style="width:${w}%"></div><span class="mtx-val">${f.pctCamion.toFixed(2)}%</span></div></td>`;
     }).join('');
-    return `<tr class="mtx-row" onclick="abrirDetalle('${f.oc}')">
-      <td class="mtx-oc">${f.oc}</td>
-      <td class="mtx-cliente">${f.cliente}</td>
-      ${celdas}
-      <td class="mtx-total">${f.pctCamion.toFixed(2)}%</td>
-    </tr>`;
+    return `<tr class="mtx-row" onclick="abrirDetalle('${f.oc}')"><td class="mtx-oc">${f.oc}</td><td class="mtx-cliente">${f.cliente}</td>${celdas}<td class="mtx-total">${f.pctCamion.toFixed(2)}%</td></tr>`;
   }).join('');
-
-  const totalesHtml = cols.map(c =>
-    `<td class="mtx-total-col">${totalesCol[c] ? totalesCol[c].toFixed(2)+'%' : ''}</td>`
-  ).join('');
-
-  document.getElementById('content').innerHTML = `
-  <div class="matrix-wrap">
+  const totalesHtml = cols.map(c=>`<td class="mtx-total-col">${totalesCol[c]?totalesCol[c].toFixed(2)+'%':''}</td>`).join('');
+  document.getElementById('content').innerHTML = `<div class="matrix-wrap">
     <div class="matrix-title">% de camión por días en Alisto</div>
-    <div class="matrix-sub">Aging = días desde que el pedido ingresó, sin despachar todavía · <span style="color:var(--green);font-weight:700">1–4 a tiempo</span> · <span style="color:var(--amber);font-weight:700">5–7 atención</span> · <span style="color:var(--red);font-weight:700">8+ crítico</span> · % camión sobre ${CAPACIDAD_CAMION_M3} m³ · ${filas.length} OCs activas</div>
-    <div class="matrix-scroll">
-      <table class="matrix-table">
-        <thead>
-          <tr>
-            <th class="mtx-head-fixed">OC</th>
-            <th class="mtx-head-fixed" style="left:90px">Cliente</th>
-            ${headHtml}
-            <th class="mtx-head-fixed" style="left:auto">Total</th>
-          </tr>
-        </thead>
-        <tbody>${filasHtml}</tbody>
-        <tfoot>
-          <tr>
-            <td class="mtx-total-label" colspan="2">Total general</td>
-            ${totalesHtml}
-            <td class="mtx-total-col">${totalGeneral.toFixed(2)}%</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
+    <div class="matrix-sub">Aging = días desde ingreso · <span style="color:var(--green);font-weight:700">1–4 a tiempo</span> · <span style="color:var(--amber);font-weight:700">5–7 atención</span> · <span style="color:var(--red);font-weight:700">8+ crítico</span> · ${filas.length} OCs activas</div>
+    <div class="matrix-scroll"><table class="matrix-table">
+      <thead><tr><th class="mtx-head-fixed">OC</th><th class="mtx-head-fixed" style="left:90px">Cliente</th>${headHtml}<th class="mtx-head-fixed" style="left:auto">Total</th></tr></thead>
+      <tbody>${filasHtml}</tbody>
+      <tfoot><tr><td class="mtx-total-label" colspan="2">Total general</td>${totalesHtml}<td class="mtx-total-col">${totalGeneral.toFixed(2)}%</td></tr></tfoot>
+    </table></div>
   </div>`;
 }
 
@@ -957,74 +1086,39 @@ function renderLista() {
     if(busq&&!oc.oc.toLowerCase().includes(busq)&&!oc.cliente.toLowerCase().includes(busq)) return false;
     return true;
   });
-
   document.getElementById('toolbarCount').textContent=`${filtradas.length} de ${ocs.length} OCs`;
   if(!filtradas.length){
     document.getElementById('content').innerHTML=`<div class="list-wrap"><div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No hay OCs para este filtro</div></div></div>`;
     return;
   }
-
-  // Agrupar: 1º vencidas (más vencido primero), 2º bloqueadas, 3º en tiempo, 4º entregadas
-  const esVenc = o => o.estadoOC!=='entregado' && o.diasVenc!==null && o.diasVenc<0;
+  const esVenc = o => o.estadoOC!=='entregado'&&o.diasVenc!==null&&o.diasVenc<0;
   const venc = filtradas.filter(esVenc).sort((a,b)=>a.diasVenc-b.diasVenc);
-  const bloq = filtradas.filter(o=>o.estadoOC==='bloqueado' && !esVenc(o))
-                        .sort((a,b)=>(a.fechaEntrega||'9999').localeCompare(b.fechaEntrega||'9999'));
-  const usados = new Set([...venc, ...bloq]);
-  const activos = filtradas.filter(o=>o.estadoOC!=='entregado' && !usados.has(o))
-                        .sort((a,b)=>(a.fechaEntrega||'9999').localeCompare(b.fechaEntrega||'9999'));
-  const entreg = filtradas.filter(o=>o.estadoOC==='entregado')
-                        .sort((a,b)=>(b.fechaEntrega||'').localeCompare(a.fechaEntrega||''));
-
+  const bloq = filtradas.filter(o=>o.estadoOC==='bloqueado'&&!esVenc(o)).sort((a,b)=>(a.fechaEntrega||'9999').localeCompare(b.fechaEntrega||'9999'));
+  const usados = new Set([...venc,...bloq]);
+  const activos = filtradas.filter(o=>o.estadoOC!=='entregado'&&!usados.has(o)).sort((a,b)=>(a.fechaEntrega||'9999').localeCompare(b.fechaEntrega||'9999'));
+  const entreg = filtradas.filter(o=>o.estadoOC==='entregado').sort((a,b)=>(b.fechaEntrega||'').localeCompare(a.fechaEntrega||''));
   const grupos = [
-    {titulo:'⚠ Vencidas',   cls:'lg-red',   ocs:venc},
-    {titulo:'⛔ Bloqueadas', cls:'lg-amber', ocs:bloq},
-    {titulo:'📦 En tiempo',  cls:'lg-blue',  ocs:activos},
-    {titulo:'✅ Entregadas', cls:'lg-green', ocs:entreg},
+    {titulo:'⚠ Vencidas',cls:'lg-red',ocs:venc},
+    {titulo:'⛔ Bloqueadas',cls:'lg-amber',ocs:bloq},
+    {titulo:'📦 En tiempo',cls:'lg-blue',ocs:activos},
+    {titulo:'✅ Entregadas',cls:'lg-green',ocs:entreg},
   ].filter(g=>g.ocs.length);
-
-  const html = grupos.map(g=>`
-    <div class="lista-group">
-      <div class="lista-group-header ${g.cls}">
-        <span class="lista-group-title">${g.titulo}</span>
-        <span class="lista-group-count">${g.ocs.length} OC${g.ocs.length>1?'s':''}</span>
-      </div>
-      <div class="oc-grid">${g.ocs.map(renderOCCard).join('')}</div>
-    </div>`).join('');
-
+  const html = grupos.map(g=>`<div class="lista-group"><div class="lista-group-header ${g.cls}"><span class="lista-group-title">${g.titulo}</span><span class="lista-group-count">${g.ocs.length} OC${g.ocs.length>1?'s':''}</span></div><div class="oc-grid">${g.ocs.map(renderOCCard).join('')}</div></div>`).join('');
   document.getElementById('content').innerHTML=`<div class="list-wrap">${html}</div>`;
 }
 
 function renderOCCard(oc) {
-  const pbClass   = oc.estadoOC==='entregado'?'pb-green':oc.estadoOC==='alistado'?'pb-blue':oc.estadoOC==='bloqueado'?'pb-red':'pb-amber';
-  const badgeClass= oc.estadoOC==='entregado'?'badge-entregado':oc.estadoOC==='alistado'?'badge-alistado':oc.estadoOC==='bloqueado'?'badge-bloqueado':'badge-ingresado';
-  const badgeText = oc.estadoOC==='entregado'?'Entregado':oc.estadoOC==='alistado'?'Alistado':oc.estadoOC==='bloqueado'?'Bloqueado':'Ingresado';
+  const pbClass=oc.estadoOC==='entregado'?'pb-green':oc.estadoOC==='alistado'?'pb-blue':oc.estadoOC==='bloqueado'?'pb-red':'pb-amber';
+  const badgeClass=oc.estadoOC==='entregado'?'badge-entregado':oc.estadoOC==='alistado'?'badge-alistado':oc.estadoOC==='bloqueado'?'badge-bloqueado':'badge-ingresado';
+  const badgeText=oc.estadoOC==='entregado'?'Entregado':oc.estadoOC==='alistado'?'Alistado':oc.estadoOC==='bloqueado'?'Bloqueado':'Ingresado';
   const diasTxt=oc.diasVenc===null?'':oc.diasVenc<0?`${Math.abs(oc.diasVenc)}d vencida`:oc.diasVenc===0?'Hoy':`${oc.diasVenc}d restantes`;
   const alertaHtml=oc.nBloq>0?`<div class="oc-alerta">⚠ ${oc.nBloq} línea${oc.nBloq>1?'s':''} bloqueada${oc.nBloq>1?'s':''} por producción</div>`:'';
-  return `
-  <div class="oc-card ${oc.estadoOC}" onclick="abrirDetalle('${oc.oc}')">
-    <div class="oc-card-header">
-      <div style="min-width:0"><div class="oc-num">${oc.oc}</div><div class="oc-cliente">${oc.cliente}</div></div>
-      <span class="oc-status-badge ${badgeClass}">${badgeText}</span>
-    </div>
-    <div class="oc-fecha-row">
-      <span class="oc-fecha-label">Entrega:</span>
-      <span class="oc-fecha-val ${oc.claseVenc}">${oc.fechaEntrega||'—'}</span>
-      ${diasTxt?`<span class="dias-badge ${oc.claseVenc}">${diasTxt}</span>`:''}
-      <span style="margin-left:auto;font-size:11px;color:var(--text-dim)">${oc.lineas.length} líneas · ${oc.volumen.toFixed(2)} m³</span>
-    </div>
+  return `<div class="oc-card ${oc.estadoOC}" onclick="abrirDetalle('${oc.oc}')">
+    <div class="oc-card-header"><div style="min-width:0"><div class="oc-num">${oc.oc}</div><div class="oc-cliente">${oc.cliente}</div></div><span class="oc-status-badge ${badgeClass}">${badgeText}</span></div>
+    <div class="oc-fecha-row"><span class="oc-fecha-label">Entrega:</span><span class="oc-fecha-val ${oc.claseVenc}">${oc.fechaEntrega||'—'}</span>${diasTxt?`<span class="dias-badge ${oc.claseVenc}">${diasTxt}</span>`:''}<span style="margin-left:auto;font-size:11px;color:var(--text-dim)">${oc.lineas.length} líneas · ${oc.volumen.toFixed(2)} m³</span></div>
     ${alertaHtml}
-    <div class="oc-progress-wrap">
-      <div class="oc-progress-labels">
-        <span class="oc-progress-pct" style="color:${oc.estadoOC==='entregado'?'var(--green)':oc.estadoOC==='bloqueado'?'var(--red)':'var(--text-mid)'}">${oc.pendienteUnds.toLocaleString()} unds pendientes</span>
-        <span class="oc-progress-nums">${oc.totalCajas.toFixed(0)} cajas</span>
-      </div>
-      <div class="progress-track"><div class="progress-bar ${pbClass}" style="width:${oc.progreso}%"></div></div>
-    </div>
-    <div class="oc-lineas-row">
-      ${oc.nDisp>0?`<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--green)"></span>${oc.nDisp} listas</span>`:''}
-      ${oc.nParc>0?`<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--purple)"></span>${oc.nParc} parciales</span>`:''}
-      ${oc.nBloq>0?`<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--red)"></span>${oc.nBloq} bloqueado${oc.nBloq>1?'s':''}</span>`:''}
-    </div>
+    <div class="oc-progress-wrap"><div class="oc-progress-labels"><span class="oc-progress-pct" style="color:${oc.estadoOC==='entregado'?'var(--green)':oc.estadoOC==='bloqueado'?'var(--red)':'var(--text-mid)'}">${oc.pendienteUnds.toLocaleString()} unds pendientes</span><span class="oc-progress-nums">${oc.totalCajas.toFixed(0)} cajas</span></div><div class="progress-track"><div class="progress-bar ${pbClass}" style="width:${oc.progreso}%"></div></div></div>
+    <div class="oc-lineas-row">${oc.nDisp>0?`<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--green)"></span>${oc.nDisp} listas</span>`:''}${oc.nParc>0?`<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--purple)"></span>${oc.nParc} parciales</span>`:''}${oc.nBloq>0?`<span class="oc-linea-stat"><span class="dot-stat" style="background:var(--red)"></span>${oc.nBloq} bloqueado${oc.nBloq>1?'s':''}</span>`:''}</div>
   </div>`;
 }
 
@@ -1044,49 +1138,335 @@ function renderDetalle(ocNum) {
   const ocs = procesarOCs();
   const oc  = ocs.find(o=>o.oc===ocNum);
   if (!oc) { setModo('kanban'); return; }
-
-  const diasTxt = oc.diasVenc===null?'':oc.diasVenc<0?`· Vencida hace ${Math.abs(oc.diasVenc)} días`:oc.diasVenc===0?'· Entrega HOY':`· ${oc.diasVenc} días para entrega`;
+  const diasTxt=oc.diasVenc===null?'':oc.diasVenc<0?`· Vencida hace ${Math.abs(oc.diasVenc)} días`:oc.diasVenc===0?'· Entrega HOY':`· ${oc.diasVenc} días para entrega`;
   const lineasOrden = oc.lineas.slice().sort((a,b)=>{
-    const rank = l => l.estadoLinea==='bloqueada' ? 0 : l.estadoLinea==='parcial' ? 1 : l.estadoLinea==='no-entregado' ? 3 : 2;
-    return rank(a)-rank(b); // bloqueada → parcial → disponible/entregado → no-entregado al final
+    const rank = l => l.estadoLinea==='bloqueada'?0:l.estadoLinea==='parcial'?1:l.estadoLinea==='no-entregado'?3:2;
+    return rank(a)-rank(b);
   });
   const lineasHtml = lineasOrden.map(l=>{
     const cls=l.estadoLinea==='bloqueada'?'bloqueada':l.estadoLinea==='disponible'?'disponible':l.estadoLinea==='entregado'?'entregado':l.estadoLinea==='parcial'?'parcial':l.estadoLinea==='no-entregado'?'bloqueada':'';
     const badgeTxt=l.estadoLinea==='bloqueada'?'Sin stock':l.estadoLinea==='disponible'?'Disponible':l.estadoLinea==='entregado'?'Entregado':l.estadoLinea==='parcial'?'Parcial':l.estadoLinea==='no-entregado'?'No Entregado':'—';
     const badgeStyle=l.estadoLinea==='bloqueada'?'background:rgba(231,76,60,.15);color:var(--red);':l.estadoLinea==='disponible'?'background:rgba(46,204,113,.1);color:var(--green);':l.estadoLinea==='entregado'?'background:rgba(46,204,113,.15);color:var(--green);':l.estadoLinea==='no-entregado'?'background:rgba(245,158,11,.15);color:var(--amber);':'background:rgba(155,89,182,.15);color:var(--purple);';
-    const alertaOp=l.faltaStock?`<div class="linea-alerta">⚠ Falta stock — Disponible: ${l.stockDisp.toLocaleString()} / Pedido: ${l.pendiente.toLocaleString()}${l.opsEnProd.length?` · ${l.opsEnProd.length} OP en producción`:' · Sin OP activa para este producto'}</div>`:'';
-    return `<div class="linea-card ${cls}">
-      <div class="linea-info">
-        <div class="linea-producto">${l.producto}</div>
-        <div class="linea-codigo">Cód: ${l.codigo||'—'}</div>
-      </div>
+    const alertaOp=l.faltaStock?`<div class="linea-alerta">⚠ Falta stock — Disponible: ${l.stockDisp.toLocaleString()} / Pedido: ${l.pendiente.toLocaleString()}${l.opsEnProd.length?` · ${l.opsEnProd.length} OP en producción`:' · Sin OP activa'}</div>`:'';
+    return `<div class="linea-card ${cls}"><div class="linea-info"><div class="linea-producto">${l.producto}</div><div class="linea-codigo">Cód: ${l.codigo||'—'}</div></div>
       <div class="linea-stats">
         <div class="linea-stat"><span class="lbl">Pedido</span><span class="num">${l.totalUnds.toLocaleString()}</span></div>
         <div class="linea-stat"><span class="lbl">Stock</span><span class="num ${l.faltaStock?'red':'green'}">${l.stockDisp.toLocaleString()}</span></div>
-        <div class="linea-stat"><span class="lbl">Faltante</span><span class="num ${l.faltaStock?'red':'green'}">${l.faltaStock ? Math.max(0, l.totalUnds - l.stockDisp).toLocaleString() : '—'}</span></div>
+        <div class="linea-stat"><span class="lbl">Faltante</span><span class="num ${l.faltaStock?'red':'green'}">${l.faltaStock?Math.max(0,l.totalUnds-l.stockDisp).toLocaleString():'—'}</span></div>
         <div class="linea-stat"><span class="lbl">Cajas</span><span class="num">${l.cajas.toFixed(1)}</span></div>
       </div>
       <span class="linea-status-badge" style="${badgeStyle}">${badgeTxt}</span>
       ${alertaOp}
     </div>`;
   }).join('');
-
-  document.getElementById('content').innerHTML=`
-  <div class="detail-wrap">
-    <div class="detail-back">
-      <button class="back-btn" onclick="setModo('kanban')">← Volver</button>
-      <span class="detail-oc-num">${oc.oc}</span>
-      <span class="detail-cliente">${oc.cliente}</span>
-      <span class="detail-venc ${oc.claseVenc}">${diasTxt}</span>
-    </div>
+  document.getElementById('content').innerHTML=`<div class="detail-wrap">
+    <div class="detail-back"><button class="back-btn" onclick="setModo('kanban')">← Volver</button><span class="detail-oc-num">${oc.oc}</span><span class="detail-cliente">${oc.cliente}</span><span class="detail-venc ${oc.claseVenc}">${diasTxt}</span></div>
     <div class="detail-summary">
-      <div class="summary-card"><div class="summary-label">Unidades faltantes</div><div class="summary-val ${oc.nBloq>0?'red':'green'}">${oc.nBloq>0 ? oc.lineas.filter(l=>l.faltaStock).reduce((s,l)=>s+Math.max(0,l.totalUnds-l.stockDisp),0).toLocaleString() : '—'}</div></div>
+      <div class="summary-card"><div class="summary-label">Unidades faltantes</div><div class="summary-val ${oc.nBloq>0?'red':'green'}">${oc.nBloq>0?oc.lineas.filter(l=>l.faltaStock).reduce((s,l)=>s+Math.max(0,l.totalUnds-l.stockDisp),0).toLocaleString():'—'}</div></div>
       <div class="summary-card"><div class="summary-label">Total cajas</div><div class="summary-val">${oc.totalCajas.toFixed(0)}</div></div>
       <div class="summary-card"><div class="summary-label">Volumen m³</div><div class="summary-val">${oc.volumen.toFixed(2)}</div></div>
       <div class="summary-card"><div class="summary-label">Líneas (${oc.nBloq+oc.nNoEnt} exc)</div><div class="summary-val ${(oc.nBloq+oc.nNoEnt)>0?'red':''}">${oc.lineas.length}</div></div>
     </div>
     <div class="lineas-list">${lineasHtml}</div>
   </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PICKER — MÓDULO ALISTO
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function fmtDate(d) {
+  return d.toLocaleDateString('es-CR',{day:'2-digit',month:'2-digit',year:'numeric'})+' '+
+    d.toLocaleTimeString('es-CR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+function abrirPicker() {
+  document.getElementById('pickerOverlay').classList.add('visible');
+  document.getElementById('pk-fecha').textContent =
+    new Date().toLocaleDateString('es-CR',{weekday:'long',day:'numeric',month:'long'});
+  pkFiltro = 'todos';
+  renderPickerLista();
+  pkShow('list');
+}
+
+function cerrarPicker() {
+  document.getElementById('pickerOverlay').classList.remove('visible');
+}
+
+function pkShow(vista) {
+  document.getElementById('pk-listView').style.display   = vista==='list'   ? 'flex' : 'none';
+  document.getElementById('pk-opView').style.display     = vista==='op'     ? 'flex' : 'none';
+  document.getElementById('pk-detailView').style.display = vista==='detail' ? 'flex' : 'none';
+}
+
+// ── Render lista de OCs en picker ───────────────────────────────────────────
+function renderPickerLista() {
+  if (!allData) {
+    document.getElementById('pk-oc-list').innerHTML = '<div style="color:#3d6696;text-align:center;padding:40px;">Cargando datos…</div>';
+    return;
+  }
+  const ocs = procesarOCs();
+  const busq = (document.getElementById('pk-search').value||'').toLowerCase();
+  const filtradas = ocs.filter(oc => {
+    if (pkFiltro !== 'todos' && oc.estadoOC !== pkFiltro) return false;
+    if (busq && !oc.oc.toLowerCase().includes(busq) && !oc.cliente.toLowerCase().includes(busq)) return false;
+    return true;
+  }).sort((a,b) => (a.fechaEntrega||'9999').localeCompare(b.fechaEntrega||'9999'));
+
+  const colMap = { bloqueado:'#f07070', ingresado:'#7ec4e8', alistado:'#2dd4a0', entregado:'#2dd4a0', parcial:'#f5c842' };
+  const bdgBg  = { bloqueado:'#2a0f0f', ingresado:'#0c2d52', alistado:'#0a2e24', entregado:'#0a2e24', parcial:'#2a1f06' };
+  const bdgClr = { bloqueado:'#f07070', ingresado:'#a8d8f0', alistado:'#2dd4a0', entregado:'#2dd4a0', parcial:'#f5c842' };
+  const bdgBd  = { bloqueado:'#5c2020', ingresado:'#2a5494', alistado:'#1a5c45', entregado:'#1a5c45', parcial:'#5c4010' };
+  const bdgTxt = { bloqueado:'Bloqueado', ingresado:'Ingresado', alistado:'Alistado', entregado:'Entregado', parcial:'Parcial' };
+
+  const html = filtradas.map(oc => `
+    <div onclick="pkSeleccionarOC('${oc.oc}')" style="background:#152848;border:1px solid #1e3d6e;border-left:3px solid ${colMap[oc.estadoOC]||'#3d6696'};border-radius:10px;padding:14px 14px 14px 18px;cursor:pointer;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:#eef7fd;letter-spacing:.04em;">${oc.oc}</div>
+        <div style="text-align:right;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;color:#eef7fd;line-height:1;">${Math.round(oc.pendienteUnds).toLocaleString()}</div>
+          <div style="font-size:10px;color:#3d6696;text-transform:uppercase;">Unds pend.</div>
+        </div>
+      </div>
+      <div style="color:#a8d8f0;font-size:12px;font-weight:500;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${oc.cliente}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="color:#c8e6f8;font-size:11px;font-weight:600;">${oc.fechaEntrega||'—'}</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="background:${bdgBg[oc.estadoOC]};color:${bdgClr[oc.estadoOC]};border:1px solid ${bdgBd[oc.estadoOC]};border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase;">${bdgTxt[oc.estadoOC]||oc.estadoOC}</span>
+          <span style="color:#3d6696;font-size:11px;">${oc.totalCajas.toFixed(0)} cajas · ${oc.lineas.length} líneas</span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('pk-oc-list').innerHTML = html ||
+    '<div style="color:#3d6696;text-align:center;padding:40px;">Sin OCs para este filtro</div>';
+}
+
+// ── Seleccionar OC → ir a operarios ─────────────────────────────────────────
+function pkSeleccionarOC(ocNum) {
+  const ocs = procesarOCs();
+  const oc  = ocs.find(o=>o.oc===ocNum);
+  if (!oc) return;
+
+  pkState = {
+    oc,
+    ops: [],
+    tsInicio: new Date(),
+    tsFin: null,
+    lines: {},
+    ocLineas: oc.lineas,
+  };
+
+  // Render vista operarios
+  const body = document.getElementById('pk-op-body');
+  body.innerHTML = `
+    <div class="pk-oc-header">
+      <div class="pk-oc-num">${oc.oc}</div>
+      <div class="pk-oc-razon">${oc.cliente}</div>
+      <div class="pk-oc-meta">
+        <div class="pk-stat"><div class="pk-stat-val">${Math.round(oc.pendienteUnds).toLocaleString()}</div><div class="pk-stat-lbl">Unidades</div></div>
+        <div class="pk-stat"><div class="pk-stat-val">${oc.totalCajas.toFixed(0)}</div><div class="pk-stat-lbl">Cajas</div></div>
+        <div class="pk-stat"><div class="pk-stat-val">${oc.lineas.length}</div><div class="pk-stat-lbl">Líneas</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="pk-section-label">👤 ¿Quién alista este pedido?</div>
+      <div class="pk-op-grid" id="pk-op-grid"></div>
+    </div>
+    <div>
+      <div class="pk-section-label">🕐 Inicio del alisto</div>
+      <div class="pk-ts-box">
+        <div class="pk-ts-icon">⏱</div>
+        <div><div class="pk-ts-label">Capturado al abrir</div><div class="pk-ts-value">${fmtDate(pkState.tsInicio)}</div></div>
+      </div>
+    </div>
+    <button class="pk-cta-btn" id="pk-op-continue-btn" disabled onclick="pkIrDetalle()">
+      ▶ Iniciar alisto
+    </button>
+  `;
+
+  const grid = document.getElementById('pk-op-grid');
+  OPERARIOS.forEach(name => {
+    const chip = document.createElement('div');
+    chip.className = 'pk-op-chip';
+    chip.innerHTML = `<div class="pk-op-avatar">${name[0]}</div><div class="pk-op-name">${name}</div><div class="pk-op-check"><span class="pk-check-mark">✓</span></div>`;
+    chip.onclick = () => {
+      const i = pkState.ops.indexOf(name);
+      if (i === -1) { pkState.ops.push(name); chip.classList.add('selected'); }
+      else { pkState.ops.splice(i,1); chip.classList.remove('selected'); }
+      document.getElementById('pk-op-continue-btn').disabled = pkState.ops.length === 0;
+    };
+    grid.appendChild(chip);
+  });
+
+  pkShow('op');
+}
+
+// ── Ir al picking de líneas ──────────────────────────────────────────────────
+function pkIrDetalle() {
+  const oc = pkState.oc;
+  document.getElementById('pk-d-num').textContent = oc.oc;
+  document.getElementById('pk-d-razon').textContent = oc.cliente;
+  document.getElementById('pk-d-estado').textContent = oc.estadoOC.charAt(0).toUpperCase()+oc.estadoOC.slice(1);
+  document.getElementById('pk-d-units').textContent = Math.round(oc.pendienteUnds).toLocaleString();
+  document.getElementById('pk-d-cajas').textContent = oc.totalCajas.toFixed(0);
+  document.getElementById('pk-d-lineas').textContent = oc.lineas.length;
+  document.getElementById('pk-d-meta').innerHTML =
+    pkState.ops.map(n=>`<span class="pk-op-tag">${n}</span>`).join('') +
+    `<span class="pk-ts-tag">⏱ ${fmtDate(pkState.tsInicio)}</span>`;
+  pkState.lines = {};
+  pkRenderLineas();
+  pkShow('detail');
+}
+
+// ── Render líneas de picking ─────────────────────────────────────────────────
+function pkRenderLineas() {
+  const list = document.getElementById('pk-lines-list');
+  list.innerHTML = '';
+  pkState.ocLineas.forEach((l, i) => {
+    const st = pkState.lines[i] || 'pendiente';
+    const div = document.createElement('div');
+    div.className = 'pk-line' + (st==='entregado'?' st-entregado':st==='parcial'?' st-parcial':st==='no'?' st-no':'');
+
+    const undo = `<button class="pk-undo-btn" onclick="pkResetLine(${i})">Deshacer</button>`;
+    let bottom = '';
+    if (st==='entregado') bottom = `<div style="margin-top:7px;display:flex;align-items:center;"><span class="pk-estado-badge pk-b-ent">Entregado</span>${undo}</div>`;
+    if (st==='no')        bottom = `<div style="margin-top:7px;display:flex;align-items:center;"><span class="pk-estado-badge pk-b-no">No entregado</span>${undo}</div>`;
+    if (st==='parcial')   bottom = `
+      <div class="pk-parcial-wrap visible">
+        <input class="pk-parcial-input" type="number" min="1" max="${l.totalUnds-1}" value="${pkState.lines[i+'_qty']||1}" onchange="pkState.lines[${i}+'_qty']=parseInt(this.value)||1" />
+        <span class="pk-parcial-lbl">de ${l.totalUnds} unds despachadas</span>
+      </div>
+      <div style="margin-top:7px;display:flex;align-items:center;"><span class="pk-estado-badge pk-b-par">Parcial</span>${undo}</div>`;
+
+    div.innerHTML = `
+      <div class="pk-line-top"><div class="pk-line-code">${l.codigo||'—'}</div><div class="pk-line-qty">${l.totalUnds.toLocaleString()} unds</div></div>
+      <div class="pk-line-desc">${l.producto}</div>
+      ${st==='pendiente' ? `<div class="pk-line-actions">
+        <button class="pk-btn pk-btn-ent" onclick="pkSetEstado(${i},'entregado')">Entregado</button>
+        <button class="pk-btn pk-btn-par" onclick="pkSetEstado(${i},'parcial')">Parcial</button>
+        <button class="pk-btn pk-btn-no"  onclick="pkSetEstado(${i},'no')">No entregado</button>
+      </div>` : bottom}
+    `;
+    list.appendChild(div);
+  });
+  pkUpdateProgress();
+}
+
+function pkSetEstado(i, est) {
+  pkState.lines[i] = est;
+  if (est==='parcial') pkState.lines[i+'_qty'] = 1;
+  pkRenderLineas();
+}
+function pkResetLine(i) {
+  delete pkState.lines[i];
+  delete pkState.lines[i+'_qty'];
+  pkRenderLineas();
+}
+
+function pkUpdateProgress() {
+  const tot   = pkState.ocLineas.length;
+  const marc  = Object.keys(pkState.lines).filter(k=>!k.includes('_qty')).length;
+  const pct   = Math.round((marc/tot)*100);
+  document.getElementById('pk-prog-bar').style.width = pct+'%';
+  document.getElementById('pk-prog-lbl').textContent = marc+' de '+tot+' líneas marcadas';
+  const btn   = document.getElementById('pk-confirm-btn');
+  const noC   = Object.values(pkState.lines).filter(v=>v==='no').length;
+  const parC  = Object.values(pkState.lines).filter(v=>v==='parcial').length;
+  if (marc < tot) {
+    btn.disabled = true;
+    btn.textContent = 'Marcar todas las líneas para confirmar';
+  } else {
+    btn.disabled = false;
+    btn.textContent = noC===0&&parC===0
+      ? 'Confirmar despacho completo'
+      : `Confirmar (${parC} parcial${parC!==1?'es':''}, ${noC} no entregada${noC!==1?'s':''})`;
+  }
+}
+
+// ── Confirmar despacho y enviar al flow ──────────────────────────────────────
+async function pkConfirmar() {
+  pkState.tsFin = new Date();
+
+  const noC   = Object.values(pkState.lines).filter(v=>v==='no').length;
+  const parC  = Object.values(pkState.lines).filter(v=>v==='parcial').length;
+  const entC  = Object.values(pkState.lines).filter(v=>v==='entregado').length;
+  const ms    = pkState.tsFin - pkState.tsInicio;
+  const dur   = Math.floor(ms/60000)+'m '+Math.floor((ms%60000)/1000)+'s';
+  const estadoFinal = noC===0&&parC===0 ? 'Alistado' : parC>0 ? 'Parcial' : 'No Entregado';
+  const colorMap = { 'Alistado':'green','Parcial':'amber','No Entregado':'red' };
+
+  // Armar resumen
+  const rows = [
+    ['OC',          pkState.oc.oc,                          'accent'],
+    ['Cliente',     pkState.oc.cliente.substring(0,32)+'…', ''],
+    ['Operario(s)', pkState.ops.join(', '),                  'accent'],
+    ['Inicio',      fmtDate(pkState.tsInicio),               ''],
+    ['Fin',         fmtDate(pkState.tsFin),                  ''],
+    ['Duración',    dur,                                     'green'],
+    ['Entregadas',  entC+' / '+pkState.ocLineas.length,      'green'],
+    ['Parciales',   parC,                                    parC>0?'amber':''],
+    ['No entreg.',  noC,                                     noC>0?'red':''],
+    ['Estado',      estadoFinal,                             colorMap[estadoFinal]],
+  ];
+  document.getElementById('pk-resumen-body').innerHTML = rows.map(([k,v,c])=>
+    `<div class="pk-resumen-row"><span class="pk-rkey">${k}</span><span class="pk-rval ${c}">${v}</span></div>`
+  ).join('');
+
+  const statusEl  = document.getElementById('pk-resumen-status');
+  const closeBtn  = document.getElementById('pk-resumen-close-btn');
+  statusEl.className = 'pk-resumen-status enviando';
+  statusEl.textContent = '⏳ Enviando a SharePoint…';
+  closeBtn.disabled = true;
+
+  document.getElementById('pk-resumen-overlay').classList.add('visible');
+
+  // Armar payload para el flow
+  const lineas = pkState.ocLineas.map((l, i) => {
+    const st = pkState.lines[i];
+    if (!st) return null;
+    return {
+      ID: l.ID,
+      Status: st === 'entregado' ? 'Entregado' : st === 'no' ? 'No Entregado' : 'Parcial',
+      CantidadDespachada: st === 'parcial'
+        ? (pkState.lines[i+'_qty'] || 0)
+        : st === 'entregado' ? l.totalUnds : 0,
+    };
+  }).filter(Boolean);
+
+  const payload = {
+    lineas,
+    Operario:     pkState.ops.join(', '),
+    InicioAlisto: pkState.tsInicio.toISOString(),
+    FinAlisto:    pkState.tsFin.toISOString(),
+  };
+
+  try {
+    const res = await fetch(FLOW_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    if (res.ok || res.status === 202) {
+      statusEl.className = 'pk-resumen-status ok';
+      statusEl.textContent = '✅ Guardado en SharePoint correctamente';
+    } else {
+      statusEl.className = 'pk-resumen-status error';
+      statusEl.textContent = `⚠ Error ${res.status} — revisá el flow en Power Automate`;
+    }
+  } catch(e) {
+    statusEl.className = 'pk-resumen-status error';
+    statusEl.textContent = `⚠ Sin conexión — ${e.message}`;
+  }
+
+  closeBtn.disabled = false;
+}
+
+function pkCerrarResumen() {
+  document.getElementById('pk-resumen-overlay').classList.remove('visible');
+  document.getElementById('pickerOverlay').classList.remove('visible');
+  // Refrescar datos del tablero
+  fetchData();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
