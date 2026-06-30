@@ -243,7 +243,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
   display:none;
   flex-direction:column;
   font-family:'Barlow',sans-serif;
-  zoom:2;
+  zoom:1.6;
 }
 .picker-overlay.visible{display:flex;}
 
@@ -392,7 +392,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;heig
   position:fixed;inset:0;z-index:200;
   background:rgba(10,22,40,0.93);
   display:none;align-items:center;justify-content:center;padding:24px;
-  zoom:2;
+  zoom:1.6;
 }
 .pk-resumen-overlay.visible{display:flex;}
 .pk-resumen-card{
@@ -638,8 +638,10 @@ async function fetchData() {
     render();
   } catch(e) {
     dot.className = 'status-dot';
-    document.getElementById('content').innerHTML =
-      `<div class="loader" style="color:var(--red)">⚠ Error al cargar datos — ${e.message}</div>`;
+    if (modo !== 'sipoc') {
+      document.getElementById('content').innerHTML =
+        `<div class="loader" style="color:var(--red)">⚠ Error al cargar datos — ${e.message}</div>`;
+    }
   }
 }
 setInterval(fetchData, REFRESH_MS);
@@ -663,11 +665,11 @@ function setFiltro(f, btn) {
 }
 
 function render() {
+  if (modo === 'sipoc') { renderSipoc(); return; }
   if (!allData) return;
   if (modo === 'kanban') renderKanban();
   else if (modo === 'lista') renderLista();
   else if (modo === 'matriz') renderMatriz();
-  else if (modo === 'sipoc') renderSipoc();
   else if (modo === 'detalle' && ocSeleccionada) renderDetalle(ocSeleccionada);
   else renderLista();
 }
@@ -951,6 +953,91 @@ function renderSipoc() {
       <div><span style="font-weight:700; font-size:19px; color:#fff;">Finalizado</span><div style="font-size:13px; color:#a6e2bf;">Encuesta marcada <b style="color:#bdf0d2;">"Alistado"</b></div></div>
     </div>
   </section>
+
+  <!-- PANELES INFERIORES: POKA-YOKE + SIPOC -->
+  <section style="flex:0 0 auto; display:flex; gap:14px;">
+    <div style="flex:0 0 44%; display:flex; flex-direction:column; background:linear-gradient(180deg, rgba(127,29,29,0.32), rgba(80,15,15,0.22)); border:2px solid rgba(239,68,68,0.55); border-radius:14px; overflow:hidden;">
+      <div style="display:flex; align-items:center; gap:11px; padding:11px 16px; background:rgba(239,68,68,0.16); border-bottom:1px solid rgba(239,68,68,0.4);">
+        <div style="width:34px; height:34px; border-radius:8px; background:#ef4444; color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800;">⚠</div>
+        <div style="line-height:1.1;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:21px; color:#fff; letter-spacing:0.5px;">REGLAS POKA-YOKE</div>
+          <div style="font-weight:700; font-size:13px; color:#fca5a5; letter-spacing:2px;">NUNCA SE PUEDEN SALTAR</div>
+        </div>
+      </div>
+      <div style="flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between; padding:10px 16px;">
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">No tocar producto sin haber tomado la <b style="color:#fff;">OC impresa</b> de la bandeja</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Los faltantes se anotan en la <b style="color:#fff;">tablet</b> — nunca de palabra a Zeidy</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">No avisar a Zeidy sin haber marcado <b style="color:#fff;">“Alistado”</b> en la encuesta</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Zeidy <b style="color:#fff;">no factura</b> sin ver el registro de faltantes en el sistema</span></div>
+        <div style="display:flex; gap:10px; align-items:center;"><span style="flex:0 0 auto; width:22px; height:22px; border-radius:5px; background:#ef4444; color:#fff; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center;">×</span><span style="font-size:15px; line-height:1.22; color:#fde2e2; font-weight:500;">Jason / Jesús <b style="color:#fff;">no salen</b> sin el pedido físico y la factura impresa</span></div>
+      </div>
+    </div>
+    <div style="flex:1 1 0; display:flex; flex-direction:column; background:#131a24; border:1px solid #1f2a37; border-radius:14px; overflow:hidden;">
+      <div style="display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid #1f2a37;">
+        <div style="width:34px; height:34px; border-radius:8px; background:#f97316; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px;">2</div>
+        <div style="line-height:1.1;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:21px; color:#fff; letter-spacing:0.5px;">SIPOC — ETAPA DE PICKING</div>
+          <div style="font-weight:600; font-size:13px; color:#f6b27d; letter-spacing:1px;">Proveedores · Entradas · Proceso · Salidas · Clientes</div>
+        </div>
+      </div>
+      <div style="flex:1 1 auto; display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:#1f2a37;">
+        <div style="background:#131a24; display:flex; flex-direction:column;">
+          <div style="padding:7px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:14px; color:#f6b27d; letter-spacing:0.5px; border-bottom:1px solid #1f2a37;">SUPPLIERS</div>
+          <ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; line-height:1.25; color:#cdd6e1;">
+            <li>Zeidy (Ingreso)</li>
+            <li>Bandeja <b style="color:#fff;">Ingresados</b></li>
+            <li>Bodega PT</li>
+          </ul>
+        </div>
+        <div style="background:#131a24; display:flex; flex-direction:column;">
+          <div style="padding:7px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:14px; color:#f6b27d; letter-spacing:0.5px; border-bottom:1px solid #1f2a37;">INPUTS</div>
+          <ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; line-height:1.25; color:#cdd6e1;">
+            <li>OC impresa</li>
+            <li>Pedido digitado</li>
+            <li>Alistar el pedido</li>
+            <li>Tablet de faltantes</li>
+          </ul>
+        </div>
+        <div style="background:#131a24; display:flex; flex-direction:column;">
+          <div style="padding:7px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:14px; color:#f6b27d; letter-spacing:0.5px; border-bottom:1px solid #1f2a37;">PROCESS</div>
+          <ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.22; color:#cdd6e1;">
+            <li>Alistar el pedido en una tarima</li>
+            <li>Verificar ítem por ítem</li>
+            <li>Registrar faltantes</li>
+            <li>Marcar <b style="color:#fff;">“Alistado”</b></li>
+          </ul>
+        </div>
+        <div style="background:#131a24; display:flex; flex-direction:column;">
+          <div style="padding:7px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:14px; color:#f6b27d; letter-spacing:0.5px; border-bottom:1px solid #1f2a37;">OUTPUTS</div>
+          <ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; line-height:1.25; color:#cdd6e1;">
+            <li>Producto alistado</li>
+            <li>Faltantes registrados</li>
+            <li>Encuesta <b style="color:#fff;">“Alistado”</b></li>
+          </ul>
+        </div>
+        <div style="background:#131a24; display:flex; flex-direction:column;">
+          <div style="padding:7px 10px; background:rgba(249,115,22,0.14); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:14px; color:#f6b27d; letter-spacing:0.5px; border-bottom:1px solid #1f2a37;">CUSTOMERS</div>
+          <ul style="margin:0; padding:9px 10px; list-style:none; display:flex; flex-direction:column; gap:7px; font-size:13px; line-height:1.25; color:#cdd6e1;">
+            <li>Zeidy factura</li>
+            <li>Jason o Jesús hacen la entrega</li>
+            <li>Traen la factura con la firma de recibido del cliente</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; padding-top:6px; border-top:1px solid #1d2733;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:14px; letter-spacing:2px; color:#6b7c8f; padding:3px 9px; border:1px solid #2a3645; border-radius:6px;">HDv2-ALISTO-01</span>
+      <span style="font-size:12px; color:#5d6b7c; letter-spacing:1px;">Código de empresa</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:7px; font-size:13px; color:#6b7c8f; letter-spacing:1px;">
+      <span style="width:6px; height:6px; border-radius:50%; background:#2f6fed;"></span>
+      <span style="font-weight:600;">Heavenly Digital</span>
+    </div>
+  </footer>
 </div>`;
 }
 
