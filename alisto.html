@@ -1525,6 +1525,8 @@ async function pkConfirmar() {
 
   const payload = {
     lineas,
+    OC:           pkState.oc.oc,
+    Cliente:      pkState.oc.cliente,
     Operario:     pkState.ops.join(', '),
     InicioAlisto: pkState.tsInicio.toISOString(),
     FinAlisto:    pkState.tsFin.toISOString(),
