@@ -17,6 +17,8 @@ const ERLO_CONFIG = {
     OPS:       'https://csotoajoy.github.io/grupoerlo/ps_data.json',
     INVENTARIO:'https://csotoajoy.github.io/grupoerlo/ps_inventario.json',
     PEDIDOS:   'https://csotoajoy.github.io/grupoerlo/ps_pedidos.json',
+    ALL:       'https://csotoajoy.github.io/grupoerlo/ps_all.json',
+    RUTAS:     'https://csotoajoy.github.io/grupoerlo/ps_rutas.json',
   },
 
   // ── SHAREPOINT ───────────────────────────────────────────

@@ -578,7 +578,7 @@ const URLS = (typeof ERLO_CONFIG !== 'undefined') ? ERLO_CONFIG.DATA : {
   RUTAS:      'https://csotoajoy.github.io/grupoerlo/ps_rutas.json',
 };
 const REFRESH_MS = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.REFRESH_MS) || 30000;
-const CAPACIDAD_CAMION_M3 = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.CAPACIDAD_CAMION_M3) || 10;
+const CAPACIDAD_CAMION_M3 = (typeof ERLO_CONFIG !== 'undefined' && ERLO_CONFIG.CAMION && ERLO_CONFIG.CAMION.CAPACIDAD_M3) || 10;
 const RUTAS_URL = (URLS.RUTAS) || 'https://csotoajoy.github.io/grupoerlo/ps_rutas.json';
 
 // ── URL DEL FLOW POWER AUTOMATE ──────────────────────────────────────────────
