@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recepción — Grupo Erlo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pane: rgba(7, 15, 30, 0.58);
+    --pane-strong: rgba(6, 12, 25, 0.74);
+    --edge: rgba(190, 215, 255, 0.14);
+    --edge-hi: rgba(220, 235, 255, 0.28);
+    --text: #f2f6ff;
+    --text-2: #b4c2de;
+    --text-3: #7d8db0;
+    --azul: #7d8bff;      /* azul de marca aclarado para fondo oscuro */
+    --naranja: #f0a54a;   /* naranja de marca */
+    --verde: #42e09f;
+    --rojo: #ff6262;
+    --ambar: #ffc043;
+    --r: 18px;
+    --gap: clamp(10px, 1.1vw, 20px);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: #050b18; /* respaldo mientras arranca el cielo */
+    color: var(--text);
+    font-family: 'Barlow', system-ui, sans-serif;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--gap);
+    padding: var(--gap) calc(var(--gap) * 1.4);
+    -webkit-font-smoothing: antialiased;
+  }
+  .num, .cond { font-family: 'Barlow Condensed', 'Barlow', sans-serif; }
+
+  /* Paneles: ventanas oscuras sobre el cielo */
+  .pane {
+    background: var(--pane);
+    border: 1px solid var(--edge);
+    border-radius: var(--r);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 50px rgba(0, 4, 18, 0.35);
+    position: relative;
+  }
+  body.vidrio .pane { backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); }
+
+  /* ── Encabezado ── */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 2px 4px; }
+  .marca { display: flex; align-items: center; gap: clamp(12px, 1.2vw, 22px); }
+  .logo {
+    background: #fff; border-radius: 14px; padding: clamp(6px, .5vw, 10px) clamp(10px, .8vw, 16px);
+    height: clamp(64px, 7.4vh, 120px); display: flex; align-items: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  }
+  .logo img { height: 100%; width: auto; display: block; }
+  .titulo { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: clamp(26px, 2.6vw, 52px); line-height: 1; letter-spacing: .005em; text-shadow: 0 2px 18px rgba(0, 8, 30, .45); }
+  .subtitulo { color: var(--text-2); font-size: clamp(13px, 1vw, 19px); margin-top: 4px; text-shadow: 0 1px 10px rgba(0, 8, 30, .5); }
+  .reloj { text-align: right; text-shadow: 0 2px 20px rgba(0, 8, 30, .5); }
+  .hora { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: clamp(44px, 4.6vw, 96px); line-height: .9; font-variant-numeric: tabular-nums; }
+  .fecha { color: var(--text-2); font-size: clamp(13px, 1vw, 19px); margin-top: 6px; }
+  .fecha::first-letter { text-transform: uppercase; }
+
+  /* ── Indicadores ── */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); padding: clamp(12px, 1.4vh, 22px) 0; }
+  .kpi { padding: 0 clamp(16px, 1.6vw, 34px); display: flex; align-items: baseline; gap: clamp(10px, .9vw, 18px); }
+  .kpi + .kpi { border-left: 1px solid var(--edge); }
+  .kpi .num { font-weight: 700; font-size: clamp(40px, 4.2vw, 86px); line-height: .95; font-variant-numeric: tabular-nums; }
+  .kpi .lbl { color: var(--text-2); font-size: clamp(14px, 1.05vw, 21px); line-height: 1.2; max-width: 11ch; }
+  .kpi.alerta .num { color: var(--naranja); }
+  .kpi.ok .num { color: var(--verde); }
+
+  /* ── Cuerpo ── */
+  main { display: grid; grid-template-columns: 2.05fr 1fr; gap: var(--gap); min-height: 0; }
+  .sec-titulo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 4px 10px; }
+  .sec-titulo h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: clamp(20px, 1.6vw, 32px); text-shadow: 0 2px 14px rgba(0, 8, 30, .5); }
+  .sec-titulo span { color: var(--text-2); font-size: clamp(12px, .9vw, 17px); text-shadow: 0 1px 10px rgba(0, 8, 30, .6); }
+  .col { display: flex; flex-direction: column; min-height: 0; }
+
+  .estaciones { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: var(--gap); min-height: 0; }
+  .est { padding: clamp(14px, 1.6vh, 26px) clamp(16px, 1.2vw, 26px); display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; min-height: 0; }
+  .est.grande { grid-column: span 2; }
+  .est-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: clamp(17px, 1.35vw, 28px); color: var(--text-2); display: flex; align-items: center; gap: 10px; }
+  .luz { width: .55em; height: .55em; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
+  .est.produciendo .luz { background: var(--verde); box-shadow: 0 0 0 0 rgba(66, 224, 159, .6); animation: latido 2.4s ease-out infinite; }
+  .est.pausada .luz { background: var(--ambar); }
+  .est.bloqueada .luz { background: var(--rojo); }
+  @keyframes latido { 0% { box-shadow: 0 0 0 0 rgba(66, 224, 159, .55); } 70%, 100% { box-shadow: 0 0 0 .7em rgba(66, 224, 159, 0); } }
+  .est.produciendo { border-color: rgba(66, 224, 159, .35); }
+  .est.bloqueada { border-color: rgba(255, 98, 98, .4); }
+  .est.vacia { background: rgba(7, 15, 30, 0.38); }
+  .est-sku { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: clamp(22px, 2.1vw, 44px); line-height: 1.04; margin: .35em 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .est.grande .est-sku { font-size: clamp(28px, 2.8vw, 58px); }
+  .est-vacio { color: var(--text-3); font-size: clamp(14px, 1vw, 20px); }
+  .est-pie { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 10px; color: var(--text-2); font-size: clamp(13px, .95vw, 19px); }
+  .est-pie .num { font-weight: 700; font-size: clamp(20px, 1.6vw, 34px); color: var(--text); font-variant-numeric: tabular-nums; }
+  .etiqueta { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: clamp(13px, .95vw, 19px); padding: .1em .65em; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .barra { height: clamp(6px, .75vh, 11px); background: rgba(255, 255, 255, .09); border-radius: 999px; overflow: hidden; margin: .55em 0 .5em; }
+  .barra i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, #42e09f, #8ff5cb); position: relative; overflow: hidden; }
+  .barra i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.55) 50%, transparent 80%); transform: translateX(-100%); animation: brillo 3.2s ease-in-out infinite; }
+  @keyframes brillo { 60%, 100% { transform: translateX(100%); } }
+  .cola { color: var(--text-3); font-size: clamp(12px, .85vw, 17px); margin-top: 4px; }
+
+  /* Aviso cuando no hay órdenes */
+  .aviso { margin-bottom: var(--gap); padding: 12px 18px; border-radius: 12px; background: rgba(240, 165, 74, .14); border: 1px solid rgba(240, 165, 74, .4); color: #ffd9a8; font-size: clamp(14px, 1vw, 20px); display: none; }
+  .aviso.visible { display: block; }
+
+  /* ── Entregas ── */
+  .entregas { flex: 1; overflow: hidden; min-height: 0; padding: 6px 0; -webkit-mask-image: linear-gradient(transparent 0, #000 18px, #000 calc(100% - 28px), transparent 100%); mask-image: linear-gradient(transparent 0, #000 18px, #000 calc(100% - 28px), transparent 100%); }
+  .entregas-lista { will-change: transform; }
+  .ent { display: grid; grid-template-columns: 1fr auto; gap: 2px 14px; padding: clamp(10px, 1.2vh, 18px) clamp(16px, 1.2vw, 24px); }
+  .ent + .ent { border-top: 1px solid var(--edge); }
+  .ent-cliente { font-weight: 600; font-size: clamp(15px, 1.1vw, 22px); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ent-detalle { color: var(--text-3); font-size: clamp(12px, .85vw, 17px); }
+  .ent-cajas { text-align: right; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: clamp(20px, 1.5vw, 32px); line-height: 1; font-variant-numeric: tabular-nums; }
+  .ent-cajas small { display: block; font-family: 'Barlow', sans-serif; font-weight: 500; font-size: clamp(11px, .75vw, 15px); color: var(--text-3); }
+  .ent-cuando { font-size: clamp(12px, .85vw, 17px); text-align: right; color: var(--text-2); white-space: nowrap; }
+  .ent.vencida .ent-cuando { color: var(--naranja); font-weight: 600; }
+  .ent.hoy .ent-cuando { color: var(--verde); font-weight: 600; }
+  .vacio-lista { padding: 24px; color: var(--text-2); font-size: clamp(14px, 1vw, 20px); }
+
+  /* ── Pie ── */
+  footer { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: 12px; background: var(--pane-strong); color: var(--text-2); font-size: clamp(12px, .85vw, 17px); }
+  footer .der { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .punto { width: 9px; height: 9px; border-radius: 50%; background: var(--text-3); flex-shrink: 0; }
+  .punto.ok { background: var(--verde); }
+  .punto.viejo { background: var(--ambar); }
+  .punto.error { background: var(--rojo); }
+  footer .der { margin-left: auto; color: var(--text-3); }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; height: auto; grid-template-rows: auto; }
+    .kpis { grid-template-columns: repeat(2, 1fr); row-gap: 14px; }
+    .kpi:nth-child(3) { border-left: 0; }
+    main { grid-template-columns: 1fr; }
+    .estaciones { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; }
+    .est { min-height: 150px; }
+    .entregas { max-height: 60vh; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .barra i::after, .est.produciendo .luz { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="marca">
+    <div class="logo"><img src="fx/erlo-logo.svg" alt="Grupo Erlo"></div>
+    <div>
+      <div class="titulo">Vista general de planta</div>
+      <div class="subtitulo">Producción y despachos en tiempo real</div>
+    </div>
+  </div>
+  <div class="reloj">
+    <div class="hora" id="hora">--:--</div>
+    <div class="fecha" id="fecha">&nbsp;</div>
+  </div>
+</header>
+
+<section class="pane kpis" aria-label="Indicadores">
+  <div class="kpi ok"><span class="num" id="kEnProd">—</span><span class="lbl">órdenes en producción</span></div>
+  <div class="kpi"><span class="num" id="kPedidos">—</span><span class="lbl">pedidos por alistar</span></div>
+  <div class="kpi"><span class="num" id="kCajas">—</span><span class="lbl">cajas por despachar</span></div>
+  <div class="kpi" id="kVencBox"><span class="num" id="kVencidos">—</span><span class="lbl">entregas vencidas</span></div>
+</section>
+
+<main>
+  <section class="col" aria-label="Estaciones">
+    <div class="sec-titulo"><h2>Estaciones</h2><span id="resumenEst"></span></div>
+    <div class="aviso" id="avisoOps">No hay órdenes de producción abiertas en SharePoint. Las estaciones se llenan solas cuando se registre una orden.</div>
+    <div class="estaciones" id="estaciones"></div>
+  </section>
+  <section class="col" aria-label="Próximas entregas">
+    <div class="sec-titulo"><h2>Próximas entregas</h2><span id="resumenEnt"></span></div>
+    <div class="pane entregas" id="entregas"><div class="entregas-lista" id="entregasLista"></div></div>
+  </section>
+</main>
+
+<footer>
+  <span class="punto" id="punto"></span>
+  <span id="estadoDatos">Cargando datos…</span>
+  <span class="der" id="enProduccionTxt"></span>
+</footer>
+
+<script src="fx/vendor/gsap.min.js"></script>
+<script src="fx/motion.js"></script>
+<script src="fx/cielo.js"></script>
+<script>
+ErloCielo.init({ dim: 0.3 });
+if (/[?&]blur=1/.test(location.search)) document.body.classList.add('vidrio');
+
+// Rutas relativas: funcionan igual en GitHub Pages y en una copia local
+const URL_ALL = 'ps_all.json';
+const URL_PEDIDOS = 'ps_pedidos.json';
+const REFRESH_MS = 30000;
+const DATOS_VIEJOS_MIN = 120;   // a partir de aquí el pie avisa que los datos están desactualizados
+
+const ESTACIONES_TV = [
+  { id: 'B-Inyección Soplado',       nombre: 'Inyección y soplado', grande: true },
+  { id: 'C-Etiquetado y Serigrafía', nombre: 'Etiquetado' },
+  { id: 'C-Armar Tapas',             nombre: 'Armar tapas' },
+  { id: 'D-Llenado',                 nombre: 'Llenado' },
+  { id: 'E-Alisto',                  nombre: 'Alisto' },
+  { id: 'B-Maquina Bolitas',         nombre: 'Bolitas' },
+  { id: 'A-Preparar Resina',         nombre: 'Preparar resina' },
+];
+const PRIORIDAD_COLOR = { URGENTE: '#ff6262', A: '#f0a54a', B: '#7d8bff', C: '#42e09f', BLOQUEADA: '#c77dff' };
+
+// Campos robustos: aceptan nombres de SharePoint o del JSON
+const _sku   = o => o.producto_sku || o.sku || o['Producto/SKU'] || o.ProductoSKU || o.Titulo || o.Title || '—';
+const _est   = o => o.estacion || o['Estación'] || o.Estacion || '';
+const _prio  = o => o.prioridad || o.Prioridad || '';
+const _edo   = o => o.estado || o.Estado || 'Pendiente';
+const _meta  = o => parseFloat(o.undsMeta || o['Unds Meta'] || o.cantidad || o.Cantidad || 0);
+const _hecho = o => parseFloat(o.cantidadProducida || o['Cantidad Producida'] || o.stockPT || 0);
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => Math.round(n).toLocaleString('es-CR');
+let primeraCarga = true;
+
+// ── Reloj (hora de Costa Rica) ──
+const fHora = new Intl.DateTimeFormat('es-CR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Costa_Rica' });
+const fFecha = new Intl.DateTimeFormat('es-CR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Costa_Rica' });
+function reloj() {
+  const d = new Date();
+  document.getElementById('hora').textContent = fHora.format(d);
+  document.getElementById('fecha').textContent = fFecha.format(d);
+}
+function hoyCR() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Costa_Rica' }).format(new Date()); // AAAA-MM-DD
+}
+function diasEntre(a, b) { return Math.round((Date.parse(b) - Date.parse(a)) / 86400000); }
+
+// ── Datos ──
+async function traer(url) {
+  const r = await fetch(url + '?t=' + Date.now(), { cache: 'no-store' });
+  if (!r.ok) throw new Error(url + ' respondió ' + r.status);
+  return r.json();
+}
+
+async function actualizar() {
+  try {
+    const [all, ped] = await Promise.all([traer(URL_ALL), traer(URL_PEDIDOS)]);
+    pintar(all, ped);
+  } catch (e) {
+    document.getElementById('punto').className = 'punto error';
+    document.getElementById('estadoDatos').textContent = 'Sin conexión con los datos. Se reintenta cada 30 segundos.';
+    console.warn(e);
+  }
+}
+
+function pintar(all, ped) {
+  const ops = (all.ordenes || []).filter(o => !/^complet/i.test(_edo(o)));
+  const enProd = ops.filter(o => _edo(o) === 'En Producción');
+  const pedidos = (ped.pedidos || []).filter(p => p.Status !== 'Alistado');
+  const hoy = hoyCR();
+
+  // Pedidos agrupados por orden de compra
+  const porOC = new Map();
+  pedidos.forEach(p => {
+    const k = p.OC || p.ID;
+    if (!porOC.has(k)) porOC.set(k, { oc: p.OC, cliente: p.Cliente, entrega: p['Fecha de Entrega'], cajas: 0, lineas: 0, parcial: false });
+    const g = porOC.get(k);
+    g.cajas += Number(p['Total Cajas']) || 0;
+    g.lineas++;
+    if (p.Status === 'Parcial') g.parcial = true;
+    if (p['Fecha de Entrega'] && (!g.entrega || p['Fecha de Entrega'] < g.entrega)) g.entrega = p['Fecha de Entrega'];
+  });
+  const ocs = [...porOC.values()].sort((a, b) => (a.entrega || '9999').localeCompare(b.entrega || '9999'));
+  const vencidas = ocs.filter(o => o.entrega && o.entrega < hoy).length;
+  const cajas = ocs.reduce((s, o) => s + o.cajas, 0);
+
+  // Indicadores
+  ErloFX.contar(document.getElementById('kEnProd'), enProd.length);
+  ErloFX.contar(document.getElementById('kPedidos'), ocs.length);
+  ErloFX.contar(document.getElementById('kCajas'), cajas);
+  ErloFX.contar(document.getElementById('kVencidos'), vencidas);
+  document.getElementById('kVencBox').classList.toggle('alerta', vencidas > 0);
+
+  pintarEstaciones(ops);
+  pintarEntregas(ocs, hoy);
+
+  // Pie: frescura de los datos
+  const act = all.actualizado ? new Date(all.actualizado) : null;
+  const min = act ? Math.round((Date.now() - act) / 60000) : null;
+  const punto = document.getElementById('punto');
+  const txt = document.getElementById('estadoDatos');
+  if (min === null) { punto.className = 'punto viejo'; txt.textContent = 'Datos sin fecha de actualización'; }
+  else if (min > DATOS_VIEJOS_MIN) { punto.className = 'punto viejo'; txt.textContent = `Los datos de SharePoint no se actualizan desde hace ${Math.round(min / 60)} h. Revisar el flujo de sincronización.`; }
+  else { punto.className = 'punto ok'; txt.textContent = `Datos de SharePoint actualizados ${min <= 1 ? 'hace un momento' : 'hace ' + min + ' min'}`; }
+  document.getElementById('enProduccionTxt').textContent = enProd.length
+    ? 'Produciendo ahora: ' + enProd.slice(0, 4).map(_sku).join(', ') + (enProd.length > 4 ? ` y ${enProd.length - 4} más` : '')
+    : '';
+
+  if (primeraCarga) {
+    primeraCarga = false;
+    ErloFX.entrar(document.querySelectorAll('header, .kpis, .sec-titulo, .est, .entregas, footer'), { escalonado: 0.06 });
+  }
+}
+
+function pintarEstaciones(ops) {
+  const cont = document.getElementById('estaciones');
+  document.getElementById('avisoOps').classList.toggle('visible', ops.length === 0);
+  const activas = ESTACIONES_TV.filter(e => ops.some(o => _est(o) === e.id)).length;
+  document.getElementById('resumenEst').textContent = `${activas} de ${ESTACIONES_TV.length} con orden asignada`;
+
+  ESTACIONES_TV.forEach((est, i) => {
+    const suyas = ops.filter(o => _est(o) === est.id);
+    const op = suyas.find(o => _edo(o) === 'En Producción') || suyas.find(o => _edo(o) === 'Pausada') || suyas[0] || null;
+    let el = cont.children[i];
+    if (!el) { el = document.createElement('article'); cont.appendChild(el); }
+    const firma = op ? [_sku(op), _edo(op), _prio(op), _meta(op), _hecho(op), suyas.length].join('|') : 'vacia';
+    if (el.dataset.firma === firma) return;   // sin cambios: no se repinta ni se anima
+    const habia = el.dataset.firma !== undefined;
+    el.dataset.firma = firma;
+
+    if (!op) {
+      el.className = 'pane est vacia' + (est.grande ? ' grande' : '');
+      el.innerHTML = `<div class="est-nombre"><span class="luz"></span>${esc(est.nombre)}</div><div class="est-vacio">Sin orden asignada</div><div></div>`;
+      return;
+    }
+    const edo = _edo(op), prio = _prio(op);
+    const bloq = prio === 'BLOQUEADA' || edo === 'Bloqueada';
+    const clase = bloq ? 'bloqueada' : edo === 'En Producción' ? 'produciendo' : edo === 'Pausada' ? 'pausada' : '';
+    const meta = _meta(op), hecho = _hecho(op);
+    const pct = meta > 0 ? Math.min(100, hecho / meta * 100) : 0;
+    const color = PRIORIDAD_COLOR[prio] || '#7d8bff';
+    el.className = `pane est ${clase}` + (est.grande ? ' grande' : '');
+    el.innerHTML = `
+      <div>
+        <div class="est-nombre"><span class="luz"></span>${esc(est.nombre)}</div>
+        <div class="est-sku">${esc(_sku(op))}</div>
+      </div>
+      <div>
+        ${meta > 0 ? `<div class="barra"><i></i></div>` : ''}
+        <div class="est-pie">
+          <span style="white-space:nowrap"><span class="num">${fmt(hecho)}</span> de ${fmt(meta)} uds</span>
+          ${prio ? `<span class="etiqueta" style="color:${color}">${esc(prio === 'BLOQUEADA' ? 'Bloqueada' : prio === 'URGENTE' ? 'Urgente' : 'Prioridad ' + prio)}</span>` : ''}
+        </div>
+        ${suyas.length > 1 ? `<div class="cola">${suyas.length - 1} más en cola · ${esc(edo)}</div>` : `<div class="cola">${esc(edo)}</div>`}
+      </div>`;
+    const b = el.querySelector('.barra i');
+    if (b) requestAnimationFrame(() => ErloFX.barra(b, pct));
+    if (habia && window.gsap) gsap.fromTo(el, { boxShadow: '0 0 0 2px rgba(160,210,255,.7), 0 0 40px rgba(120,180,255,.45)' }, { boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 50px rgba(0,4,18,0.35)', duration: 2.2, ease: 'power2.out', clearProps: 'boxShadow' });
+  });
+}
+
+function cuando(fecha, hoy) {
+  if (!fecha) return 'Sin fecha';
+  const d = diasEntre(hoy, fecha);
+  if (d === 0) return 'Entrega hoy';
+  if (d === 1) return 'Mañana';
+  if (d > 1) return `En ${d} días`;
+  return d === -1 ? 'Venció ayer' : `Venció hace ${-d} días`;
+}
+
+function pintarEntregas(ocs, hoy) {
+  const lista = document.getElementById('entregasLista');
+  document.getElementById('resumenEnt').textContent = ocs.length ? `${ocs.length} órdenes de compra` : '';
+  const firma = ocs.map(o => o.oc + o.cajas + o.entrega).join('|') + hoy;
+  if (lista.dataset.firma === firma) return;
+  lista.dataset.firma = firma;
+  if (!ocs.length) { lista.innerHTML = '<div class="vacio-lista">Todos los pedidos están alistados.</div>'; return; }
+  lista.innerHTML = ocs.map(o => {
+    const clase = !o.entrega ? '' : o.entrega < hoy ? 'vencida' : o.entrega === hoy ? 'hoy' : '';
+    return `<div class="ent ${clase}">
+      <div class="ent-cliente">${esc(o.cliente || 'Cliente sin nombre')}</div>
+      <div class="ent-cajas">${fmt(o.cajas)}<small>cajas</small></div>
+      <div class="ent-detalle">${esc(o.oc || '')}${o.parcial ? ' — despacho parcial' : ''}</div>
+      <div class="ent-cuando">${cuando(o.entrega, hoy)}</div>
+    </div>`;
+  }).join('');
+  requestAnimationFrame(() => ErloFX.desplazar(document.getElementById('entregas'), lista));
+}
+
+reloj();
+setInterval(reloj, 1000);
+actualizar();
+setInterval(actualizar, REFRESH_MS);
+</script>
+</body>
+</html>

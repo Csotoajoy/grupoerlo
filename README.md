@@ -15,6 +15,34 @@ que Power Automate actualiza desde SharePoint.
 | `plan_trabajo_v2.html` | Planificación | Plan de trabajo por máquina (resina, sacos, OCs) | `ps_all.json`, `ps_pedidos.json` | 60 s |
 | `index.html` | Gerencia de proyectos | Panel de Proyectos 2026: Scrum, Gantt y matriz de prioridad | `tareas.json` | Manual |
 
+### Versiones nuevas en prueba
+
+| Página | Reemplazaría a | Qué cambia |
+|---|---|---|
+| `recepcion-v2.html` | `recepcion.html` | Cielo animado en tiempo real, logo en vector, indicadores de pedidos y entregas vencidas, lista de próximas entregas, aviso cuando los datos de SharePoint están desactualizados. Lee `ps_all.json` y `ps_pedidos.json` |
+
+Se publican junto a la versión actual; la original no se toca hasta aprobar la nueva en la TV.
+
+## Efectos visuales (`fx/`)
+
+| Archivo | Para qué |
+|---|---|
+| `fx/cielo.js` | Fondo de cielo dibujado en tiempo real con WebGL a la resolución nativa de la pantalla (hasta 4K). Sigue la hora de Costa Rica: amanecer, día, atardecer y noche con estrellas y luna. Ajusta su calidad sola si la pantalla no da abasto |
+| `fx/motion.js` | Animaciones de datos: números que cuentan, barras que se llenan, destello cuando algo cambia, desplazamiento automático de listas largas |
+| `fx/erlo-logo.svg` | Logo de Grupo Erlo en vector, nítido a cualquier tamaño |
+| `fx/vendor/gsap.min.js` | Librería de animación GSAP 3.15, incluida en el repo para no depender de un CDN |
+
+Parámetros para probar en la TV sin tocar código (se agregan a la URL):
+
+- `?cielo=amanecer`, `dia`, `atardecer` o `noche` — fija el momento del día (por defecto sigue la hora real)
+- `?calidad=alta`, `media` o `baja` — fija la calidad; por defecto se ajusta sola
+- `?fps=24` — cuadros por segundo máximos (30 por defecto)
+- `?nubes=0.8` — cantidad de nubes de 0 a 1
+- `?cielodebug=1` — muestra resolución, nivel de calidad y fps reales
+- `?blur=1` — paneles con vidrio esmerilado (más pesado; solo para equipos potentes)
+
+Ejemplo: `recepcion-v2.html?cielo=atardecer&cielodebug=1`
+
 ### Archivos de apoyo / heredados
 
 - `Panel_Prioridades_Proyectos_12.html` — versión anterior de `index.html` que leía las tareas directo desde SharePoint. Se mantiene como respaldo.

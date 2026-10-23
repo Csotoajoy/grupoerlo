@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="190 40 430 340" role="img" aria-label="Grupo Erlo">
+  <title>Grupo Erlo</title>
+  <g fill="none" stroke-width="19" stroke-linecap="butt">
+    <path stroke="#2626F5" d="M602 62 H330 A119 119 0 0 0 330 300 A115 115 0 0 0 445 185 H350"/>
+    <path stroke="#E39834" d="M602 185 H522 A57.5 57.5 0 0 0 522 300 H602"/>
+  </g>
+  <text x="410" y="368" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="50">
+    <tspan fill="#2626F5">Grupo </tspan><tspan fill="#E39834">Erlo</tspan>
+  </text>
+</svg>
