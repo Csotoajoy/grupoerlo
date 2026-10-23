@@ -17,6 +17,7 @@
      fps:     cuadros por segundo máximos (30 por defecto)
      calidad: 'auto' | 'alta' | 'media' | 'baja'
      nubes:   0..1  cantidad de nubes (0.65 por defecto)
+     astros:  true/false  dibuja el disco del sol y la luna (true por defecto)
 
    PARÁMETROS EN LA URL (para probar en la TV sin tocar código)
      ?cielo=noche   ?calidad=media   ?fps=24   ?nubes=0.7   ?cielodebug=1
@@ -76,7 +77,7 @@
     '#endif',
     'uniform vec2 uRes;uniform float uT;uniform float uDim;uniform float uOct;uniform float uCover;',
     'uniform vec3 uZ;uniform vec3 uH;uniform vec3 uS;uniform vec3 uCL;uniform vec3 uCS;',
-    'uniform vec2 uSol;uniform float uSt;uniform float uMo;',
+    'uniform vec2 uSol;uniform float uSt;uniform float uMo;uniform float uAstro;',
     'float h21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}',
     'float vn(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*f*(f*(f*6.-15.)+10.);',
     '  return mix(mix(h21(i),h21(i+vec2(1,0)),u.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),u.x),u.y);}',
@@ -93,7 +94,7 @@
     '  col+=uH*.18*exp(-y*7.);',
     // Sol y halo
     '  vec2 sp=vec2(uSol.x*asp,uSol.y);float d=length(p-sp);float sv=smoothstep(-.12,.05,uSol.y);',
-    '  float alto=smoothstep(.25,.8,uSol.y);col+=uS*sv*(.2*exp(-d*2.2)+mix(.5,.32,alto)*exp(-d*9.)+.25*exp(-d*40.)+mix(1.4,.55,alto)*smoothstep(.032,.032-2.*px,d));',
+    '  float alto=smoothstep(.25,.8,uSol.y);col+=uS*sv*(.2*exp(-d*2.2)+mix(.5,.32,alto)*exp(-d*9.)+.25*exp(-d*40.)+uAstro*mix(1.4,.55,alto)*smoothstep(.032,.032-2.*px,d));',
     // Estrellas: 3 capas, nítidas a cualquier resolución, con color y centelleo
     '  if(uSt>.01){',
     '    for(int L=0;L<3;L++){float sc=L==0?42.:(L==1?85.:160.);vec2 g=p*sc;vec2 id=floor(g);vec2 f=fract(g)-.5;',
@@ -109,7 +110,7 @@
     '  float moonDisc=smoothstep(1.,1.-2.5*px/.03,mr);',
     '  float maria=smoothstep(.45,.75,fbm3(mq*1.3+3.))*.28+smoothstep(.55,.8,vn(mq*4.))*.08;',
     '  vec3 moonCol=vec3(.93,.95,1.)*(.72+.28*sqrt(max(0.,1.-mr*mr)))*(1.-maria);',
-    '  col=mix(col,moonCol,moonDisc*uMo);',
+    '  col=mix(col,moonCol,moonDisc*uMo*uAstro);',
     '  col+=uMo*vec3(.35,.45,.7)*(.14*exp(-length(p-mp)*7.)+.05*exp(-length(p-mp)*2.))*(1.-moonDisc);',
     // Nubes: plano en perspectiva + deformación de dominio + erosión de bordes
     '  float dep=1./(y+.3);vec2 cp=vec2((p.x-asp*.5)*dep,dep*1.7);',
@@ -191,7 +192,7 @@
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     var u = {};
-    ['uRes', 'uT', 'uDim', 'uOct', 'uCover', 'uZ', 'uH', 'uS', 'uCL', 'uCS', 'uSol', 'uSt', 'uMo']
+    ['uRes', 'uT', 'uDim', 'uOct', 'uCover', 'uZ', 'uH', 'uS', 'uCL', 'uCS', 'uSol', 'uSt', 'uMo', 'uAstro']
       .forEach(function (n) { u[n] = gl.getUniformLocation(pr, n); });
     st.gl = gl; st.u = u;
     return true;
@@ -238,6 +239,7 @@
     gl.uniform3fv(u.uCL, p.cl); gl.uniform3fv(u.uCS, p.cs);
     gl.uniform2f(u.uSol, p.sol[0], p.sol[1]);
     gl.uniform1f(u.uSt, p.st); gl.uniform1f(u.uMo, p.mo);
+    gl.uniform1f(u.uAstro, st.opt.astros ? 1 : 0);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
@@ -284,12 +286,14 @@
       dim: q.dim !== undefined ? +q.dim : (o.dim !== undefined ? o.dim : 0.35),
       fps: +(q.fps || o.fps || 30),
       calidad: q.calidad || o.calidad || 'auto',
-      nubes: q.nubes !== undefined ? +q.nubes : (o.nubes !== undefined ? o.nubes : 0.65)
+      nubes: q.nubes !== undefined ? +q.nubes : (o.nubes !== undefined ? o.nubes : 0.65),
+      astros: q.astros !== undefined ? q.astros !== '0' : o.astros !== false
     };
     var canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
     canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:-1;display:block;pointer-events:none';
-    document.body.insertBefore(canvas, document.body.firstChild);
+    // Va en <html> y no en <body>: así no lo afecta un zoom o transform aplicado al body
+    document.documentElement.insertBefore(canvas, document.body);
 
     var nivelMin = { alta: 0, media: 2, baja: 4 }[opt.calidad];
     st = {

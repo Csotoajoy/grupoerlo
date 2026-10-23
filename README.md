@@ -27,6 +27,7 @@ Se publican junto a la versión actual; la original no se toca hasta aprobar la 
 
 | Archivo | Para qué |
 |---|---|
+| `fx/realce.js` | Complemento para las pantallas existentes: pone el cielo detrás, vuelve semitransparentes los fondos, cambia el logo por el vector y anima los números cuando cambian. No toca el contenido ni la lógica de la página. Está activo en `estacion`, `recepcion`, `supervisor`, `alisto` y `plan_trabajo_v2`. Se apaga con `?realce=0` en la URL |
 | `fx/cielo.js` | Fondo de cielo dibujado en tiempo real con WebGL a la resolución nativa de la pantalla (hasta 4K). Sigue la hora de Costa Rica: amanecer, día, atardecer y noche con estrellas y luna. Ajusta su calidad sola si la pantalla no da abasto |
 | `fx/motion.js` | Animaciones de datos: números que cuentan, barras que se llenan, destello cuando algo cambia, desplazamiento automático de listas largas |
 | `fx/erlo-logo.svg` | Logo de Grupo Erlo en vector, nítido a cualquier tamaño |
@@ -40,6 +41,8 @@ Parámetros para probar en la TV sin tocar código (se agregan a la URL):
 - `?nubes=0.8` — cantidad de nubes de 0 a 1
 - `?cielodebug=1` — muestra resolución, nivel de calidad y fps reales
 - `?blur=1` — paneles con vidrio esmerilado (más pesado; solo para equipos potentes)
+- `?astros=1` — muestra el disco del sol y la luna (en las pantallas existentes van ocultos para no quedar detrás de las tablas)
+- `?realce=0` — apaga el cielo y las animaciones en esa pantalla
 
 Ejemplo: `recepcion-v2.html?cielo=atardecer&cielodebug=1`
 

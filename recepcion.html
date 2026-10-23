@@ -570,7 +570,8 @@ function render() {
         ? Math.min(100, Math.round((activa.stockPT / activa.unds_meta) * 100))
         : 0;
 
-      card.classList.add(esBloqueada ? 'card-bloqueada' : activa.estado === 'En Producción' ? 'card-en-produccion' : '');
+      const claseEstado = esBloqueada ? 'card-bloqueada' : activa.estado === 'En Producción' ? 'card-en-produccion' : '';
+      if (claseEstado) card.classList.add(claseEstado);
       card.style.setProperty('--card-color', pcolor);
 
       card.innerHTML = `
@@ -618,5 +619,6 @@ setInterval(updateClock, 1000);
 fetchData();
 setInterval(fetchData, REFRESH_MS);
 </script>
+<script src="fx/realce.js" data-numeros=".kpi-val"></script>
 </body>
 </html>
