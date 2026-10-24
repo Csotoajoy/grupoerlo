@@ -1,0 +1,59 @@
+/* aura.css · fondo AURA para las pantallas de planta (copia de la parte v4 de estilo/celestial.css de Kurage OS, 23/10/2026) */
+:root{--ce-tinta:#0E2346;--ce-gris:#46587A;--ce-oro-osc:#8A6418;--ce-oro-linea:rgba(184,137,46,.45);--ce-fuente:Barlow,Manrope,system-ui,sans-serif;--ce-display:'Barlow Condensed',Georgia,serif;--aura-panel:255,255,255}
+html[data-modo="oscuro"]{--ce-tinta:#EEF3FB;--ce-gris:#A9B6CC;--ce-oro-osc:#E9CF8A;--aura-panel:14,22,42}
+.ce-cielo{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+/* ============================================================================
+   v4 · AURA (23/10/2026): la sede fija (foto del vestíbulo) + ambiente + modo + tema + transparencia.
+   Lo controla estilo/cielo.js con atributos en <html>: data-modo, data-tema, data-vidrio, data-cielo, data-efecto.
+   ========================================================================== */
+html.aura{background:#BFD6F0}
+html.aura[data-modo="oscuro"]{background:#0B1222}
+.aura-fondo>*{position:absolute;inset:0}
+.aura-img{background-size:cover;background-position:50% 42%;opacity:0;transition:opacity 2s ease;transform:scale(1.03)}
+.aura-img.visible{opacity:1;animation:aura-respira 120s ease-in-out infinite alternate}
+@keyframes aura-respira{from{transform:scale(1.03) translateX(-.5%)}to{transform:scale(1.07) translateX(.5%)}}
+/* efectos solo sobre el vidrio (máscara del cielo) */
+.aura-vidrio-fx{-webkit-mask-image:var(--aura-mascara,url(/estilo/aura/cielo-mascara.png));mask-image:var(--aura-mascara,url(/estilo/aura/cielo-mascara.png));-webkit-mask-size:cover;mask-size:cover;-webkit-mask-position:50% 42%;mask-position:50% 42%;opacity:0;transition:opacity 2s}
+.aura-estrellas{background-image:radial-gradient(1px 1px at 12% 18%,#fff,transparent),radial-gradient(1.4px 1.4px at 31% 9%,#fff,transparent),radial-gradient(1px 1px at 47% 27%,#fff,transparent),radial-gradient(1.2px 1.2px at 63% 14%,#fff,transparent),radial-gradient(1px 1px at 72% 33%,#fff,transparent),radial-gradient(1.5px 1.5px at 88% 21%,#fff,transparent),radial-gradient(1px 1px at 22% 38%,#fff,transparent),radial-gradient(1.2px 1.2px at 55% 6%,#fff,transparent),radial-gradient(1px 1px at 93% 7%,#fff,transparent),radial-gradient(1px 1px at 39% 45%,#fff,transparent);animation:aura-titila 5s ease-in-out infinite alternate}
+@keyframes aura-titila{from{filter:brightness(.6)}to{filter:brightness(1.4)}}
+html[data-efecto="estrellas"] .aura-estrellas{opacity:.9}
+html[data-efecto="lluvia"] .aura-lluvia,html[data-efecto="tormenta"] .aura-lluvia{opacity:1}
+.aura-rayo{background:radial-gradient(ellipse at 62% 10%,rgba(235,240,255,.95),rgba(200,215,255,.5) 40%,rgba(180,200,255,.15) 70%)}
+.aura-rayo.flash{animation:aura-rayo 1.1s ease-out}
+@keyframes aura-rayo{0%{opacity:0}6%{opacity:.95}12%{opacity:.15}20%{opacity:.8}45%{opacity:.1}100%{opacity:0}}
+.aura-niebla{opacity:0;transition:opacity 3s;background:radial-gradient(ellipse 60% 30% at 20% 55%,rgba(240,244,248,.55),transparent 70%),radial-gradient(ellipse 50% 25% at 75% 45%,rgba(240,244,248,.5),transparent 70%);animation:aura-niebla 60s ease-in-out infinite alternate}
+html[data-efecto="neblina"] .aura-niebla{opacity:1}
+@keyframes aura-niebla{from{transform:translateX(-4%)}to{transform:translateX(4%)}}
+.aura-velo{background:linear-gradient(180deg,rgba(255,255,255,0) 60%,rgba(255,255,255,.12) 100%)}
+html[data-modo="oscuro"] .aura-velo{background:linear-gradient(180deg,rgba(5,10,25,.25) 0%,rgba(5,10,25,.05) 40%,rgba(5,10,25,.35) 100%)}
+@media (prefers-reduced-motion:reduce){.aura-img.visible,.aura-estrellas,.aura-niebla{animation:none}}
+
+/* ── Botón y panel de ajustes ── */
+.aura-boton{position:fixed;right:16px;bottom:16px;z-index:60;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--ce-oro-linea,rgba(184,137,46,.45));
+  background:rgba(var(--aura-panel,255,255,255),.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:var(--ce-tinta,#0E2346);font:700 12px var(--ce-fuente,Manrope,sans-serif);cursor:pointer;box-shadow:0 6px 20px rgba(14,35,70,.18)}
+.aura-boton svg{color:var(--ce-oro-osc,#8A6418)}
+@media print{.aura-boton,.aura-panel{display:none}}
+.aura-panel{position:fixed;right:16px;bottom:60px;z-index:61;width:min(400px,calc(100vw - 32px));max-height:calc(100vh - 90px);overflow:auto;padding:16px 16px 12px;border-radius:18px;
+  background:rgba(var(--aura-panel,255,255,255),.93);-webkit-backdrop-filter:blur(24px) saturate(1.3);backdrop-filter:blur(24px) saturate(1.3);border:1px solid rgba(255,255,255,.5);box-shadow:0 24px 60px rgba(10,20,45,.35);color:var(--ce-tinta);font:13px/1.4 var(--ce-fuente)}
+html[data-modo="oscuro"] .aura-panel{border-color:rgba(255,255,255,.12)}
+.aura-cab{display:flex;justify-content:space-between;align-items:center}.aura-cab b{font-family:var(--ce-display);font-size:22px}
+.aura-x{border:0;background:transparent;font-size:22px;cursor:pointer;color:var(--ce-gris)}
+.aura-ahora{margin:4px 0 6px;font-weight:700}.aura-ahora small{font-weight:500;color:var(--ce-gris)}
+.aura-panel h4{margin:12px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ce-oro-osc)}
+.aura-seg{display:flex;flex-wrap:wrap;gap:4px}
+.aura-seg button,.aura-presets button{flex:1 1 auto;min-height:32px;padding:0 10px;border-radius:9px;border:1px solid rgba(120,135,160,.3);background:rgba(255,255,255,.08);color:inherit;font:600 12px var(--ce-fuente);cursor:pointer}
+.aura-seg button[aria-pressed=true],.aura-presets button[aria-pressed=true]{background:var(--aura-pri);border-color:var(--aura-pri);color:#fff}
+.aura-presets{display:flex;flex-direction:column;gap:4px}.aura-presets button{text-align:left}.aura-presets button[disabled]{opacity:.45;cursor:not-allowed}
+.aura-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.aura-mini button{display:flex;flex-direction:column;gap:3px;padding:4px;border-radius:10px;border:1px solid rgba(120,135,160,.25);background:transparent;color:inherit;font:600 11px var(--ce-fuente);cursor:pointer}
+.aura-mini i{display:block;height:42px;border-radius:7px;background-size:cover;background-position:50% 35%}
+.aura-mini button[aria-pressed=true]{border-color:var(--aura-pri);box-shadow:0 0 0 2px rgba(var(--aura-pri-rgb),.35)}
+.aura-temas{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.aura-temas button{display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;padding:8px;border-radius:10px;border:1px solid rgba(120,135,160,.25);background:transparent;color:inherit;cursor:pointer;font:12px var(--ce-fuente)}
+.aura-temas button span{display:flex;gap:3px}.aura-temas button i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(255,255,255,.6)}
+.aura-temas button small{color:var(--ce-gris);font-size:11px}
+.aura-temas button[aria-pressed=true]{border-color:var(--aura-pri);box-shadow:0 0 0 2px rgba(var(--aura-pri-rgb),.35)}
+.aura-colores{display:flex;gap:8px;margin-top:6px}.aura-colores label{flex:1;display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:700;color:var(--ce-gris)}
+.aura-colores input{width:100%;height:32px;border:0;padding:0;background:none}
+.aura-chk{display:flex;gap:6px;align-items:center;margin-top:10px;font-weight:600}
+.aura-nota{margin:10px 0 0;font-size:11px;color:var(--ce-gris)}

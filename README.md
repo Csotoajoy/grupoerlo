@@ -9,7 +9,7 @@ que Power Automate actualiza desde SharePoint.
 | Página | Para quién | Qué muestra | Datos que lee | Refresco |
 |---|---|---|---|---|
 | `estacion.html` | Operarios en cada estación | Orden de producción activa de la estación; frases 5S cuando no hay OP | `ps_all.json` | 30 s |
-| `recepcion.html` | Pantalla de recepción / TV | Resumen de órdenes de producción en curso | `ps_data.json` | 30 s |
+| `recepcion.html` | Pantalla de recepción / TV | Estaciones con su orden, indicadores de pedidos y entregas vencidas, próximas entregas, aviso de datos viejos. Fondo AURA: la sede de Heavendly Digital con el cielo y el clima reales (23/10/2026: pasa a ser la versión v2; la anterior queda en `recepcion-v1.html`) | `ps_all.json`, `ps_pedidos.json` | 30 s |
 | `supervisor.html` | Supervisor de planta | Vista general de OPs, máquinas e inventario | `ps_all.json` | 30 s |
 | `alisto.html` | E-Alisto / despacho | Pedidos por alistar, inventario PT, rutas y carga del camión. Registra el alisto en SharePoint mediante un flujo de Power Automate | `ps_pedidos.json`, `ps_inventario.json`, `ps_data.json`, `ps_rutas.json` | 30 s |
 | `plan_trabajo_v2.html` | Planificación | Plan de trabajo por máquina (resina, sacos, OCs) | `ps_all.json`, `ps_pedidos.json` | 60 s |
@@ -19,11 +19,14 @@ que Power Automate actualiza desde SharePoint.
 
 | Página | Reemplazaría a | Qué cambia |
 |---|---|---|
-| `recepcion-v2.html` | `recepcion.html` | Cielo animado en tiempo real, logo en vector, indicadores de pedidos y entregas vencidas, lista de próximas entregas, aviso cuando los datos de SharePoint están desactualizados. Lee `ps_all.json` y `ps_pedidos.json` |
+| `recepcion-v2.html` | (ya es `recepcion.html`) | Cielo animado en tiempo real, logo en vector, indicadores de pedidos y entregas vencidas, lista de próximas entregas, aviso cuando los datos de SharePoint están desactualizados. Lee `ps_all.json` y `ps_pedidos.json` |
 
 Se publican junto a la versión actual; la original no se toca hasta aprobar la nueva en la TV.
 
 ## Efectos visuales (`fx/`)
+
+**AURA (23/10/2026):** `fx/aura.js` + `fx/aura.css` + `fx/aura/` ponen de fondo la sede de Heavendly Digital (siempre el mismo vestíbulo) con lo de afuera según la hora del sol y el clima real de San José (Open-Meteo), o fijo, o según el índice de salud. Botón «Ambiente» abajo a la derecha: modo automático/claro/oscuro, tema (Heavenly Light, Midnight, Rose Executive, Manufacturing Dark, personalizado) y transparencia. Es la misma pieza que `estilo/cielo.js` de Kurage OS. Parámetros: `?cielo=noche|lluvia|tormenta…`, `?modo=claro|oscuro`, `?tema=rosa`, `?vidrio=ejecutivo|balanceado|inmersivo`, `?panel=0`.
+
 
 | Archivo | Para qué |
 |---|---|
